@@ -8,6 +8,13 @@
       "when": 1742977764209,
       "tag": "0000_faithful_natasha_romanoff",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1742980004930,
+      "tag": "0001_worthless_magik",
+      "breakpoints": true
     }
   ]
 }

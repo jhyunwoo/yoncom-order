@@ -12,6 +12,8 @@ export function initializeLucia(D1: D1Database) {
     getUserAttributes: (attribute) => {
       return {
         email: attribute.email,
+        name: attribute.name,
+        role: attribute.role,
       };
     },
   });

@@ -10,3 +10,7 @@ export const signUpValidation = z.object({
   password: z.string().min(8).max(255),
   name: z.string().min(1),
 });
+
+export const tableValidation = z.object({
+  name: z.string().min(1),
+});

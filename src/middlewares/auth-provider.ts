@@ -2,7 +2,7 @@ import { Context, Next } from "hono";
 import { initializeLucia } from "../lib/lucia";
 import { getCookie } from "hono/cookie";
 
-export async function authMiddleware(c: Context, next: Next) {
+export async function authProvider(c: Context, next: Next) {
   const lucia = initializeLucia(c.env.DB);
 
   // 쿠키에서 sessionId 가져오기

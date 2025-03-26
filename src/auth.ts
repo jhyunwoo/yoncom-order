@@ -1,7 +1,5 @@
 import { Hono } from "hono";
 import { Bindings, Variables } from "./lib/bindings";
-import { authMiddleware } from "./middlewares/auth-middleware";
-import { csrf } from "hono/csrf";
 import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
 import { users } from "./db/schema";
@@ -12,10 +10,6 @@ import { signInValidation, signUpValidation } from "./lib/validations";
 import createSession from "./lib/create-session";
 
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
-
-auth.use(csrf());
-
-auth.use("*", authMiddleware);
 
 // Sign Up Route
 auth.post("/sign-up", zValidator("json", signUpValidation), async (c) => {
