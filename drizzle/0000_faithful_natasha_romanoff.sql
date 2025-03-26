@@ -9,7 +9,7 @@ CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`email` text NOT NULL,
 	`password` text NOT NULL,
-	`name` text,
+	`name` text NOT NULL,
 	`createdAt` text
 );
 --> statement-breakpoint

@@ -24,8 +24,8 @@
    "d1_databases": [
      {
        "binding": "DB",
-       "database_name": "auth-api-db",
-       "database_id": "53e2b6cd-69b0-4452-9371-649f5cb799a1",
+       "database_name": "yoncom-order-db",
+       "database_id": "c1e52089-bd97-4371-a5ea-0d60810ab23b",
        "migrations_dir": "drizzle"
      }
    ]
