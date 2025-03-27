@@ -24,7 +24,7 @@ customer.put(
       where: and(eq(tables.id, tableId), isNotNull(tables.customerToken)),
     });
 
-    if (table?.customerToken === customerToken) {
+    if (customerToken && table?.customerToken === customerToken) {
       return c.json({ result: "Table already occupied by you" });
     }
 
