@@ -1,17 +1,17 @@
 import { Hono } from "hono";
-import { Bindings } from "./lib/bindings";
+import { Bindings, Variables } from "./lib/bindings";
 import auth from "./routes/auth";
 import order from "./routes/order";
 import table from "./routes/table";
 import menu from "./routes/menu";
 import { authProvider } from "./middlewares/auth-provider";
 import admin from "./routes/admin";
-import { csrf } from "hono/csrf";
 import { protectRoute } from "./middlewares/protect-route";
 import customer from "./routes/customer";
+import { logger } from "hono/logger";
 
-const app = new Hono<{ Bindings: Bindings }>();
-app.use(csrf());
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
+app.use(logger());
 app.use(authProvider);
 
 // /admin, /order, /table route 보호

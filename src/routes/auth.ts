@@ -81,7 +81,6 @@ auth.post("/sign-out", async (c) => {
 
   // 세션 정보 확인
   const session = c.get("session");
-  console.log(session);
   // 세션이 존재하면 무효화
   if (session) {
     await lucia.invalidateSession(session.id);

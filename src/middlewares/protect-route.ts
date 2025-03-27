@@ -3,6 +3,7 @@ import checkUserRole from "../lib/check-user-role";
 
 export function protectRoute(c: Context, next: Next, role: string[]) {
   if (!checkUserRole(c, role)) {
+    console.log("Unauthorized");
     return c.json({ result: "Unauthorized" }, 403);
   }
 
