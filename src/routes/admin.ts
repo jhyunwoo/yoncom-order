@@ -1,16 +1,12 @@
 import { Hono } from "hono";
-import { Bindings, Variables } from "./lib/bindings";
-import { protectRoute } from "./middlewares/protect-route";
+import { Bindings, Variables } from "../lib/bindings";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import initializeDb from "./db/initialize-db";
-import { users } from "./db/schema";
+import initializeDb from "../db/initialize-db";
+import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 const admin = new Hono<{ Bindings: Bindings; Variables: Variables }>();
-
-// admin 만 접근 가능
-admin.use("*", async (c, next) => protectRoute(c, next, ["admin"]));
 
 // Change user role
 admin.put(

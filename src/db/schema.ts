@@ -15,8 +15,7 @@ export const users = sqliteTable("users", {
   role: text("role").notNull().default("unverified"),
 });
 
-export const usersRelations = relations(users, ({ one, many }) => ({
-  table: one(tables),
+export const usersRelations = relations(users, ({ many }) => ({
   orders: many(orders),
 }));
 
@@ -51,14 +50,12 @@ export const menusRelations = relations(menus, ({ many }) => ({
 export const tables = sqliteTable("tables", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name").notNull().unique(),
-  customerId: text("customerId").references(() => users.id),
+  customerToken: text("customerToken"),
+  tokenKey: text("tokenKey"),
+  tokenIv: text("tokenIv"),
 });
 
-export const tablesRelations = relations(tables, ({ one, many }) => ({
-  user: one(users, {
-    fields: [tables.customerId],
-    references: [users.id],
-  }),
+export const tablesRelations = relations(tables, ({ many }) => ({
   orders: many(orders),
 }));
 
