@@ -7,4 +7,5 @@ export type Bindings = {
 export type Variables = {
   user: User | null;
   session: Session | null;
+  customerToken: string | null;
 };

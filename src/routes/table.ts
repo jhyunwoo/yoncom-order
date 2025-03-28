@@ -27,7 +27,7 @@ table.post("/", zValidator("json", tableValidation), async (c) => {
 
 table.delete(
   "/",
-  zValidator("json", z.object({ tableId: z.number() })),
+  zValidator("json", z.object({ tableId: z.string().min(1) })),
   async (c) => {
     const { tableId } = c.req.valid("json");
     const db = initializeDb(c.env.DB);
@@ -43,7 +43,7 @@ table.delete(
 
 table.put(
   "/vacate",
-  zValidator("json", z.object({ tableId: z.number().min(1) })),
+  zValidator("json", z.object({ tableId: z.string().min(1) })),
   async (c) => {
     const { tableId } = c.req.valid("json");
     const db = initializeDb(c.env.DB);

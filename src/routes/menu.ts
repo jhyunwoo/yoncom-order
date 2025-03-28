@@ -53,7 +53,7 @@ menu.delete(
   zValidator(
     "json",
     z.object({
-      id: z.string().min(1),
+      id: z.number().min(1),
     }),
   ),
   async (c) => {

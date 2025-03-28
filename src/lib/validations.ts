@@ -25,7 +25,7 @@ export const menuPostValidation = z.object({
 });
 
 export const menuPutValidation = z.object({
-  id: z.string().min(1),
+  id: z.number().min(1),
   name: z.string().min(1),
   description: z.string().min(1),
   price: z.number().int(),
@@ -35,8 +35,8 @@ export const menuPutValidation = z.object({
 });
 
 export const orderValidation = z.object({
-  tableId: z.number().int(),
-  menuId: z.string().min(1),
+  tableId: z.string().min(1),
+  menuId: z.number().min(1),
   quantity: z.number().int(),
   isCompleted: z.boolean(),
 });

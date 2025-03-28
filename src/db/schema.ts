@@ -15,10 +15,6 @@ export const users = sqliteTable("users", {
   role: text("role").notNull().default("unverified"),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
-  orders: many(orders),
-}));
-
 export const sessions = sqliteTable("sessions", {
   id: text("id").primaryKey().notNull(),
   userId: text("user_id")
@@ -28,10 +24,7 @@ export const sessions = sqliteTable("sessions", {
 });
 
 export const menus = sqliteTable("menus", {
-  id: text("id")
-    .primaryKey()
-    .notNull()
-    .$defaultFn(() => uuidv4()),
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   description: text("description").notNull(),
   price: integer("price").notNull(),
@@ -48,7 +41,10 @@ export const menusRelations = relations(menus, ({ many }) => ({
 }));
 
 export const tables = sqliteTable("tables", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  id: text("id")
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => uuidv4()),
   name: text("name").notNull().unique(),
   customerToken: text("customerToken"),
   tokenKey: text("tokenKey"),
@@ -64,15 +60,13 @@ export const orders = sqliteTable("orders", {
     .primaryKey()
     .notNull()
     .$defaultFn(() => uuidv4()),
-  tableId: integer("tableId")
+  tableId: text("tableId")
     .references(() => tables.id)
     .notNull(),
-  customerId: text("customerId")
-    .references(() => users.id)
-    .notNull(),
-  menuId: text("menuId")
+  menuId: integer("menuId")
     .references(() => menus.id)
     .notNull(),
+  customerToken: text("customerToken").notNull(),
   quantity: integer("quantity").notNull(),
   isCompleted: integer("isCompleted", { mode: "boolean" })
     .notNull()
@@ -86,10 +80,6 @@ export const orders = sqliteTable("orders", {
 });
 
 export const ordersRelations = relations(orders, ({ one }) => ({
-  customer: one(users, {
-    fields: [orders.customerId],
-    references: [users.id],
-  }),
   menu: one(menus, {
     fields: [orders.menuId],
     references: [menus.id],

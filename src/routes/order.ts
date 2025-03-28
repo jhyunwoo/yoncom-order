@@ -3,7 +3,7 @@ import { Bindings, Variables } from "../lib/bindings";
 import { zValidator } from "@hono/zod-validator";
 import { orderValidation } from "../lib/validations";
 import initializeDb from "../db/initialize-db";
-import { orders } from "../db/schema";
+import { orders, tables } from "../db/schema";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 
@@ -16,7 +16,22 @@ order.post("/", zValidator("json", orderValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
   try {
-    await db.insert(orders).values({ tableId, menuId, quantity, isCompleted });
+    const table = await db.query.tables.findFirst({
+      where: eq(tables.id, tableId),
+      columns: {
+        customerToken: true,
+      },
+    });
+    if (!table?.customerToken) {
+      return c.json({ result: "Table not found" }, 404);
+    }
+    await db.insert(orders).values({
+      tableId,
+      menuId,
+      quantity,
+      isCompleted,
+      customerToken: table.customerToken,
+    });
   } catch (e) {
     console.error(e);
     return c.json({ result: "DB Insert Error" }, 500);
