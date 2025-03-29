@@ -17,7 +17,8 @@ table.post("/", zValidator("json", tableValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
   try {
-    await db.insert(tables).values({ name });
+    const tableInfo = await db.insert(tables).values({ name }).returning();
+    console.log(tableInfo);
   } catch (e) {
     console.error(e);
     return c.json({ result: "DB Insert Error" }, 500);
