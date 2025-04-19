@@ -15,12 +15,12 @@
   //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   //   }
   // ],
-  // "r2_buckets": [
-  //   {
-  //     "binding": "MY_BUCKET",
-  //     "bucket_name": "my-bucket"
-  //   }
-  // ],
+   "r2_buckets": [
+     {
+       "binding": "R2",
+       "bucket_name": "yoncom-order"
+     }
+   ],
    "d1_databases": [
      {
        "binding": "DB",
@@ -28,12 +28,12 @@
        "database_id": "c1e52089-bd97-4371-a5ea-0d60810ab23b",
        "migrations_dir": "drizzle"
      }
-   ]
+   ],
   // "ai": {
   //   "binding": "AI"
   // },
-  // "observability": {
-  //   "enabled": true,
-  //   "head_sampling_rate": 1
-  // }
+   "observability": {
+     "enabled": true,
+     "head_sampling_rate": 1
+   }
 }
