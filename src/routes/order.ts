@@ -1,65 +1,97 @@
 import { Hono } from "hono";
 import { Bindings, Variables } from "../lib/bindings";
 import { zValidator } from "@hono/zod-validator";
-import { orderValidation } from "../lib/validations";
-import initializeDb from "../db/initialize-db";
-import { orders, tables } from "../db/schema";
 import { z } from "zod";
+import initializeDb from "../db/initialize-db";
 import { eq } from "drizzle-orm";
+import { menus, orders, tables } from "../db/schema";
+import decryptData from "../lib/decrypt-data";
 
 const order = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-// Create Order
-order.post("/", zValidator("json", orderValidation), async (c) => {
-  const { tableId, menuId, quantity, isCompleted } = c.req.valid("json");
-
+order.get("/", async (c) => {
   const db = initializeDb(c.env.DB);
+  const customerToken = c.get("customerToken");
+  if (!customerToken) return c.json({ error: "Unauthorized" }, 403);
 
-  try {
-    const table = await db.query.tables.findFirst({
-      where: eq(tables.id, tableId),
-      columns: {
-        customerToken: true,
-      },
-    });
-    if (!table?.customerToken) {
-      return c.json({ result: "Table not found" }, 404);
-    }
-    await db.insert(orders).values({
-      tableId,
-      menuId,
-      quantity,
-      isCompleted,
-      customerToken: table.customerToken,
-    });
-  } catch (e) {
-    console.error(e);
-    return c.json({ result: "DB Insert Error" }, 500);
-  }
+  const orderData = await db.query.orders.findMany({
+    where: eq(orders.customerToken, customerToken),
+  });
 
-  return c.json({ result: "success" });
+  return c.json(orderData);
 });
 
-// Delete Order
-order.delete(
+order.post(
   "/",
   zValidator(
     "json",
     z.object({
-      orderId: z.string().min(1),
+      tableId: z.string().min(1),
+      menuId: z.number().min(1),
+      quantity: z.number().min(1),
     }),
   ),
   async (c) => {
-    const { orderId } = c.req.valid("json");
+    const { tableId, menuId, quantity } = c.req.valid("json");
     const db = initializeDb(c.env.DB);
+    const customerToken = c.get("customerToken");
 
-    try {
-      await db.delete(orders).where(eq(orders.id, orderId));
-    } catch (e) {
-      console.error(e);
-      return c.json({ result: "DB Delete Error" }, 500);
+    // Check Customer has table
+    if (!customerToken) {
+      return c.json({ result: "No Table" });
     }
 
+    const checkTable = await db.query.tables.findFirst({
+      where: eq(tables.customerToken, customerToken),
+    });
+
+    if (!checkTable || !checkTable.tokenKey || !checkTable.tokenIv) {
+      return c.json({ result: "No Table" });
+    }
+
+    // Validate orders token
+    if (
+      new Date(
+        await decryptData(
+          customerToken,
+          checkTable.tokenKey,
+          checkTable.tokenIv,
+        ),
+      ) > new Date()
+    ) {
+      return c.json({ result: "Error" });
+    }
+
+    // Check menu quantity is enough
+    const menuQuantity = await db.query.menus.findFirst({
+      where: eq(menus.id, menuId),
+      columns: {
+        quantity: true,
+      },
+    });
+
+    if (!menuQuantity) {
+      return c.json({ result: "Menu not found" }, 404);
+    }
+
+    const prevOrders = await db.query.orders.findMany({
+      where: eq(orders.menuId, menuId),
+      columns: {
+        quantity: true,
+      },
+    });
+
+    const orderedQuantity = prevOrders.reduce((acc, order) => {
+      return acc + order.quantity;
+    }, 0);
+
+    if (menuQuantity.quantity - orderedQuantity < quantity) {
+      return c.json({ result: "Not enough menu quantity" }, 400);
+    }
+
+    await db
+      .insert(orders)
+      .values({ tableId, menuId, quantity, customerToken });
     return c.json({ result: "success" });
   },
 );

@@ -1,74 +1,37 @@
 import { Hono } from "hono";
 import { Bindings, Variables } from "../lib/bindings";
-import { zValidator } from "@hono/zod-validator";
-import { menuPostValidation, menuPutValidation } from "../lib/validations";
 import initializeDb from "../db/initialize-db";
-import { menus } from "../db/schema";
-import { eq } from "drizzle-orm";
-import { z } from "zod";
 
 const menu = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-// Create Menu
-menu.post("/", zValidator("json", menuPostValidation), async (c) => {
-  const { name, description, price, image, quantity, canOrder } =
-    c.req.valid("json");
-
+menu.get("/", async (c) => {
   const db = initializeDb(c.env.DB);
 
-  try {
-    await db
-      .insert(menus)
-      .values({ name, description, price, quantity, canOrder, image });
-  } catch (e) {
-    console.error(e);
-    return c.json({ result: "DB Insert Error" }, 500);
-  }
-  return c.json({ result: "success" });
-});
+  const menuList = await db.query.menus.findMany();
+  const orderList = await db.query.orders.findMany({
+    columns: {
+      quantity: true,
+      menuId: true,
+    },
+  });
 
-// Update Menu
-menu.put("/", zValidator("json", menuPutValidation), async (c) => {
-  const { id, name, description, price, image, quantity, canOrder } =
-    c.req.valid("json");
+  const menuIdList = menuList.map((menu) => menu.id);
+  const menuOrderedList: number[] = new Array(menuIdList.length).fill(0);
 
-  const db = initializeDb(c.env.DB);
-
-  try {
-    await db
-      .update(menus)
-      .set({ name, description, price, quantity, canOrder, image })
-      .where(eq(menus.id, id));
-  } catch (e) {
-    console.error(e);
-    return c.json({ result: "DB Update Error" }, 500);
-  }
-
-  return c.json({ result: "success" });
-});
-
-// Delete Menu
-menu.delete(
-  "/",
-  zValidator(
-    "json",
-    z.object({
-      id: z.number().min(1),
-    }),
-  ),
-  async (c) => {
-    const { id } = c.req.valid("json");
-
-    const db = initializeDb(c.env.DB);
-
-    try {
-      await db.delete(menus).where(eq(menus.id, id));
-    } catch (e) {
-      console.error(e);
-      return c.json({ result: "DB Delete Error" }, 500);
+  for (const order of orderList) {
+    if (menuIdList.includes(order.menuId)) {
+      menuOrderedList[menuIdList.indexOf(order.menuId)] += order.quantity;
     }
-    return c.json({ result: "success" });
-  },
-);
+  }
 
-export default menu;
+  const menus = [];
+
+  for (const menu of menuList) {
+    menus.push({
+      ...menu,
+      ordered: menuOrderedList[menuIdList.indexOf(menu.id)],
+    });
+  }
+
+  return c.json(menus);
+});

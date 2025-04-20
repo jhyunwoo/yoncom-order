@@ -1,21 +1,21 @@
 import { Hono } from "hono";
-import { Bindings, Variables } from "../lib/bindings";
+import { Bindings, Variables } from "../../lib/bindings";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import initializeDb from "../db/initialize-db";
-import { users } from "../db/schema";
+import initializeDb from "../../db/initialize-db";
+import { users } from "../../db/schema";
 import { eq } from "drizzle-orm";
 
-const admin = new Hono<{ Bindings: Bindings; Variables: Variables }>();
+const adminRole = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Change user role
-admin.put(
+adminRole.put(
   "/role",
   zValidator(
     "json",
     z.object({
       userId: z.string().min(1),
-      role: z.enum(["unverified", "admin"]),
+      role: z.enum(["unverified", "role"]),
     }),
   ),
   async (c) => {
@@ -32,4 +32,4 @@ admin.put(
   },
 );
 
-export default admin;
+export default adminRole;

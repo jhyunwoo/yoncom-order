@@ -1,64 +1,58 @@
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
+import initializeDb from "../db/initialize-db";
+import { and, eq, isNotNull } from "drizzle-orm";
+import { tables } from "../db/schema";
+import encryptData from "../lib/encrypt-data";
 import { Hono } from "hono";
 import { Bindings, Variables } from "../lib/bindings";
-import { zValidator } from "@hono/zod-validator";
-import { tableValidation } from "../lib/validations";
-import { protectRoute } from "../middlewares/protect-route";
-import initializeDb from "../db/initialize-db";
-import { tables } from "../db/schema";
-import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { setCookie } from "hono/cookie";
 
 const table = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-table.use("*", async (c, next) => protectRoute(c, next, ["admin"]));
-
-table.post("/", zValidator("json", tableValidation), async (c) => {
-  const { name } = c.req.valid("json");
-  const db = initializeDb(c.env.DB);
-
-  try {
-    const tableInfo = await db.insert(tables).values({ name }).returning();
-    console.log(tableInfo);
-  } catch (e) {
-    console.error(e);
-    return c.json({ result: "DB Insert Error" }, 500);
-  }
-  return c.json({ result: "success" });
-});
-
-table.delete(
-  "/",
-  zValidator("json", z.object({ tableId: z.string().min(1) })),
-  async (c) => {
-    const { tableId } = c.req.valid("json");
-    const db = initializeDb(c.env.DB);
-    try {
-      await db.delete(tables).where(eq(tables.id, tableId));
-    } catch (e) {
-      console.error(e);
-      return c.json({ result: "DB Error" }, 500);
-    }
-    return c.json({ result: "success" });
-  },
-);
-
 table.put(
-  "/vacate",
+  "/occupy",
   zValidator("json", z.object({ tableId: z.string().min(1) })),
   async (c) => {
     const { tableId } = c.req.valid("json");
     const db = initializeDb(c.env.DB);
 
+    // Check if table is already occupied
+    const table = await db.query.tables.findFirst({
+      where: and(eq(tables.id, tableId), isNotNull(tables.customerToken)),
+    });
+
+    const customerToken = c.get("customerToken");
+    if (customerToken && table?.customerToken === customerToken) {
+      return c.json({ result: "Table already occupied by you" });
+    }
+
+    if (table) {
+      return c.json({ result: "Table already occupied" }, 400);
+    }
+
+    const currentDate = String(new Date());
+
+    const { encrypted, key, iv } = await encryptData(currentDate);
+
     try {
-      await db
-        .update(tables)
-        .set({ customerToken: null, tokenIv: null, tokenKey: null })
-        .where(eq(tables.id, tableId));
+      const tableData = (
+        await db
+          .update(tables)
+          .set({ customerToken: encrypted, tokenIv: iv, tokenKey: key })
+          .returning({ table: tables.name })
+      )[0];
+
+      setCookie(c, "customer_token", encrypted, {
+        httpOnly: true,
+        secure: true,
+      });
+
+      return c.json({ result: "success", table: tableData.table });
     } catch (e) {
       console.error(e);
       return c.json({ result: "DB Error" }, 500);
     }
-    return c.json({ result: "success" });
   },
 );
 

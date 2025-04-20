@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { Bindings, Variables } from "../lib/bindings";
+import { Bindings, Variables } from "../../lib/bindings";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 

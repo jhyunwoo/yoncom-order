@@ -1,13 +1,13 @@
 import { Hono } from "hono";
-import { Bindings, Variables } from "../lib/bindings";
+import { Bindings, Variables } from "../../lib/bindings";
 import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
-import { users } from "../db/schema";
+import { users } from "../../db/schema";
 import { Scrypt } from "lucia";
-import initializeDb from "../db/initialize-db";
-import { initializeLucia } from "../lib/lucia";
-import { signInValidation, signUpValidation } from "../lib/validations";
-import createSession from "../lib/create-session";
+import initializeDb from "../../db/initialize-db";
+import { initializeLucia } from "../../lib/lucia";
+import { signInValidation, signUpValidation } from "../../lib/validations";
+import createSession from "../../lib/create-session";
 
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
