@@ -35,10 +35,13 @@ adminMenu.put("/", zValidator("json", menuPutValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
   try {
-    await db
+    const updateResult = await db
       .update(menus)
       .set({ name, description, price, quantity, canOrder, image })
-      .where(eq(menus.id, id));
+      .where(eq(menus.id, id)).returning({id:menus.id});
+    if (updateResult.length === 0) {
+      return c.json({result:"Menu Not Found"}, 404);
+    }
   } catch (e) {
     console.error(e);
     return c.json({ result: "DB Update Error" }, 500);
@@ -62,7 +65,12 @@ adminMenu.delete(
     const db = initializeDb(c.env.DB);
 
     try {
-      await db.delete(menus).where(eq(menus.id, id));
+      const deleteResult = await db.delete(menus).where(eq(menus.id, id)).returning({
+        id:menus.id
+      })
+      if(deleteResult.length===0){
+        return c.json({result:"Menu Not Found"}, 404);
+      }
     } catch (e) {
       console.error(e);
       return c.json({ result: "DB Delete Error" }, 500);

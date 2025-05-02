@@ -11,9 +11,10 @@ import adminMenu from "./routes/admin/menu";
 import adminOrder from "./routes/admin/order";
 import adminRole from "./routes/admin/role";
 import adminTable from "./routes/admin/table";
-import menu from "./routes/admin/menu";
 import order from "./routes/order";
 import table from "./routes/table";
+import test from "./routes/test";
+import menu from "./routes/menu";
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -47,5 +48,7 @@ app.route("/admin/table", adminTable);
 app.route("/menu", menu);
 app.route("/order", order);
 app.route("/table", table);
+
+app.route('/test', test)
 
 export default app;

@@ -35,3 +35,5 @@ menu.get("/", async (c) => {
 
   return c.json(menus);
 });
+
+export default menu
