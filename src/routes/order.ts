@@ -12,6 +12,7 @@ const order = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 order.get("/", async (c) => {
   const db = initializeDb(c.env.DB);
   const customerToken = c.get("customerToken");
+  console.log(customerToken);
   if (!customerToken) return c.json({ error: "Unauthorized" }, 403);
 
   const orderData = await db.query.orders.findMany({

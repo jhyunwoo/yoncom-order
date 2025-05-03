@@ -9,12 +9,14 @@ import test from "./routes/test";
 import menu from "./routes/menu";
 import admin from "./routes/admin";
 import auth from "./routes/auth";
+import { customerToken } from "./middlewares/customer-token";
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Middlewares
 app.use(logger());
 app.use(authProvider);
+app.use(customerToken);
 app.use(
   "*",
   cors({
@@ -30,11 +32,11 @@ app.get("/", (c) => {
 });
 
 app.route("/admin", admin);
-app.route('/auth', auth)
+app.route("/auth", auth);
 app.route("/menu", menu);
 app.route("/order", order);
 app.route("/table", table);
 
-app.route('/test', test)
+app.route("/test", test);
 
 export default app;
