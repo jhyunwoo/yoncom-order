@@ -15,6 +15,7 @@ import order from "./routes/order";
 import table from "./routes/table";
 import test from "./routes/test";
 import menu from "./routes/menu";
+import admin from "./routes/admin";
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -37,13 +38,7 @@ app.get("/", (c) => {
   return c.json({ result: "API is Healthy" + serverStartDate });
 });
 
-app.route("/admin/auth", auth);
-app.route("/admin/deposit", deposit);
-app.route("/admin/image", image);
-app.route("/admin/menu", adminMenu);
-app.route("/admin/order", adminOrder);
-app.route("/admin/role", adminRole);
-app.route("/admin/table", adminTable);
+app.route("/admin", admin);
 
 app.route("/menu", menu);
 app.route("/order", order);
