@@ -14,6 +14,10 @@ pos.get("/", async (c) => {
         orderBy: asc(orders.createdAt),
       },
     },
+    columns: {
+      tokenIv: false,
+      tokenKey: false,
+    },
   });
   const orderStatus = db.query.orders.findMany();
 

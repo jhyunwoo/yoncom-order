@@ -5,7 +5,6 @@ import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import order from "./routes/order";
 import table from "./routes/table";
-import test from "./routes/test";
 import menu from "./routes/menu";
 import admin from "./routes/admin";
 import auth from "./routes/auth";
@@ -36,7 +35,5 @@ app.route("/auth", auth);
 app.route("/menu", menu);
 app.route("/order", order);
 app.route("/table", table);
-
-app.route("/test", test);
 
 export default app;

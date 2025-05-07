@@ -31,7 +31,7 @@ table.put(
       return c.json({ result: "Table already occupied" }, 400);
     }
 
-    const currentDate = String(new Date());
+    const currentDate = String(new Date()) + tableId;
 
     const { encrypted, key, iv } = await encryptData(currentDate);
 
