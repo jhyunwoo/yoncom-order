@@ -1,82 +1,41 @@
 import { Hono } from "hono";
-import { Bindings, Variables } from "../../lib/bindings";
+import { Bindings, Variables } from "~/lib/bindings";
 import { zValidator } from "@hono/zod-validator";
-import { menuPostValidation, menuPutValidation } from "../../lib/validations";
-import initializeDb from "../../db/initialize-db";
-import { menus } from "../../db/schema";
-import { eq } from "drizzle-orm";
-import { z } from "zod";
+import { createMenuValidation, deleteMenuValidation, updateMenuValidation } from "~/lib/validations";
+import initializeDb from "~/db/initialize-db";
+import * as Menu from "~/controller/menu.controller";
 
 const adminMenu = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Create Menu
-adminMenu.post("/", zValidator("json", menuPostValidation), async (c) => {
-  const { name, description, price, image, quantity, canOrder } =
-    c.req.valid("json");
-
+adminMenu.post("/", zValidator("json", createMenuValidation), async (c) => {
   const db = initializeDb(c.env.DB);
+  const userId = c.get("user")!.id;
 
-  try {
-    await db
-      .insert(menus)
-      .values({ name, description, price, quantity, canOrder, image });
-  } catch (e) {
-    console.error(e);
-    return c.json({ result: "DB Insert Error" }, 500);
-  }
-  return c.json({ result: "success" });
+  const { result, status } = 
+    await Menu.create(db, userId, c.req.valid("json"));
+  return c.json({ result }, status);
 });
 
 // Update Menu
-adminMenu.put("/", zValidator("json", menuPutValidation), async (c) => {
-  const { id, name, description, price, image, quantity, canOrder } =
-    c.req.valid("json");
-
+adminMenu.put("/", zValidator("json", updateMenuValidation), async (c) => {
   const db = initializeDb(c.env.DB);
+  const userId = c.get("user")!.id;
 
-  try {
-    const updateResult = await db
-      .update(menus)
-      .set({ name, description, price, quantity, canOrder, image })
-      .where(eq(menus.id, id)).returning({id:menus.id});
-    if (updateResult.length === 0) {
-      return c.json({result:"Menu Not Found"}, 404);
-    }
-  } catch (e) {
-    console.error(e);
-    return c.json({ result: "DB Update Error" }, 500);
-  }
-
-  return c.json({ result: "success" });
+  const { result, status } = 
+    await Menu.update(db, userId, c.req.valid("json"));
+  return c.json({ result }, status);
 });
 
-// Delete Menu
-adminMenu.delete(
-  "/",
-  zValidator(
-    "json",
-    z.object({
-      id: z.number().min(1),
-    }),
-  ),
+// Remove Menu
+adminMenu.delete("/", zValidator("json", deleteMenuValidation),
   async (c) => {
-    const { id } = c.req.valid("json");
+  const db = initializeDb(c.env.DB);
+  const userId = c.get("user")!.id;
 
-    const db = initializeDb(c.env.DB);
-
-    try {
-      const deleteResult = await db.delete(menus).where(eq(menus.id, id)).returning({
-        id:menus.id
-      })
-      if(deleteResult.length===0){
-        return c.json({result:"Menu Not Found"}, 404);
-      }
-    } catch (e) {
-      console.error(e);
-      return c.json({ result: "DB Delete Error" }, 500);
-    }
-    return c.json({ result: "success" });
-  },
-);
+  const { result, status } = 
+    await Menu.remove(db, userId, c.req.valid("json"));
+  return c.json({ result }, status);
+});
 
 export default adminMenu;

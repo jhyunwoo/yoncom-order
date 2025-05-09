@@ -1,39 +1,18 @@
 import { Hono } from "hono";
 import { Bindings, Variables } from "../lib/bindings";
 import initializeDb from "../db/initialize-db";
+import { zValidator } from "@hono/zod-validator";
+import { getMenuValidation } from "~/lib/validations";
+import * as Menu from "~/controller/menu.controller";
 
 const menu = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-menu.get("/", async (c) => {
+menu.get("/", zValidator("json", getMenuValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
-  const menuList = await db.query.menus.findMany();
-  const orderList = await db.query.orders.findMany({
-    columns: {
-      quantity: true,
-      menuId: true,
-    },
-  });
-
-  const menuIdList = menuList.map((menu) => menu.id);
-  const menuOrderedList: number[] = new Array(menuIdList.length).fill(0);
-
-  for (const order of orderList) {
-    if (menuIdList.includes(order.menuId)) {
-      menuOrderedList[menuIdList.indexOf(order.menuId)] += order.quantity;
-    }
-  }
-
-  const menus = [];
-
-  for (const menu of menuList) {
-    menus.push({
-      ...menu,
-      ordered: menuOrderedList[menuIdList.indexOf(menu.id)],
-    });
-  }
-
-  return c.json(menus);
+  const { result, status } = 
+    await Menu.get(db, c.req.valid("json"));
+  return c.json({ result }, status);
 });
 
 export default menu

@@ -11,27 +11,67 @@ export const signUpValidation = z.object({
   name: z.string().min(1),
 });
 
-export const tableValidation = z.object({
-  name: z.string().min(1),
+export const createTableValidation = z.object({
+  tableOptions: z.object({
+    name: z.string().min(1),
+    seats: z.number().int().min(1),
+  }),
 });
 
-export const menuPostValidation = z.object({
-  name: z.string().min(1),
-  description: z.string().min(1),
-  price: z.number().int(),
-  quantity: z.number().int(),
-  image: z.string(),
-  canOrder: z.boolean(),
+export const deleteTableValidation = z.object({
+  tableId: z.string().length(15),
 });
 
-export const menuPutValidation = z.object({
-  id: z.number().min(1),
-  name: z.string().min(1),
-  description: z.string().min(1),
-  price: z.number().int(),
-  quantity: z.number().int(),
-  image: z.string(),
-  canOrder: z.boolean(),
+export const vacateTableValidation = z.object({
+  tableId: z.string().length(15),
+});
+
+export const updateTableValidation = z.object({
+  tableId: z.string().length(15),
+  tableOptions: z.object({
+    name: z.string().min(1).optional(),
+    seats: z.number().int().min(1).optional(),
+  }),
+});
+
+export const occupyTableValidation = z.object({
+  tableId: z.string().length(15),
+});
+
+
+
+export const createMenuValidation = z.object({
+  menuOptions: z.object({
+    name: z.string().min(1),
+    image: z.string(),
+    description: z.string().min(1),
+    price: z.number().int(),
+    quantity: z.number().int(),
+    menuCategoryId: z.string().length(15),
+    available: z.boolean(),
+  }),
+});
+
+export const updateMenuValidation = z.object({
+  menuId: z.string().length(15),
+  menuOptions: z.object({
+    name: z.string().min(1),
+    image: z.string(),
+    description: z.string().min(1),
+    price: z.number().int(),
+    quantity: z.number().int(),
+    menuCategoryId: z.string().length(15),
+    available: z.boolean(),
+  }),
+});
+
+export const deleteMenuValidation = z.object({
+  menuId: z.string().length(15),
+});
+
+export const getMenuValidation = z.object({
+  userId: z.string().length(15),
+  menuCategoryIds: z.array(z.string().length(15)).optional(),
 });
 
 export const orderValidation = z.object({

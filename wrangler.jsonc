@@ -1,39 +1,16 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "yoncom-order-api",
-  "main": "src/index.tsx",
-  "compatibility_date": "2025-03-25",
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "MY_KV_NAMESPACE",
-  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
-   "r2_buckets": [
-     {
-       "binding": "R2",
-       "bucket_name": "yoncom-order"
-     }
-   ],
-   "d1_databases": [
-     {
-       "binding": "DB",
-       "database_name": "yoncom-order-db",
-       "database_id": "c1e52089-bd97-4371-a5ea-0d60810ab23b",
-       "migrations_dir": "drizzle"
-     }
-   ],
-  // "ai": {
-  //   "binding": "AI"
-  // },
-   "observability": {
-     "enabled": true,
-     "head_sampling_rate": 1
-   }
+  "main": "src/index.ts",
+  "compatibility_date": "2025-04-18",
+  "observability": {
+    "enabled": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "yoncom-order-db",
+      "database_id": "940650dc-dfb8-44ba-a732-207d73d2cb79"
+    }
+  ],
 }
