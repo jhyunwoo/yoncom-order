@@ -1,57 +1,43 @@
-# Auth API with Cloudflare Workers
+# YONCOM-ORDER 
+Mono Repository project for integrated POS System for non-registered Sellers
 
 ## Start Project
-1. Add env file
+0. Login to Wrangler
+    ```bash
+    npx wrangler login
+    ```
+1. Create D1 DB
+    ```bash
+    npx wrangler d1 create DB_NAME
+    ```
+2. Copy and Edit .env file
     ```bash
     cp .env.example .env
     ```
-
-2. Install Dependencies
+3. Copy and Edit wrangler.jsonc file
     ```bash
-    bun install
-    ```
-3. Create D1 DB
+    cp apps/api/wrangler.example.jsonc apps/api/wrangler.jsonc
+4. Install Dependencies
     ```bash
-    wrangler d1 create DB_NAME
+    pnpm install
     ```
-4. Add DB info on wrangler.jsonc
-5. Generate SQL
-    ```bash
-    bun db:generate
-    ```
-6. Migrate SQL
-    ```bash
-    bun db:migrate
-    ```
-
-
-## Commands
-### Dev Run
-```bash
-bun dev
-```
-
-### Deploy
-```bash
-bun deploy
-```
-
-### SQL Generate
-```bash
-bun db:generate
-```
-
-### SQL Migration
-```bash
-bun db:migrate
-```
-
-### SQL Push (Generate + Migration)
-```bash
-bun db:push
-```
-
-### SQL Studio
-```bash
-bun db:studio
-```
+5. Generate & Migration
+    1. on Local DB
+        ```bash
+        pnpm db:generate
+        pnpm db:apply:local
+        ```
+    2. on Cloud DB
+        ```bash
+        pnpm db:generate
+        pnpm db:apply
+        ```
+6. Run
+   1. with Cloud DB
+        ```bash
+        pnpm dev
+        ```
+   2. with Local DB
+       ```bash
+       pnpm dev:local
+       ```

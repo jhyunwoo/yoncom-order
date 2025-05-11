@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "yoncom-order-api",
+  "name": "yoncom-order",
   "main": "src/index.ts",
   "compatibility_date": "2025-04-18",
   "observability": {
@@ -10,7 +10,8 @@
     {
       "binding": "DB",
       "database_name": "yoncom-order-db",
-      "database_id": "940650dc-dfb8-44ba-a732-207d73d2cb79"
+      "database_id": "<CLOUDFLARE_DATABASE_ID>",
+      "migrations_dir": "../../packages/db/.migrations"
     }
-  ],
+  ]
 }
