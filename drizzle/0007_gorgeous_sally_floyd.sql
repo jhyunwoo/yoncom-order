@@ -1,1 +1,0 @@
-ALTER TABLE `orders` ADD `customerToken` text NOT NULL;
