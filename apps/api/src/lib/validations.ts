@@ -91,3 +91,22 @@ export const clientGetTableValidation = z.object({
 export const adminGetTableValidation = z.object({
   tableIds: z.array(z.string().length(15)).optional(),
 });
+
+export const createMenuCategoryValidation = z.object({
+  menuCategoryOptions: z.object({
+    name: z.string().min(1),
+    description: z.string(),
+  }),
+});
+
+export const updateMenuCategoryValidation = z.object({
+  menuCategoryId: z.string().length(15),
+  menuCategoryOptions: z.object({
+    name: z.string().min(1),
+    description: z.string(),
+  }),
+});
+
+export const deleteMenuCategoryValidation = z.object({
+  menuCategoryId: z.string().length(15),
+});

@@ -18,6 +18,10 @@ export const create = async (
     const user = (await QueryDB.queryUsers(db, [userId]))[0];
     const menuCategory = (await QueryDB.queryMenuCategories(db, [menuOptions.menuCategoryId]))[0];
 
+    // 메뉴 카테고리가 존재하는지
+    if (!menuCategory || menuCategory.deletedAt !== null)
+      return { result: "Menu Category Not Found", status: 409 };
+
     // 유저가 추가하려는 메뉴의 메뉴 카테고리 소유자가 맞는지
     const isMenuCategoryOwnedByUser = QueryDB.isMenuCategoriesOwnedByUser(user, [menuCategory]);
     if (!isMenuCategoryOwnedByUser)
@@ -102,7 +106,7 @@ export const remove = async (
   }
 }
 
-export const get = async (
+export const clientGet = async (
   db: DB,
   query: z.infer<typeof getMenuValidation>
 ): Promise<{ 
@@ -117,10 +121,12 @@ export const get = async (
     const user = (await QueryDB.queryUsers(db, [userId], { menuCategories: true }))[0];
     const data = await Promise.all(
       user.menuCategories
+        .filter((menuCategory) => menuCategory.deletedAt === null)
         .filter((menuCategory) => menuCategoryIds === undefined || menuCategoryIds.includes(menuCategory.id))
         .map(async (menuCategory) => ({ 
           ...menuCategory, 
           menus: (await QueryDB.queryMenuCategories(db, [menuCategory], { menus: true }))[0].menus
+            .filter((menu) => menu.deletedAt === null)
         }))
     );
 

@@ -11,7 +11,7 @@ menu.get("/", zValidator("json", getMenuValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
   const { result, status } = 
-    await Menu.get(db, c.req.valid("json"));
+    await Menu.clientGet(db, c.req.valid("json"));
   return c.json({ result }, status);
 });
 

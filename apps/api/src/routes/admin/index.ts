@@ -6,6 +6,7 @@ import adminMenu from "./menu";
 // import adminOrder from "./order";
 // import adminRole from "./role";
 import adminTable from "./table";
+import adminMenuCategory from "./menuCategory";
 import { protectRoute } from "api/middlewares/protect-route";
 // import pos from "./pos";
 import * as Schema from "db/schema";
@@ -24,6 +25,7 @@ admin.route("/menu", adminMenu);
 // admin.route("/order", adminOrder);
 // admin.route("/role", adminRole);
 admin.route("/table", adminTable);
+admin.route("/menuCategory", adminMenuCategory);
 // admin.route("/pos", pos);
 
 export default admin;

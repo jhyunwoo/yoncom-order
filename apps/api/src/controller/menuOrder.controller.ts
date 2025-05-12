@@ -3,7 +3,6 @@ import { ContentfulStatusCode } from "hono/utils/http-status";
 import { createOrderValidation, getOrderValidation } from "api/lib/validations";
 import { z } from "zod";
 import * as QueryDB from "api/lib/queryDB";
-import * as TableController from "api/controller/table.controller";
 import * as Schema from "db/schema";
 
 type DB = DrizzleD1Database<typeof import("db/schema")> & { $client: D1Database; };
@@ -61,7 +60,6 @@ export const create = async (
   }
 }
 
-// TODO: 뭔갈 해야함. 하여튼 이거 아님.
 export const get = async (
   db: DB,
   query: z.infer<typeof getOrderValidation>

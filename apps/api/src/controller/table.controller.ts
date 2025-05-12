@@ -4,7 +4,7 @@ import { createTableValidation, deleteTableValidation, clientGetTableValidation,
 import { z } from "zod";
 import * as QueryDB from "api/lib/queryDB";
 import * as Schema from "db/schema";
-import { eq, isTable } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 type DB = DrizzleD1Database<typeof import("db/schema")> & { $client: D1Database; };
 
@@ -14,8 +14,6 @@ export const create = async (
   query: z.infer<typeof createTableValidation>
 ): Promise<{ result: string; status: ContentfulStatusCode }> => {
   const { tableOptions } = query;
-
-  console.debug(userId, tableOptions);
 
   try {
     const user = (await QueryDB.queryUsers(db, [userId], { tables: true }))[0];
@@ -68,7 +66,7 @@ export const remove = async (
       .set({ deletedAt: Date.now() })
       .where(eq(Schema.tables.id, tableId));
 
-    return { result: "Table deleted", status: 200 };
+    return { result: "Table removed", status: 200 };
   } catch (e) {
     console.error(e);
     return { result: "DB Delete Error", status: 500 };
