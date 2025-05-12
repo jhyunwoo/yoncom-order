@@ -6,13 +6,15 @@ import { users } from "db/schema";
 import { Scrypt } from "lucia";
 import initializeDb from "api/lib/initialize-db";
 import { initializeLucia } from "api/lib/lucia";
-import { signInValidation, signUpValidation } from "api/lib/validations";
+import * as AuthRequest from "shared/api/types/requests/auth";
 import createSession from "api/lib/create-session";
+
+// TODO: 형식 통일 필요
 
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Sign Up Route
-auth.post("/sign-up", zValidator("json", signUpValidation), async (c) => {
+auth.post("/sign-up", zValidator("json", AuthRequest.signUpValidation), async (c) => {
   const { email, password, name } = c.req.valid("json");
 
   const db = initializeDb(c.env.DB);
@@ -48,7 +50,7 @@ auth.post("/sign-up", zValidator("json", signUpValidation), async (c) => {
 });
 
 // Sign In Route
-auth.post("/sign-in", zValidator("json", signInValidation), async (c) => {
+auth.post("/sign-in", zValidator("json", AuthRequest.signInValidation), async (c) => {
   const { email, password } = c.req.valid("json");
   const db = initializeDb(c.env.DB);
 

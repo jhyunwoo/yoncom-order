@@ -2,7 +2,7 @@ import { DrizzleD1Database } from "drizzle-orm/d1";
 import { and, eq, isNull, inArray, asc, desc } from "drizzle-orm";
 import * as Schema from "db/schema";
 
-type DB = DrizzleD1Database<typeof import("db/schema")> & { $client: D1Database; };
+export type DB = DrizzleD1Database<typeof import("db/schema")> & { $client: D1Database; };
 
 type WithUser<T extends { user?: true }> = T["user"] extends true ? { user: Schema.User } : {};
 type WithTable<T extends { table?: true }> = T["table"] extends true ? { table: Schema.Table } : {};

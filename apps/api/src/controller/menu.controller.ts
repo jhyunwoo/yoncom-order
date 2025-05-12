@@ -1,18 +1,15 @@
-import { sql, and, eq, isNull, inArray, or } from "drizzle-orm";
-import { DrizzleD1Database } from "drizzle-orm/d1";
-import { ContentfulStatusCode } from "hono/utils/http-status";
+import { eq } from "drizzle-orm";
 import * as Schema from "db/schema";
-import { createMenuValidation, updateMenuValidation, deleteMenuValidation, getMenuValidation } from "api/lib/validations";
-import { z } from "zod";
 import * as QueryDB from "api/lib/queryDB";
-
-type DB = DrizzleD1Database<typeof import("db/schema")> & { $client: D1Database; };
+import * as MenuRequest from "shared/api/types/requests/menu";
+import * as MenuResponse from "shared/api/types/responses/menu";
+import ControllerResult from "api/types/controller";
 
 export const create = async (
-  db: DB,
+  db: QueryDB.DB,
   userId: string,
-  query: z.infer<typeof createMenuValidation>
-): Promise<{ result: string; status: ContentfulStatusCode }> => {
+  query: MenuRequest.CreateQuery
+): Promise<ControllerResult<MenuResponse.Create>> => {
   const { menuOptions } = query;
   try {
     const user = (await QueryDB.queryUsers(db, [userId]))[0];
@@ -20,12 +17,12 @@ export const create = async (
 
     // 메뉴 카테고리가 존재하는지
     if (!menuCategory || menuCategory.deletedAt !== null)
-      return { result: "Menu Category Not Found", status: 409 };
+      return { error: "Menu Category Not Found", status: 409 };
 
     // 유저가 추가하려는 메뉴의 메뉴 카테고리 소유자가 맞는지
     const isMenuCategoryOwnedByUser = QueryDB.isMenuCategoriesOwnedByUser(user, [menuCategory]);
     if (!isMenuCategoryOwnedByUser)
-      return { result: "Menu Category Not Found", status: 403 };
+      return { error: "Menu Category Not Found", status: 403 };
 
     await db
       .insert(Schema.menus)
@@ -34,21 +31,21 @@ export const create = async (
     return { result: "Menu Created", status: 200 };
   } catch (e) {
     console.error(e);
-    return { result: "DB Insert Error", status: 500 };
+    return { error: "DB Insert Error", status: 500 };
   }
 }
 
 export const update = async (
-  db: DB,
+  db: QueryDB.DB,
   userId: string,
-  query: z.infer<typeof updateMenuValidation>
-): Promise<{ result: string; status: ContentfulStatusCode }> => {
+  query: MenuRequest.UpdateQuery
+): Promise<ControllerResult<MenuResponse.Update>> => {
   const { menuId, menuOptions } = query;
   try {
     const user = (await QueryDB.queryUsers(db, [userId], { menuCategories: true }))[0];
     const menu = (await QueryDB.queryMenus(db, [menuId])).at(0);
     if (!menu)
-      return { result: "Menu Not Found", status: 403 };
+      return { error: "Menu Not Found", status: 403 };
 
     if (menu.menuCategoryId !== menuOptions.menuCategoryId) {
       // 메뉴의 카테고리를 옮기는 상황
@@ -56,13 +53,13 @@ export const update = async (
       const dstMenuCategory = (await QueryDB.queryMenuCategories(db, [menuOptions.menuCategoryId]))[0];
       const isDstMenuCategoryOwnedByUser = QueryDB.isMenuCategoriesOwnedByUser(user, [dstMenuCategory]);
       if (!isDstMenuCategoryOwnedByUser)
-        return { result: "Menu Category Not Found", status: 403 };
+        return { error: "Menu Category Not Found", status: 403 };
     }
 
     // 유저가 메뉴 소유자가 맞는지
     const isMenuOwnedByUser = QueryDB.isMenusOwnedByUser(user, [menu]);
     if (!isMenuOwnedByUser)
-      return { result: "Menu Not Found", status: 403 };
+      return { error: "Menu Not Found", status: 403 };
 
     await db
       .update(Schema.menus)
@@ -72,27 +69,27 @@ export const update = async (
     return { result: "Menu Updated", status: 200 };
   } catch (e) {
     console.error(e);
-    return { result: "DB Update Error", status: 500 };
+    return { error: "DB Update Error", status: 500 };
   }
 }
 
 export const remove = async (
-  db: DB,
+  db: QueryDB.DB,
   userId: string,
-  query: z.infer<typeof deleteMenuValidation>
-): Promise<{ result: string; status: ContentfulStatusCode }> => {
+  query: MenuRequest.RemoveQuery
+): Promise<ControllerResult<MenuResponse.Remove>> => {
   const { menuId } = query;
 
   try {
     const user = (await QueryDB.queryUsers(db, [userId], { menuCategories: true }))[0];
     const menu = (await QueryDB.queryMenus(db, [menuId])).at(0);
     if (!menu)
-      return { result: "Menu Not Found", status: 403 };
+      return { error: "Menu Not Found", status: 403 };
 
     // 유저가 메뉴 소유자가 맞는지
     const isMenuOwnedByUser = QueryDB.isMenusOwnedByUser(user, [menu]);
     if (!isMenuOwnedByUser)
-      return { result: "Menu Not Found", status: 403 };
+      return { error: "Menu Not Found", status: 403 };
 
     await db
       .update(Schema.menus)
@@ -102,19 +99,14 @@ export const remove = async (
     return { result: "Menu Removed", status: 200 };
   } catch (e) {
     console.error(e);
-    return { result: "DB Delete Error", status: 500 };
+    return { error: "DB Delete Error", status: 500 };
   }
 }
 
 export const clientGet = async (
-  db: DB,
-  query: z.infer<typeof getMenuValidation>
-): Promise<{ 
-  result: (Schema.MenuCategory & {
-    menus: Schema.Menu[]
-  })[] | string, 
-  status: ContentfulStatusCode 
-}> => {
+  db: QueryDB.DB,
+  query: MenuRequest.GetQuery
+): Promise<ControllerResult<MenuResponse.ClientGet>> => {
   const { userId, menuCategoryIds } = query;
   
   try {
@@ -133,6 +125,6 @@ export const clientGet = async (
     return { result: data, status: 200 };
   } catch (e) {
     console.error(e);
-    return { result: "DB Query Error", status: 500 };
+    return { error: "DB Query Error", status: 500 };
   }
 }

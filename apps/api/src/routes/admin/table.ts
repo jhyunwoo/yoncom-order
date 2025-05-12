@@ -1,27 +1,27 @@
 import { Hono } from "hono";
-import { Bindings, Variables } from "api/lib/bindings";
 import { zValidator } from "@hono/zod-validator";
-import { adminGetTableValidation, createTableValidation, deleteTableValidation, occupyTableValidation, updateTableValidation, vacateTableValidation } from "api/lib/validations";
+import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
+import * as TableRequest from "shared/api/types/requests/table";
 import * as TableController from "api/controller/table.controller";
 
 const adminTable = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Create Table
-adminTable.post("/", zValidator("json", createTableValidation),
+adminTable.post("/", zValidator("json", TableRequest.createValidation),
   async (c) => {
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
 
     console.debug(userId, c.req.valid("json"));
 
-    const { result, status } = 
+    const { result, error, status } = 
       await TableController.create(db, userId, c.req.valid("json"));
-    return c.json({ result }, status);
+    return c.json({ result, error }, status);
 });
 
 // Remove Table
-adminTable.delete("/", zValidator("json", deleteTableValidation),
+adminTable.delete("/", zValidator("json", TableRequest.removeValidation),
   async (c) => {
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
@@ -33,7 +33,7 @@ adminTable.delete("/", zValidator("json", deleteTableValidation),
 );
 
 //Update Table
-adminTable.put("/update", zValidator("json", updateTableValidation),
+adminTable.put("/update", zValidator("json", TableRequest.updateValidation),
   async (c) => {
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
@@ -45,7 +45,7 @@ adminTable.put("/update", zValidator("json", updateTableValidation),
 );
 
 // Occupy Table
-adminTable.put("/occupy", zValidator("json", occupyTableValidation),
+adminTable.put("/occupy", zValidator("json", TableRequest.occupyValidation),
   async (c) => {
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
@@ -57,7 +57,7 @@ adminTable.put("/occupy", zValidator("json", occupyTableValidation),
 );
 
 // Vacate Table
-adminTable.put("/vacate", zValidator("json", vacateTableValidation),
+adminTable.put("/vacate", zValidator("json", TableRequest.vacateValidation),
   async (c) => {
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
@@ -70,7 +70,7 @@ adminTable.put("/vacate", zValidator("json", vacateTableValidation),
 
 // pos에서 테이블 현황을 받아올 때 여기로 접속
 // 특정 tableId를 tableIds에 넣으면 해당 테이블만 받아오는 쿼리로 동작
-adminTable.get("/", zValidator("json", adminGetTableValidation),
+adminTable.get("/", zValidator("json", TableRequest.adminGetValidation),
   async (c) => {
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;

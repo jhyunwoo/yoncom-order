@@ -1,18 +1,18 @@
 import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
-import { zValidator } from "@hono/zod-validator";
-import { getMenuValidation } from "api/lib/validations";
+import * as MenuRequest from "shared/api/types/requests/menu";
 import * as Menu from "api/controller/menu.controller";
 
 const menu = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-menu.get("/", zValidator("json", getMenuValidation), async (c) => {
+menu.get("/", zValidator("json", MenuRequest.getValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
-  const { result, status } = 
+  const { result, error, status } = 
     await Menu.clientGet(db, c.req.valid("json"));
-  return c.json({ result }, status);
+  return c.json({ result, error }, status);
 });
 
 export default menu

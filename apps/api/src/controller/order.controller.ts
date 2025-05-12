@@ -1,25 +1,22 @@
-import { DrizzleD1Database } from "drizzle-orm/d1";
-import { ContentfulStatusCode } from "hono/utils/http-status";
-import { createOrderValidation, getOrderValidation } from "api/lib/validations";
-import { z } from "zod";
+import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
 import * as TableController from "api/controller/table.controller";
-import * as Schema from "db/schema";
-
-type DB = DrizzleD1Database<typeof import("db/schema")> & { $client: D1Database; };
+import * as OrderRequest from "shared/api/types/requests/order";
+import * as OrderResponse from "shared/api/types/responses/order";
+import ControllerResult from "api/types/controller";
 
 // TODO: 주문 가능 수량 체크 필요
 export const create = async (
-  db: DB,
-  query: z.infer<typeof createOrderValidation>
-): Promise<{ result: string; status: ContentfulStatusCode }> => {
+  db: QueryDB.DB,
+  query: OrderRequest.CreateQuery
+): Promise<ControllerResult<OrderResponse.Create>> => {
   const { tableId, menuOrders } = query;
 
   try {
     // 해당 테이블 존재 여부 확인
     const table = (await QueryDB.queryTables(db, [tableId], { tableContexts: true }))[0];
     if (!table) 
-      return { result: "Table Not Found", status: 409 };
+      return { error: "Table Not Found", status: 409 };
 
     // 해당 테이블에 활성 context가 없다면 occupy
     const isTablesOnActivate = QueryDB.isTablesOnActivate([table]);
@@ -33,11 +30,11 @@ export const create = async (
     const menus = (await QueryDB.queryMenus(db, menuIds, { menuCategory: true }))
       .filter((menu) => menu.deletedAt === null);
     if (menus.length !== menuIds.length)
-      return { result: "Menu Not Found", status: 409 };
+      return { error: "Menu Not Found", status: 409 };
 
     // 주문에 들어온 메뉴가 모두 소유자가 맞는지 확인
     if (menus.some((menu) => menu.menuCategory.userId !== table.userId))
-      return { result: "Menu Not Found", status: 409 };
+      return { error: "Menu Not Found", status: 409 };
 
     // order 생성
     const order = (await db
@@ -57,15 +54,15 @@ export const create = async (
     return { result: "Order Created", status: 200 };
   } catch (e) {
     console.error(e);
-    return { result: "DB Insert Error", status: 500 };
+    return { error: "DB Insert Error", status: 500 };
   }
 }
 
 // TODO: 뭔갈 해야함. 하여튼 이거 아님.
 export const get = async (
-  db: DB,
-  query: z.infer<typeof getOrderValidation>
-): Promise<{ result: typeof Schema.orders.$inferSelect | string; status: ContentfulStatusCode }> => {
+  db: QueryDB.DB,
+  query: OrderRequest.GetQuery
+): Promise<ControllerResult<OrderResponse.Get>> => {
   const { orderId } = query;  
 
   try {
@@ -74,11 +71,11 @@ export const get = async (
       menuOrders: true,
     }))[0];
     if (!order)
-      return { result: "Order Not Found", status: 403 };
+      return { error: "Order Not Found", status: 403 };
 
     return { result: order, status: 200 };
   } catch (e) {
     console.error(e);
-    return { result: "DB Query Error", status: 500 };
+    return { error: "DB Query Error", status: 500 };
   }
 }
