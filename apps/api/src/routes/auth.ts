@@ -46,7 +46,7 @@ auth.post("/sign-up", zValidator("json", AuthRequest.signUpValidation), async (c
 
   c.header("Set-Cookie", cookie.serialize(), { append: true });
 
-  return c.json({ result: "Success" });
+  return c.json({ result: "Success" }, 200);
 });
 
 // Sign In Route
@@ -74,7 +74,7 @@ auth.post("/sign-in", zValidator("json", AuthRequest.signInValidation), async (c
 
   c.header("Set-Cookie", cookie.serialize(), { append: true });
 
-  return c.json({ result: "Success" });
+  return c.json({ result: "Success" }, 200);
 });
 
 // Sign Out Route
@@ -92,7 +92,7 @@ auth.post("/sign-out", async (c) => {
   const cookie = lucia.createBlankSessionCookie();
   c.header("Set-Cookie", cookie.serialize(), { append: true });
 
-  return c.json({ result: "Success" });
+  return c.json({ result: "Success" }, 200);
 });
 
 export default auth;

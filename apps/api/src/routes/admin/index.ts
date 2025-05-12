@@ -5,6 +5,7 @@ import * as Schema from "db/schema";
 import adminMenu from "./menu";
 import adminTable from "./table";
 import adminMenuCategory from "./menuCategory";
+import * as AdminResponse from "shared/api/types/responses/admin";
 
 const admin = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 

@@ -19,14 +19,17 @@ app.use(authProvider);
 app.use(
   "*",
   cors({
-    origin: ["http://localhost:3000", "https://example.org"],
+    origin: ["http://localhost:5173", "https://example.org"],
+    credentials: true, // <-- 이게 핵심
+    allowHeaders: ["Content-Type"], // 필요한 헤더 추가
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"], // preflight 대응
   }),
 );
 
 // 서버 정상 작동 확인용 API
 const serverStartDate = new Date();
 
-app.get("/", async (c) => {
+app.get("/api", async (c) => {
   const db = initializeDb(c.env.DB);
   await db.update(users).set({
     role: userRole.ADMIN,
@@ -34,10 +37,10 @@ app.get("/", async (c) => {
   return c.json({ result: "API is Healthy" + serverStartDate });
 });
 
-app.route("/admin", admin);
-app.route("/auth", auth);
-app.route("/menu", menu);
-app.route("/order", order);
-app.route("/table", table);
+app.route("/api/admin", admin);
+app.route("/api/auth", auth);
+app.route("/api/menu", menu);
+app.route("/api/order", order);
+app.route("/api/table", table);
 
 export default app;

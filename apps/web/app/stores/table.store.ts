@@ -1,24 +1,24 @@
 import { create } from 'zustand';
-import * as Schema from 'db/schema';
-import ky from 'ky';
-import { z } from 'zod';
-import { adminGetTableValidation, createTableValidation, removeTableValidation, updateTableValidation } from 'shared/api/validations/validations';
-import { API_BASE_URL } from 'shared/constants';
-import { APIResponse } from 'shared/api/types/responses/table';
+import * as TableRequest from 'shared/api/types/requests/table';
+import * as TableResponse from 'shared/api/types/responses/table';
+import queryStore from 'web/app/lib/query';
 
 type TableState = {
-  tables: Schema.Table[];
+  tables: TableResponse.AdminGet["result"];
   loading: boolean;
   error: boolean;
 
-  loadTables: (query: z.infer<typeof adminGetTableValidation>) => Promise<void>;
-  createTable: (query: z.infer<typeof createTableValidation>) => Promise<void>;
-  removeTable: (query: z.infer<typeof removeTableValidation>) => Promise<void>;
-  updateTable: (query: z.infer<typeof updateTableValidation>) => Promise<void>;
+  load: (query: TableRequest.AdminGetQuery) => Promise<void>;
 
-  _setTables: (tables: Schema.Table[]) => void;
-  _openTable: (tableId: string, context: string) => Promise<void>;
-  _closeTable: (tableId: string) => Promise<void>;
+  createTable: (query: TableRequest.CreateQuery) => Promise<void>;
+  removeTable: (query: TableRequest.RemoveQuery) => Promise<void>;
+  updateTable: (query: TableRequest.UpdateQuery) => Promise<void>;
+
+  occupyTable: (query: TableRequest.OccupyQuery) => Promise<void>;
+  vacateTable: (query: TableRequest.VacateQuery) => Promise<void>;
+
+  // 다른 store에서 사용하기 위해 노출. component에서 사용하지 않음.
+  _setTables: (tables: TableResponse.AdminGet["result"]) => void;
 }
 
 const useTableStore = create<TableState>((set, get) => ({
@@ -26,115 +26,53 @@ const useTableStore = create<TableState>((set, get) => ({
   loading: false,
   error: false,
 
-  loadTables: async (query: z.infer<typeof adminGetTableValidation>) => {
-    const URL = API_BASE_URL + "/admin/table";
+  load: async (query: TableRequest.AdminGetQuery) => queryStore<TableRequest.AdminGetQuery, TableResponse.AdminGet>({
+    route: "admin/table",
+    method: "get",
+    query,
+    setter: set,
+    onSuccess: (res) => set({ tables: res.result }),
+  }),
 
-    set({ loading: true, error: false });
-    try {
-      const res = await ky.get(URL, { json: { query } }).json<APIResponse>();
+  createTable: async (query: TableRequest.CreateQuery) => queryStore<TableRequest.CreateQuery, TableResponse.Create>({
+    route: "admin/table",
+    method: "post",
+    query,
+    setter: set,
+    onSuccess: (res) => console.debug(res),
+  }),
 
-      set({ tables: res.result as Schema.Table[], loading: false, error: false });
-      console.debug("Table Loaded:", res.result);
-    } catch (error) {
-      console.error("Failed to fetch tables:", error);
-      set({
-        tables: [],
-        loading: false,
-        error: true,
-      });
-    }
-  },
+  removeTable: async (query: TableRequest.RemoveQuery) => queryStore<TableRequest.RemoveQuery, TableResponse.Remove>({
+    route: "admin/table",
+    method: "delete",
+    query,
+    setter: set,
+    onSuccess: (res) => console.debug(res),
+  }),
 
-  createTable: async (query: z.infer<typeof createTableValidation>) => {
-    const URL = API_BASE_URL + "/admin/table";
+  updateTable: async (query: TableRequest.UpdateQuery) => queryStore<TableRequest.UpdateQuery, TableResponse.Update>({
+    route: "admin/table",
+    method: "put",
+    query,
+    setter: set,
+    onSuccess: (res) => console.debug(res),
+  }),
 
-    set({ loading: true, error: false });
-    try {
-      const res = await ky.post(URL, { json: { query } }).json<APIResponse>();
+  occupyTable: async (query: TableRequest.OccupyQuery) => queryStore<TableRequest.OccupyQuery, TableResponse.Occupy>({
+    route: "admin/table/occupy",
+    method: "put",
+    query,
+    setter: set,
+  }),
 
-      set((state) => ({
-        tables: [...state.tables, res.data as Type.Table],
-        loading: false,
-        error: false
-      }));
-      console.debug("Table created:", res.data);
-    } catch (error) {
-      console.error("Failed to create table:", error);
-      set({
-        loading: false,
-        error: true
-      });
-    }
-  },
+  vacateTable: async (query: TableRequest.VacateQuery) => queryStore<TableRequest.VacateQuery, TableResponse.Vacate>({
+    route: "admin/table/vacate",
+    method: "put",
+    query,
+    setter: set,
+  }),
 
-  removeTable: async (query: z.infer<typeof removeTableValidation>) => {
-    set({ loading: true, error: false });
-    try {
-      const res = await ky.get(`http://localhost:8000/api/tables/${query.tableId}/delete`).json<Type.Response<Type.Table>>();
-      set((state) => ({
-        tables: state.tables.filter((table) => table.id !== tableId),
-        loading: false,
-        error: false
-      }));
-      console.debug("Table deleted:", res.data);
-    } catch (error) {
-      console.error("Failed to delete table:", error);
-      set({
-        loading: false,
-        error: true
-      });
-    }
-  },
-
-  updateTable: async (query: z.infer<typeof updateTableValidation>) => {
-    throw new Error("Not implemented");
-    set({ loading: true, error: false });
-    try {
-      const res = await ky.put(`/api/tables/${tableId}/rename`, {
-        json: { name }
-      }).json<Type.Response<Type.Table>>();
-
-      set((state) => ({
-        tables: state.tables.map((table) =>
-          table.id === tableId ? { ...table, name: tableName } : table
-        ),
-        loading: false,
-        error: false
-      }));
-      console.debug("Table renamed:", res.data);
-    } catch (error) {
-      console.error("Failed to rename table:", error);
-      set({
-        loading: false,
-        error: true
-      });
-    }
-  },
-
-  _setTables: (tables: Type.Table[]) => {
-    set({ tables });
-  },
-  _openTable: async (tableId: Type.Id, tableContextId: Type.Id) => {
-    set((state) => ({
-      tables: state.tables.map((table) => table.id === tableId
-        ? { ...table, tableContextId }
-        : table
-      ),
-      loading: false,
-      error: false
-    }));
-  }
-  ,
-  _closeTable: async (tableId: Type.Id) => {
-    set((state) => ({
-      tables: state.tables.map((table) => table.id === tableId
-        ? { ...table, tableContextId: undefined }
-        : table
-      ),
-      loading: false,
-      error: false
-    }));
-  }
+  _setTables: (tables: TableResponse.AdminGet["result"]) => set({ tables }),
 }));
 
 export default useTableStore;

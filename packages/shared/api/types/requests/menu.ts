@@ -32,9 +32,13 @@ export const removeValidation = z.object({
 });
 export type RemoveQuery = z.infer<typeof removeValidation>;
 
-export const getValidation = z.object({
+export const clientGetValidation = z.object({
   userId: z.string().length(15),
   menuCategoryIds: z.array(z.string().length(15)).optional(),
 });
-export type GetQuery = z.infer<typeof getValidation>;
+export type ClientGetQuery = z.infer<typeof clientGetValidation>;
 
+export const adminGetValidation = z.object({
+  menuCategoryIds: z.array(z.string().length(15)).optional(),
+});
+export type AdminGetQuery = z.infer<typeof adminGetValidation>;

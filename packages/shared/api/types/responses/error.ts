@@ -1,3 +1,5 @@
-export type Error = {
+type ErrorResponse = {
   error: string;
 }
+
+export default ErrorResponse;

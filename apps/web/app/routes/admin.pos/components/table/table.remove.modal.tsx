@@ -1,0 +1,63 @@
+import { useEffect, useState } from "react";
+import { Button } from "~/components/ui/button";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import useTableStore from "~/stores/table.store";
+import * as Schema from "db/schema";
+
+export default function RemoveTableModal({
+  openState, setOpenState,
+  modalClassName,
+}: {
+  openState: boolean;
+  setOpenState: any;
+  modalClassName?: string;
+}) {
+  const [tableId, setTableId] = useState<string>("");
+  const [invalid, setInvalid] = useState(false);
+
+  const { tables, removeTable } = useTableStore();
+
+  const handleConfirm = async () => {
+    if (tableId.length === 0) {
+      setInvalid(true);
+      return;
+    }
+
+    await removeTable({ tableId });
+    handleClose();
+  }
+
+  const handleClose = () => {
+    setTableId("");
+    setInvalid(false);
+    setOpenState(false);
+  }
+
+  return (
+    <Dialog open={openState} onOpenChange={handleClose}>
+      <DialogContent className={modalClassName}>
+        <DialogHeader>
+          <DialogTitle>테이블 제거</DialogTitle>
+          <DialogDescription>제거할 테이블을 선택하세요.</DialogDescription>
+        </DialogHeader>
+        <Select value={tableId} onValueChange={setTableId}>
+          <SelectTrigger>
+            <SelectValue placeholder="제거할 테이블을 선택하세요"></SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {tables.map((table) =>
+              <SelectItem key={table.id} value={table.id}>{table.name}</SelectItem>
+            )}
+          </SelectContent>
+        </Select>
+        <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 테이블을 선택하세요.</DialogDescription>
+        <DialogFooter className="">
+          <Button onClick={handleClose} variant="outline">취소</Button>
+          <Button onClick={handleConfirm}>확인</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+
+}
