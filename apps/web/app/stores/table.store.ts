@@ -2,10 +2,11 @@ import { create } from 'zustand';
 import * as TableRequest from 'shared/api/types/requests/table';
 import * as TableResponse from 'shared/api/types/responses/table';
 import queryStore from 'web/app/lib/query';
+import { toast } from '~/hooks/use-toast';
 
 type TableState = {
   tables: TableResponse.AdminGet["result"];
-  loading: boolean;
+  isLoaded: boolean;
   error: boolean;
 
   load: (query: TableRequest.AdminGetQuery) => Promise<void>;
@@ -23,7 +24,7 @@ type TableState = {
 
 const useTableStore = create<TableState>((set, get) => ({
   tables: [],
-  loading: false,
+  isLoaded: false,
   error: false,
 
   load: async (query: TableRequest.AdminGetQuery) => queryStore<TableRequest.AdminGetQuery, TableResponse.AdminGet>({
@@ -39,7 +40,11 @@ const useTableStore = create<TableState>((set, get) => ({
     method: "post",
     query,
     setter: set,
-    onSuccess: (res) => console.debug(res),
+    onSuccess: (res) => toast({
+      title: "테이블 생성 완료",
+      description: "테이블이 성공적으로 생성되었습니다.",
+      duration: 3000,
+    }),
   }),
 
   removeTable: async (query: TableRequest.RemoveQuery) => queryStore<TableRequest.RemoveQuery, TableResponse.Remove>({
@@ -47,7 +52,11 @@ const useTableStore = create<TableState>((set, get) => ({
     method: "delete",
     query,
     setter: set,
-    onSuccess: (res) => console.debug(res),
+    onSuccess: (res) => toast({
+      title: "테이블 제거 완료",
+      description: "테이블이 성공적으로 제거되었습니다.",
+      duration: 3000,
+    }),
   }),
 
   updateTable: async (query: TableRequest.UpdateQuery) => queryStore<TableRequest.UpdateQuery, TableResponse.Update>({
@@ -55,7 +64,11 @@ const useTableStore = create<TableState>((set, get) => ({
     method: "put",
     query,
     setter: set,
-    onSuccess: (res) => console.debug(res),
+    onSuccess: (res) => toast({
+      title: "테이블 수정 완료",
+      description: "테이블이 성공적으로 수정되었습니다.",
+      duration: 3000,
+    }),
   }),
 
   occupyTable: async (query: TableRequest.OccupyQuery) => queryStore<TableRequest.OccupyQuery, TableResponse.Occupy>({
@@ -63,6 +76,11 @@ const useTableStore = create<TableState>((set, get) => ({
     method: "put",
     query,
     setter: set,
+    onSuccess: (res) => toast({
+      title: "테이블 점유 완료",
+      description: "테이블이 성공적으로 점유되었습니다.",
+      duration: 3000,
+    }),
   }),
 
   vacateTable: async (query: TableRequest.VacateQuery) => queryStore<TableRequest.VacateQuery, TableResponse.Vacate>({
@@ -70,6 +88,11 @@ const useTableStore = create<TableState>((set, get) => ({
     method: "put",
     query,
     setter: set,
+    onSuccess: (res) => toast({
+      title: "테이블 비우기 완료",
+      description: "테이블이 성공적으로 비워졌습니다.",
+      duration: 3000,
+    }),
   }),
 
   _setTables: (tables: TableResponse.AdminGet["result"]) => set({ tables }),

@@ -20,11 +20,10 @@ export default function TableSetModal({
   const activeTableContext = table.tableContexts.find((tableContext) => tableContext.deletedAt === null);
   const inUse = activeTableContext !== undefined;
   const prompt = inUse ? "미사용" : "사용 중";
-  const { occupyTable, vacateTable, loading } = useTableStore();
+  const { occupyTable, vacateTable } = useTableStore();
   const confirmFunction = inUse ? vacateTable : occupyTable;
 
   const handleConfirm = async () => {
-    if (loading) return;
     await confirmFunction({ tableId: table.id });
     handleCancel();
   }

@@ -26,21 +26,21 @@ adminTable.delete("/", zValidator("json", TableRequest.removeValidation),
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
 
-    const { result, status } = 
+    const { result, error, status } = 
       await TableController.remove(db, userId, c.req.valid("json"));
-    return c.json({ result }, status);
+    return c.json({ result, error }, status);
   },
 );
 
 //Update Table
-adminTable.put("/update", zValidator("json", TableRequest.updateValidation),
+adminTable.put("/", zValidator("json", TableRequest.updateValidation),
   async (c) => {
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
 
-    const { result, status } = 
+    const { result, error, status } = 
       await TableController.update(db, userId, c.req.valid("json"));
-    return c.json({ result }, status);
+    return c.json({ result, error }, status);
   },
 );
 
@@ -50,9 +50,9 @@ adminTable.put("/occupy", zValidator("json", TableRequest.occupyValidation),
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
 
-    const { result, status } = 
+    const { result, error, status } = 
       await TableController.occupy(db, userId, c.req.valid("json"));
-    return c.json({ result }, status);
+    return c.json({ result, error }, status);
   },
 );
 
@@ -62,9 +62,9 @@ adminTable.put("/vacate", zValidator("json", TableRequest.vacateValidation),
     const db = initializeDb(c.env.DB);
     const userId = c.get("user")!.id;
 
-    const { result, status } = 
+    const { result, error, status } = 
       await TableController.vacate(db, userId, c.req.valid("json"));
-    return c.json({ result }, status);
+    return c.json({ result, error }, status);
   },
 );
 

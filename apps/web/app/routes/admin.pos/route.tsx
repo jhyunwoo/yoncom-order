@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import Tables from "./components/table/tables";
-import Orders from "./components/orders";
+import Orders from "./components/order/orders";
 
 // const socket: Socket = io("ws://localhost:8000");
 

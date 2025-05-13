@@ -51,12 +51,12 @@ export const remove = async (
     // 유저가 테이블 소유자가 맞는지
     const isTableOwnedByUser = QueryDB.isTablesOwnedByUser(user, [table]);
     if (!isTableOwnedByUser)
-      return { error: "Table Not Found", status: 403 };
+      return { error: "Table Not Found", status: 409 };
 
     // 해당 테이블에 활성화 중인 tableContext가 있는지 확인
     const isTableActive = QueryDB.isTablesOnActivate([table]);
     if (isTableActive)
-      return { error: "Table is on use", status: 403 };
+      return { error: "Table is on use", status: 409 };
 
     await db
       .update(Schema.tables)
@@ -84,19 +84,19 @@ export const vacate = async (
     // 유저가 테이블 소유자가 맞는지
     const isTableOwnedByUser = QueryDB.isTablesOwnedByUser(user, [table]);
     if (!isTableOwnedByUser)
-      return { error: "Table Not Found", status: 403 };
+      return { error: "Table Not Found", status: 409 };
 
     // 해당 테이블에 활성화 중인 tableContext가 있는지 확인
     const activeTableContext = QueryDB.chooseActiveTableContext(table.tableContexts);
     if (!activeTableContext)
-      return { error: "Table is not occupied yet", status: 403 };
+      return { error: "Table is not occupied yet", status: 409 };
 
     // 해당 테이블에 끝나지 않은 주문이 있는지
     const tableContextWithOrders = (await QueryDB.queryTableContexts(db, [activeTableContext.id], { orders: true }))[0];
     const orderIds = tableContextWithOrders.orders.map((order) => order.id);
     const activeOrders = await QueryDB.queryOrders(db, orderIds, { onlyActive: true });
     if (activeOrders.length > 0)
-      return { error: "There are on active orders in the table", status: 403 };
+      return { error: "There are on active orders in the table", status: 409 };
 
     await db
       .update(Schema.tableContexts)
@@ -124,13 +124,13 @@ export const occupy = async (
     // 유저가 테이블 소유자가 맞는지
     const isTableOwnedByUser = QueryDB.isTablesOwnedByUser(user, [table]);
     if (!isTableOwnedByUser)
-      return { error: "Table Not Found", status: 403 };
+      return { error: "Table Not Found", status: 409 };
 
     // 해당 테이블에 비활성화 중인지 확인
     const isTableOnDeactivate = QueryDB.isTablesOnDeactivate([table]);
     console.debug(isTableOnDeactivate);
     if (!isTableOnDeactivate)
-      return { error: "Table is already occupied", status: 403 };
+      return { error: "Table is already occupied", status: 409 };
 
     await db
       .insert(Schema.tableContexts)
@@ -157,7 +157,7 @@ export const update = async (
     // 유저가 테이블 소유자가 맞는지
     const isTableOwnedByUser = QueryDB.isTablesOwnedByUser(user, [table]);
     if (!isTableOwnedByUser)
-      return { error: "Table Not Found", status: 403 };  
+      return { error: "Table Not Found", status: 409 };  
 
     // 테이블 이름 중복 체크
     if (user.tables
@@ -186,7 +186,7 @@ export const clientGet = async (
   try {
     const table = (await QueryDB.queryTables(db, [tableId], { tableContexts: true }))[0];
     if (!table)
-      return { error: "Table Not Found", status: 403 };
+      return { error: "Table Not Found", status: 409 };
 
     // 활성화 table context가 있다면 해당 내역을 같이 첨부.
     // 없다면 비활성화된 table context는 보여주면 안되므로 빈 배열 첨부
@@ -218,7 +218,7 @@ export const adminGet = async (
   try {
     const user = (await QueryDB.queryUsers(db, [userId], { tables: true }))[0];
     if (tableIds?.some((tableId) => !user.tables.map((table) => table.id).includes(tableId)))
-      return { error: "Table Not Found", status: 403 };
+      return { error: "Table Not Found", status: 409 };
 
     const tables = tableIds === undefined
       ? user.tables

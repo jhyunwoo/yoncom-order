@@ -14,11 +14,11 @@ export default async function queryStore<
   route: string,
   method: "get" | "post" | "put" | "delete" | "patch" | "head",
   query: Query,
-  setter?: (state: { loading: boolean, error: boolean }) => void,
+  setter?: (state: { isLoaded: boolean, error: boolean }) => void,
   onSuccess?: (res: Result) => void,
   onError?: (error: unknown) => void
 }) {
-  setter?.({ loading: true, error: false });
+  setter?.({ isLoaded: false, error: false });
   try {
     console.debug(new Date().toLocaleString(), "Query Start:", API_BASE_URL + "/" + route, method, query);
     const res = method === "get" || method === "head" 
@@ -27,10 +27,10 @@ export default async function queryStore<
       
     onSuccess?.(res);
     console.debug(new Date().toLocaleString(), "Query Result:", res);
-    setter?.({ loading: false, error: false });
+    setter?.({ isLoaded: true, error: false });
   } catch (error) {
     kyErrorHandler(error);
     onError?.(error);
-    setter?.({ loading: false, error: true });
+    setter?.({ isLoaded: false, error: true });
   }
 }
