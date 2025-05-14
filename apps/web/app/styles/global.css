@@ -18,6 +18,11 @@
   flex-direction: row;
 }
 
+center {
+  justify-content: center;
+  align-items: center;
+}
+
 .warningTXT {
   color: rgb(191, 128, 0) !important;
 }

@@ -29,9 +29,9 @@ export default function Tables() {
           <Button className="!bg-slate-600" onClick={() => setUpdateTableModalOpen(true)}>테이블 변경</Button>
           <Button variant="outline" onClick={() => setRemoveTableModalOpen(true)}>테이블 제거</Button>
         </div>
-        {isLoaded || tables.length > 0 ? (
-        <CardContent className="flex-1 px-0 py-0 overflow-y-scroll">
-          <div className={"grid gap-4 p-2"} style={{
+        {(isLoaded || tables.length > 0) ? (
+        <CardContent className="flex-1 p-2 overflow-y-scroll">
+          <div className={"grid gap-4"} style={{
             gridTemplateColumns: `repeat(${min(ceil(sqrt(tables.length)), 4)}, minmax(0, 1fr))`,
           }}>
             {tables
@@ -45,7 +45,7 @@ export default function Tables() {
           </div>
         </CardContent>
         ) : (
-          <CardContent className="grid grid-cols-2 gap-4 p-2 overflow-hidden">
+          <CardContent className="grid grid-cols-2 gap-4 overflow-hidden">
             <Skeleton className="aspect-square rounded-2xl" />
             <Skeleton className="aspect-square rounded-2xl" />
             <Skeleton className="aspect-square rounded-2xl" />

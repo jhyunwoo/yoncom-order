@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import SignIn from "./components/sign-in";
 import { isSignedIn } from "~/lib/auth";
 import SignOut from "./components/sign-out";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Card } from "~/components/ui/card";
+import SignUp from "./components/sign-up";
 
 export default function Auth() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
@@ -16,10 +19,22 @@ export default function Auth() {
   return (
     <div className="screen fr items-center justify-center">
       <div className="fit-content max-w-md max-h-md">
-        {signedIn === null 
+        {signedIn === null
           ? <div>Loading...</div>
-          : signedIn ? <SignOut /> : <SignIn />
-        }
+          : signedIn ? <SignOut /> : (
+            <Tabs defaultValue="sign-in" className="w-[calc(100% - 1rem)] m-2 flex-1 fc overflow-scroll">
+              <TabsList className="w-full justify-normal bg-blue-50 *:w-1/2">
+                <TabsTrigger value="sign-in">로그인</TabsTrigger>
+                <TabsTrigger value="sign-up">회원가입</TabsTrigger>
+              </TabsList>
+              <TabsContent value="sign-in" className="full">
+                <SignIn />
+              </TabsContent>
+              <TabsContent value="sign-up">
+                <SignUp />
+              </TabsContent>
+            </Tabs>
+          )}
       </div>
     </div>
   );

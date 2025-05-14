@@ -8,12 +8,12 @@ import * as TableController from "api/controller/table.controller";
 const table = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // 특정 테이블 조회 - 고객 QR용
-table.get("/", zValidator("json", TableRequest.clientGetValidation), 
+table.get("/", zValidator("query", TableRequest.clientGetValidation), 
   async (c) => {
     const db = initializeDb(c.env.DB);
 
     const { result, error, status } = 
-      await TableController.clientGet(db, c.req.valid("json"));
+      await TableController.clientGet(db, c.req.valid("query"));
     return c.json({ result, error }, status);
   }
 );

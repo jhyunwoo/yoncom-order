@@ -38,12 +38,12 @@ adminMenu.delete("/", zValidator("json", MenuRequest.removeValidation),
   return c.json({ result, error }, status);
 });
 
-adminMenu.get("/", zValidator("json", MenuRequest.adminGetValidation), async (c) => {
+adminMenu.get("/", zValidator("query", MenuRequest.adminGetValidation), async (c) => {
   const db = initializeDb(c.env.DB);
   const userId = c.get("user")!.id;
 
   const { result, error, status } =
-    await Menu.adminGet(db, userId, c.req.valid("json"));
+    await Menu.adminGet(db, userId, c.req.valid("query"));
   return c.json({ result, error }, status);
 });
 export default adminMenu;

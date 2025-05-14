@@ -6,56 +6,28 @@ export type DB = DrizzleD1Database<typeof import("db/schema")> & {
   $client: D1Database;
 };
 
-type WithUser<T extends { user?: true }> = T["user"] extends true
-  ? { user: Schema.User }
-  : {};
-type WithTable<T extends { table?: true }> = T["table"] extends true
-  ? { table: Schema.Table }
-  : {};
-type WithTables<T extends { tables?: true }> = T["tables"] extends true
-  ? { tables: Schema.Table[] }
-  : {};
-type WithTableContext<T extends { tableContext?: true }> =
-  T["tableContext"] extends true ? { tableContext: Schema.TableContext } : {};
-type WithTableContexts<T extends { tableContexts?: true }> =
-  T["tableContexts"] extends true
-    ? { tableContexts: Schema.TableContext[] }
-    : {};
-type WithMenuCategory<T extends { menuCategory?: true }> =
-  T["menuCategory"] extends true ? { menuCategory: Schema.MenuCategory } : {};
-type WithMenuCategories<T extends { menuCategories?: true }> =
-  T["menuCategories"] extends true
-    ? { menuCategories: Schema.MenuCategory[] }
-    : {};
-type WithMenu<T extends { menu?: true }> = T["menu"] extends true
-  ? { menu: Schema.Menu }
-  : {};
-type WithMenus<T extends { menus?: true }> = T["menus"] extends true
-  ? { menus: Schema.Menu[] }
-  : {};
-type WithOrder<T extends { order?: true }> = T["order"] extends true
-  ? { order: Schema.Order }
-  : {};
-type WithOrders<T extends { orders?: true }> = T["orders"] extends true
-  ? { orders: Schema.Order[] }
-  : {};
-type WithMenuOrder<T extends { menuOrder?: true }> = T["menuOrder"] extends true
-  ? { menuOrder: Schema.MenuOrder }
-  : {};
-type WithMenuOrders<T extends { menuOrders?: true }> =
-  T["menuOrders"] extends true ? { menuOrders: Schema.MenuOrder[] } : {};
-type WithPayment<T extends { payment?: true }> = T["payment"] extends true
-  ? { payment: Schema.Payment }
-  : {};
+type WithUser<T extends { user?: true }> = T["user"] extends true ? { user: Schema.User } : {};
+type WithTable<T extends { table?: true }> = T["table"] extends true ? { table: Schema.Table } : {};
+type WithTables<T extends { tables?: true }> = T["tables"] extends true ? { tables: Schema.Table[] } : {};
+type WithTableContext<T extends { tableContext?: true }> = T["tableContext"] extends true ? { tableContext: Schema.TableContext } : {};
+type WithTableContexts<T extends { tableContexts?: true }> = T["tableContexts"] extends true ? { tableContexts: Schema.TableContext[] } : {};
+type WithMenuCategory<T extends { menuCategory?: true }> = T["menuCategory"] extends true ? { menuCategory: Schema.MenuCategory } : {};
+type WithMenuCategories<T extends { menuCategories?: true }> = T["menuCategories"] extends true ? { menuCategories: Schema.MenuCategory[] } : {};
+type WithMenu<T extends { menu?: true }> = T["menu"] extends true ? { menu: Schema.Menu } : {};
+type WithMenus<T extends { menus?: true }> = T["menus"] extends true ? { menus: Schema.Menu[] } : {};
+type WithOrder<T extends { order?: true }> = T["order"] extends true ? { order: Schema.Order } : {};
+type WithOrders<T extends { orders?: true }> = T["orders"] extends true ? { orders: Schema.Order[] } : {};
+type WithMenuOrder<T extends { menuOrder?: true }> = T["menuOrder"] extends true ? { menuOrder: Schema.MenuOrder } : {};
+type WithMenuOrders<T extends { menuOrders?: true }> = T["menuOrders"] extends true ? { menuOrders: Schema.MenuOrder[] } : {};
+type WithPayment<T extends { payment?: true }> = T["payment"] extends true ? { payment: Schema.Payment } : {};
 
 type QueryUserOption = {
   tables?: true;
   menuCategories?: true;
   includeDeleted?: true;
 };
-type QueryUserResult<T extends QueryUserOption> = (Schema.User &
-  WithTables<T> &
-  WithMenuCategories<T>)[];
+type QueryUserResult<T extends QueryUserOption> = 
+  (Schema.User & WithTables<T> & WithMenuCategories<T>)[];
 export const queryUsers = async <T extends QueryUserOption>(
   db: DB,
   users: (Schema.User | string)[],
@@ -106,9 +78,8 @@ type QueryMenuOption = {
   menuOrders?: true;
   includeDeleted?: true;
 };
-type QueryMenuResult<T extends QueryMenuOption> = (Schema.Menu &
-  WithMenuCategory<T> &
-  WithMenuOrders<T>)[];
+type QueryMenuResult<T extends QueryMenuOption> = 
+  (Schema.Menu & WithMenuCategory<T> & WithMenuOrders<T>)[];
 export const queryMenus = async <T extends QueryMenuOption>(
   db: DB,
   menus: (Schema.Menu | string)[],
@@ -134,9 +105,8 @@ type QueryTableOption = {
   includeDeleted?: true;
   limit?: number;
 };
-type QueryTableResult<T extends QueryTableOption> = (Schema.Table &
-  WithUser<T> &
-  WithTableContexts<T>)[];
+type QueryTableResult<T extends QueryTableOption> = 
+  (Schema.Table & WithUser<T> & WithTableContexts<T>)[];
 export const queryTables = async <T extends QueryTableOption>(
   db: DB,
   tables: (Schema.Table | string)[],
@@ -209,40 +179,30 @@ type QueryOrderOption = {
   onlyActive?: true;
   order?: "asc";
 };
-type QueryOrderResult<T extends QueryOrderOption> = (Schema.Order &
-  WithTableContext<T> &
-  WithMenuOrders<T> &
-  WithPayment<T>)[];
+type QueryOrderResult<T extends QueryOrderOption> = 
+  (Schema.Order & WithTableContext<T> & WithMenuOrders<T> & WithPayment<T>)[];
 export const queryOrders = async <T extends QueryOrderOption>(
   db: DB,
   orders: (Schema.Order | string)[],
   option?: T
 ): Promise<QueryOrderResult<T>> => {
-  const orderIds = orders.map((order) =>
-    typeof order === "string" ? order : order.id
-  );
+  const orderIds = orders.map((order) => typeof order === "string" ? order : order.id);
   const { tableContext, menuOrders, onlyActive, order, payment } = option ?? {};
 
   if (!onlyActive)
-    return (await db.query.orders.findMany({
+    return await db.query.orders.findMany({
       where: inArray(Schema.orders.id, orderIds),
       with: { tableContext, menuOrders, payment },
-      orderBy: order
-        ? asc(Schema.orders.createdAt)
-        : desc(Schema.orders.createdAt),
-    })) as unknown as QueryOrderResult<T>;
+      orderBy: order ? asc(Schema.orders.createdAt) : desc(Schema.orders.createdAt),
+    }) as unknown as QueryOrderResult<T>;
 
   const result = (
     await db.query.orders.findMany({
       where: inArray(Schema.orders.id, orderIds),
       with: { tableContext, menuOrders: true },
-      orderBy: order
-        ? asc(Schema.orders.createdAt)
-        : desc(Schema.orders.createdAt),
+      orderBy: order ? asc(Schema.orders.createdAt) : desc(Schema.orders.createdAt),
     })
-  ).filter((order) =>
-    isOrdersOnActivate([order])
-  ) as unknown as QueryOrderResult<T>;
+  ).filter((order) => isOrdersOnActivate([order])) as unknown as QueryOrderResult<T>;
 
   if (menuOrders) return result as unknown as QueryOrderResult<T>;
   else
@@ -258,9 +218,8 @@ type QueryMenuOrderOption = {
   onlyActive?: true;
   orderBy?: "asc";
 };
-type QueryMenuOrderResult<T extends QueryMenuOrderOption> = (Schema.MenuOrder &
-  WithOrder<T> &
-  WithMenu<T>)[];
+type QueryMenuOrderResult<T extends QueryMenuOrderOption> = 
+  (Schema.MenuOrder & WithOrder<T> & WithMenu<T>)[];
 export const queryMenuOrders = async <T extends QueryMenuOrderOption>(
   db: DB,
   menuOrders: (Schema.MenuOrder | string)[],

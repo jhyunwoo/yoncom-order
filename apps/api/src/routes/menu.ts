@@ -7,11 +7,11 @@ import * as Menu from "api/controller/menu.controller";
 
 const menu = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-menu.get("/", zValidator("json", MenuRequest.clientGetValidation), async (c) => {
+menu.get("/", zValidator("query", MenuRequest.clientGetValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
   const { result, error, status } = 
-    await Menu.clientGet(db, c.req.valid("json"));
+    await Menu.clientGet(db, c.req.valid("query"));
   return c.json({ result, error }, status);
 });
 

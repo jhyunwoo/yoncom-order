@@ -19,12 +19,12 @@ order.post("/", zValidator("json", OrderRequest.createValidation),
 );
 
 // Get Order
-order.get("/", zValidator("json", OrderRequest.getValidation), 
+order.get("/", zValidator("query", OrderRequest.getValidation), 
   async (c) => {
     const db = initializeDb(c.env.DB);
 
     const { result, error, status } = 
-      await OrderController.get(db, c.req.valid("json"));
+      await OrderController.get(db, c.req.valid("query"));
     return c.json({ result, error }, status);
   }
 );

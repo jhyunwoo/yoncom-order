@@ -196,7 +196,7 @@ export const clientGet = async (
       return { result: { ...table, tableContexts: [] }, status: 200 };
 
     const tableContextWithOrders = (await QueryDB.queryTableContexts(db, [activeTableContext.id], { orders: true }))[0];
-    const orders = await QueryDB.queryOrders(db, tableContextWithOrders.orders, { menuOrders: true });
+    const orders = await QueryDB.queryOrders(db, tableContextWithOrders.orders, { menuOrders: true, payment: true });
     return { 
       result: { ...table, tableContexts: [{ ...activeTableContext, orders }] },
       status: 200 
@@ -229,7 +229,7 @@ export const adminGet = async (
         tables.splice(0, 10).map(async (table) => {
           const tableContexts = await QueryDB.queryTableContexts(db, table.tableContexts, { orders: true });
           const resolvedTableContexts = await Promise.all(tableContexts.map(async (tableContext) => {
-            const orders = await QueryDB.queryOrders(db, tableContext.orders, { menuOrders: true });
+            const orders = await QueryDB.queryOrders(db, tableContext.orders, { menuOrders: true, payment: true });
             return { ...tableContext, orders };
           }));
           return { ...table, tableContexts: resolvedTableContexts };

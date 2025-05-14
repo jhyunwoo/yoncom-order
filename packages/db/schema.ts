@@ -150,23 +150,50 @@ export type TableContext = typeof tableContexts.$inferSelect;
 
 export const orders = sqliteTable("orders", {
   id: text("id").primaryKey().notNull().$defaultFn(() => generateId(15)),
-
   tableContextId: text("tableContextId").notNull().references(() => tableContexts.id),
+  paymentId: text("paymentId"),
   
   createdAt: integer("createdAt").notNull().$defaultFn(() => Date.now()),
   updatedAt: integer("updatedAt").notNull().$defaultFn(() => Date.now()),
   deletedAt: integer("deletedAt"),
 });
 
+export type Order = typeof orders.$inferSelect;
+
+export const payments = sqliteTable("payments", {
+  id: text("id").primaryKey().notNull().$defaultFn(() => generateId(15)),
+  paid: integer("paid", { mode: "boolean" }).notNull().default(false),
+  method: text("method").notNull().$type<PaymentMethod>().default(paymentMethod.NONE),
+  amount: integer("amount").notNull(),
+  received: integer("received"),
+
+  orderId: text("orderId").notNull().references(() => orders.id),
+  
+  createdAt: integer("createdAt").notNull().$defaultFn(() => Date.now()),
+  updatedAt: integer("updatedAt").notNull().$defaultFn(() => Date.now()),
+  deletedAt: integer("deletedAt"),
+});
+
+export type Payment = typeof payments.$inferSelect;
+
+export const paymentsRelations = relations(payments, ({ one }) => ({
+  order: one(orders, {
+    fields: [payments.orderId],
+    references: [orders.id],
+  }),
+}));
+
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   tableContext: one(tableContexts, {
     fields: [orders.tableContextId],
     references: [tableContexts.id],
   }),
+  payment: one(payments, {
+    fields: [orders.paymentId],
+    references: [payments.id],
+  }),
   menuOrders: many(menuOrders),
 }));
-
-export type Order = typeof orders.$inferSelect;
 
 export const menuOrders = sqliteTable("menuOrders", {
   id: text("id").primaryKey().notNull().$defaultFn(() => generateId(15)),
@@ -193,17 +220,3 @@ export const menuOrdersRelations = relations(menuOrders, ({ one }) => ({
 }));
 
 export type MenuOrder = typeof menuOrders.$inferSelect;
-
-export const payments = sqliteTable("payments", {
-  id: text("id").primaryKey().notNull().$defaultFn(() => generateId(15)),
-  paid: integer("paid", { mode: "boolean" }).notNull().default(false),
-  method: text("method").notNull().$type<PaymentMethod>().default(paymentMethod.NONE),
-  amount: integer("amount").notNull(),
-  received: integer("received"),
-  
-  createdAt: integer("createdAt").notNull().$defaultFn(() => Date.now()),
-  updatedAt: integer("updatedAt").notNull().$defaultFn(() => Date.now()),
-  deletedAt: integer("deletedAt"),
-});
-
-export type Payment = typeof payments.$inferSelect;

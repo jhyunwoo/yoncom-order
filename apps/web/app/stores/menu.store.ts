@@ -4,31 +4,33 @@ import * as MenuRequest from 'shared/api/types/requests/menu';
 import * as MenuResponse from 'shared/api/types/responses/menu';
 import * as MenuCategoryRequest from 'shared/api/types/requests/menuCategory';
 import * as MenuCategoryResponse from 'shared/api/types/responses/menuCategory';
-import queryStore from 'web/app/lib/query';
+import queryStore from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
 
-type MenuState = {
+export type MenuState = {
+  clientMenuCategories: MenuResponse.ClientGet["result"] | null;
   menuCategories: Schema.MenuCategory[];
   menus: Schema.Menu[];
   isLoaded: boolean;
   error: boolean;
 
-  clientLoad: (query: MenuRequest.ClientGetQuery) => Promise<void>;
-  adminLoad: (query: MenuRequest.AdminGetQuery) => Promise<void>;
+  clientLoad: (query: MenuRequest.ClientGetQuery) => Promise<MenuResponse.ClientGet | null>;
+  adminLoad: (query: MenuRequest.AdminGetQuery) => Promise<MenuResponse.AdminGet | null>;
 
-  createMenu: (query: MenuRequest.CreateQuery) => Promise<void>;
-  removeMenu: (query: MenuRequest.RemoveQuery) => Promise<void>;
-  updateMenu: (query: MenuRequest.UpdateQuery) => Promise<void>;
+  createMenu: (query: MenuRequest.CreateQuery) => Promise<MenuResponse.Create | null>;
+  removeMenu: (query: MenuRequest.RemoveQuery) => Promise<MenuResponse.Remove | null>;
+  updateMenu: (query: MenuRequest.UpdateQuery) => Promise<MenuResponse.Update | null>;
 
-  createMenuCategory: (query: MenuCategoryRequest.CreateQuery) => Promise<void>;
-  removeMenuCategory: (query: MenuCategoryRequest.RemoveQuery) => Promise<void>;
-  updateMenuCategory: (query: MenuCategoryRequest.UpdateQuery) => Promise<void>;
+  createMenuCategory: (query: MenuCategoryRequest.CreateQuery) => Promise<MenuCategoryResponse.Create | null>;
+  removeMenuCategory: (query: MenuCategoryRequest.RemoveQuery) => Promise<MenuCategoryResponse.Remove | null>;
+  updateMenuCategory: (query: MenuCategoryRequest.UpdateQuery) => Promise<MenuCategoryResponse.Update | null>;
 
   // 다른 store에서 사용하기 위해 노출. component에서 사용하지 않음.
   _setMenus: (menus: Schema.Menu[]) => void;
 }
 
 const useMenuStore = create<MenuState>((set, get) => ({
+  clientMenuCategories: null,
   menuCategories: [],
   menus: [],
   isLoaded: false,
@@ -40,8 +42,7 @@ const useMenuStore = create<MenuState>((set, get) => ({
     query,
     setter: set,
     onSuccess: (res) => set({
-      menus: res.result.flatMap((menuCategory) => menuCategory.menus),
-      menuCategories: res.result.map((menuCategory) => ({ ...menuCategory, menus: undefined }))
+      clientMenuCategories: res.result,
     }),
   }),
 

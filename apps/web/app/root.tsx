@@ -8,7 +8,7 @@ import {
 import type { LinksFunction } from "@remix-run/node";
 
 import "~/tailwind.css";
-import "~/styles/custom.css";
+import "~/styles/global.css";
 import { Toaster } from "./components/ui/toaster";
 
 export const links: LinksFunction = () => [

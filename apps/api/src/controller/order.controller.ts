@@ -37,7 +37,7 @@ export const create = async (
     if (menus.length !== menuIds.length)
       return { error: "Menu Not Found", status: 409 };
 
-    // 주문에 들어온 메뉴가 모두 소유자가 맞는지 확인
+    // 주문에 들어온 메뉴가 모두 테이블 소유자의 메뉴가 맞는지 확인
     if (menus.some((menu) => menu.menuCategory.userId !== table.userId))
       return { error: "Menu Not Found", status: 409 };
 
@@ -84,13 +84,13 @@ export const get = async (
   const { orderId } = query;
 
   try {
-    const order = (
-      await QueryDB.queryOrders(db, [orderId], {
-        tableContext: true,
-        menuOrders: true,
-      })
-    )[0];
-    if (!order) return { error: "Order Not Found", status: 403 };
+    const order = (await QueryDB.queryOrders(db, [orderId], {
+      tableContext: true,
+      menuOrders: true,
+      payment: true,
+    }))[0];
+    if (!order)
+      return { error: "Order Not Found", status: 403 };
 
     return { result: order, status: 200 };
   } catch (e) {

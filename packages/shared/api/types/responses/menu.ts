@@ -15,11 +15,11 @@ export type Remove = {
 export type ClientGet = {
   result: (Schema.MenuCategory & {
     menus: Schema.Menu[]
-  })[], 
+  })[];
 }
 
 export type AdminGet = {
   result: (Schema.MenuCategory & {
-    menus: Schema.Menu[]
-  })[], 
+    menus: Schema.Menu[];
+  })[];
 }

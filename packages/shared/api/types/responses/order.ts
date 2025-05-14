@@ -7,5 +7,6 @@ export type Create = {
 export type Get = {
   result: Schema.Order & {
     menuOrders: Schema.MenuOrder[];
+    payment: Schema.Payment;
   };
 }

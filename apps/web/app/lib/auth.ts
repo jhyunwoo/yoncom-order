@@ -45,6 +45,7 @@ export async function signUp(name: string, email: string, password: string) {
     route: "auth/sign-up",
     method: "post",
     query: { name, email, password },
+    onSuccess: () => { window.location.href = "/auth"; },
   })
 }
 
