@@ -4,6 +4,7 @@ import * as TableController from "api/controller/table.controller";
 import * as OrderRequest from "shared/api/types/requests/order";
 import * as OrderResponse from "shared/api/types/responses/order";
 import ControllerResult from "api/types/controller";
+import { inArray } from "drizzle-orm";
 
 // TODO: 주문 가능 수량 체크 필요
 export const create = async (
@@ -42,16 +43,23 @@ export const create = async (
       return { error: "Menu Not Found", status: 409 };
 
     // 주문 들어온 메뉴의 수량이 남은 메뉴 수량을 안넘는지 확인
-    const orderedMenuData = await QueryDB.queryOrders(db, menuIds);
+    const orderedMenuData = await db.query.menuOrders.findMany({
+      where: inArray(Schema.menuOrders.menuId, menuIds),
+    });
 
-    // count how many menu sold
-    const soldMenuData = menus.map(
-      (menu) =>
-        orderedMenuData.filter((orderedMenu) => orderedMenu.id === menu.id)
-          .length
+    const soldMenuData = menus.map((menu) =>
+      orderedMenuData
+        .filter((orderedMenu) => orderedMenu.menuId === menu.id)
+        .reduce((acc, curr) => acc + curr.quantity, 0)
     );
 
-    console.log(soldMenuData);
+    for (const index in menus) {
+      if (
+        soldMenuData[index] + menuOrders[index].quantity >
+        menus[index].quantity
+      )
+        return { error: "Menu Not Enough", status: 409 };
+    }
 
     // order 생성
     const order = (
@@ -84,13 +92,14 @@ export const get = async (
   const { orderId } = query;
 
   try {
-    const order = (await QueryDB.queryOrders(db, [orderId], {
-      tableContext: true,
-      menuOrders: true,
-      payment: true,
-    }))[0];
-    if (!order)
-      return { error: "Order Not Found", status: 403 };
+    const order = (
+      await QueryDB.queryOrders(db, [orderId], {
+        tableContext: true,
+        menuOrders: true,
+        payment: true,
+      })
+    )[0];
+    if (!order) return { error: "Order Not Found", status: 403 };
 
     return { result: order, status: 200 };
   } catch (e) {
