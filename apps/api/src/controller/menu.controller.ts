@@ -107,14 +107,13 @@ export const clientGet = async (
   db: QueryDB.DB,
   query: MenuRequest.ClientGetQuery
 ): Promise<ControllerResult<MenuResponse.ClientGet>> => {
-  const { userId, menuCategoryIds } = query;
+  const { userId } = query;
   
   try {
     const user = (await QueryDB.queryUsers(db, [userId], { menuCategories: true }))[0];
     const data = await Promise.all(
       user.menuCategories
         .filter((menuCategory) => menuCategory.deletedAt === null)
-        .filter((menuCategory) => menuCategoryIds === undefined || menuCategoryIds.includes(menuCategory.id))
         .map(async (menuCategory) => ({ 
           ...menuCategory, 
           menus: (await QueryDB.queryMenuCategories(db, [menuCategory], { menus: true }))[0].menus
@@ -134,7 +133,7 @@ export const adminGet = async (
   userId: string,
   query: MenuRequest.AdminGetQuery
 ): Promise<ControllerResult<MenuResponse.AdminGet>> => {
-  const { menuCategoryIds } = query;
+  const { } = query;
 
   
   try {
@@ -142,7 +141,6 @@ export const adminGet = async (
     const data = await Promise.all(
       user.menuCategories
         .filter((menuCategory) => menuCategory.deletedAt === null)
-        .filter((menuCategory) => menuCategoryIds === undefined || menuCategoryIds.includes(menuCategory.id))
         .map(async (menuCategory) => ({ 
           ...menuCategory, 
           menus: (await QueryDB.queryMenuCategories(db, [menuCategory], { menus: true }))[0].menus
