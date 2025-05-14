@@ -7,3 +7,5 @@ wrangler.jsonc
 wrangler.toml
 .wrangler
 .migrations
+
+.idea

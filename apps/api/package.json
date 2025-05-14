@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx wrangler pages dev",
+    "dev": "npx wrangler dev",
     "dev:local": "npx wrangler dev --local",
     "db:apply": "npx wrangler d1 migrations apply yoncom-order-db",
     "db:apply:local": "npx wrangler d1 migrations apply yoncom-order-db --local"
