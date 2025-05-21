@@ -136,6 +136,9 @@ importers:
       zod:
         specifier: ^3.24.4
         version: 3.24.4
+      zukeeper:
+        specifier: ^1.0.2
+        version: 1.0.2
       zustand:
         specifier: ^5.0.4
         version: 5.0.4(@types/react@18.3.21)(react@18.3.1)
@@ -5276,6 +5279,9 @@ packages:
 
   zod@3.24.4:
     resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
+
+  zukeeper@1.0.2:
+    resolution: {integrity: sha512-mffz8JpzC96B3Gpoixklfl2/wY4KsYxZvgPRLFMIqAvEQeMPTjLYG8oUWXm9eoItU/nQ5Lt0G2b0GcZRDGzVgA==}
 
   zustand@5.0.4:
     resolution: {integrity: sha512-39VFTN5InDtMd28ZhjLyuTnlytDr9HfwO512Ai4I8ZABCoyAj4F1+sr7sD1jP/+p7k77Iko0Pb5NhgBFDCX0kQ==}
@@ -10899,6 +10905,8 @@ snapshots:
   zod@3.22.3: {}
 
   zod@3.24.4: {}
+
+  zukeeper@1.0.2: {}
 
   zustand@5.0.4(@types/react@18.3.21)(react@18.3.1):
     optionalDependencies:

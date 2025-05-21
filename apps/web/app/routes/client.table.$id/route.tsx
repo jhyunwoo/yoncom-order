@@ -1,9 +1,4 @@
 import { LoaderFunction } from "@remix-run/node";
-import queryStore from "~/lib/query";
-import * as TableRequest from "shared/api/types/requests/table";
-import * as TableResponse from "shared/api/types/responses/table";
-import * as MenuRequest from "shared/api/types/requests/menu";
-import * as MenuResponse from "shared/api/types/responses/menu";
 import { useLoaderData } from "@remix-run/react";
 import useTableStore from "~/stores/table.store";
 import Header from "./components/header";

@@ -2,8 +2,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import * as MenuResponse from "shared/api/types/responses/menu";
 import MenuInstance from "./menu.instance";
 
-
-
 export default function Menus({ menuCategories }: { menuCategories: MenuResponse.ClientGet["result"] }) {
   return (
     <Tabs
@@ -15,7 +13,7 @@ export default function Menus({ menuCategories }: { menuCategories: MenuResponse
           <TabsTrigger 
             key={menuCategory.id} 
             value={menuCategory.id}
-            className="text-md font-semibold"
+            className="text-lg font-semibold hover:bg-blue-100 hover:text-blue-600 m-1"
           >{menuCategory.name}</TabsTrigger>
         )}
       </TabsList>

@@ -7,7 +7,7 @@ import { toast } from "~/hooks/use-toast";
 
 type MenuOrderQuery = OrderRequest.CreateQuery["menuOrders"][number]
 
-type CartState = {
+export type CartState = {
   menuOrders: MenuOrderQuery[];
 
   addMenuOrder: (menuOrder: MenuOrderQuery) => void;
@@ -49,7 +49,8 @@ const useCartStore = create<CartState>((set, get) => ({
 
   purchaseMenuOrders: async () => {
     const table = useTableStore.getState().clientTable;
-    if (!table || get().menuOrders.length === 0) {
+    const nonZeroMenuOrders = get().menuOrders.filter((menuOrder) => menuOrder.quantity > 0);
+    if (!table || nonZeroMenuOrders.length === 0) {
       toast({
         title: "올바르지 않은 주문 요청입니다.",
         variant: "destructive",
@@ -59,11 +60,18 @@ const useCartStore = create<CartState>((set, get) => ({
     }
 
     await queryStore<OrderRequest.CreateQuery, OrderResponse.Create>({
-      route: "/api/order",
+      route: "order",
       method: "post",
       query: {
         tableId: table.id,
-        menuOrders: get().menuOrders,
+        menuOrders: nonZeroMenuOrders,
+      },
+      onSuccess: () => {
+        toast({
+          title: "주문이 완료되었습니다.",
+          duration: 3000,
+        });
+        get().clearMenuOrders();
       },
     })
   },

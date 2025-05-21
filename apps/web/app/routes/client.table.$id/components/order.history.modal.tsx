@@ -1,46 +1,23 @@
 
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DialogContent } from "~/components/ui/dialog";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import useCartStore, { CartState } from "~/stores/cart.store";
-import useMenuStore from "~/stores/menu.store";
 import OrderUpdateModal from "./order.update.modal";
 import OrderConfirmModal from "./order.confirm.modal";
+import useTableStore from "~/stores/table.store";
 
-export default function OrderModal({
+export default function OrderHistoryModal({
   openState, setOpenState,
 }: {
   openState: boolean;
   setOpenState: (open: boolean) => void;
 }) {
-  const [confirmModalOpenState, setConfirmModalOpenState] = useState(false);
-  const [modalOpenState, setModalOpenState] = useState(false);
-  const [modalMenuOrder, setModalMenuOrder] = useState<CartState["menuOrders"][number] | null>(null);
-
-  const { clientMenuCategories } = useMenuStore();
-  const { menuOrders } = useCartStore();
-
-  const menus = clientMenuCategories?.flatMap((menuCategory) => menuCategory.menus) ?? [];
-  const menuOrderInfos = menuOrders.map((menuOrder) => {
-    const menu = menus.find((menu) => menu.id === menuOrder.menuId);
-    if (!menu) return null;
-    return {
-      menuId: menuOrder.menuId,
-      menuName: menu.name,
-      menuPrice: menu.price,
-      quantity: menuOrder.quantity,
-      totalPrice: menu.price * menuOrder.quantity,
-    }
-  })
-
-  const noMenuOrder = menuOrderInfos.length === 0;
-  const invalidMenuOrder = menuOrderInfos.length === 0
-    || menuOrderInfos.some((menuOrderInfo) => menuOrderInfo === null)
+  const { clientTable } = useTableStore();
+  const tableContext = clientTable!.tableContexts[0];
+  const orders = tableContext!.orders;
 
   const handleConfirm = () => {
-    setConfirmModalOpenState(true);
     setOpenState(false);
   }
   const handleClose = () => {
@@ -51,43 +28,36 @@ export default function OrderModal({
     <>
       <Dialog open={openState} onOpenChange={setOpenState}>
         <DialogContent className="fc w-[96%] min-h-[25rem] max-h-[40rem] justify-between border-blue-500 border-2 rounded-xl">
-          {noMenuOrder || invalidMenuOrder ? (
+          {orders.length === 0 ? (
             <DialogHeader >
-              <DialogTitle>{
-                noMenuOrder ? "장바구니에 담은 메뉴가 없습니다" : "주문 정보가 잘못되었습니다"
-              }</DialogTitle>
-              <DialogDescription />
+              <DialogTitle>주문 내역</DialogTitle>
+              <DialogDescription>주문 내역이 없습니다.</DialogDescription>
             </DialogHeader>
           ) : (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl">주문 확인</DialogTitle>
-                <DialogDescription className="text-md text-center">주문을 수정하려면 주문 목록을 클릭하세요.</DialogDescription>
+                <DialogTitle className="text-2xl">주문 내역</DialogTitle>
+                <DialogDescription className="text-md text-center">주문 내역을 확인하세요.</DialogDescription>
               </DialogHeader>
               <Table>
                 <TableHeader className="bg-gray-200">
                   <TableRow>
                     {/* <TableHead></TableHead> */}
-                    <TableHead className="!text-left font-bold">메뉴{"".repeat(100)}</TableHead>
-                    <TableHead className="!text-right">단가</TableHead>
-                    <TableHead className="!text-right">수량</TableHead>
-                    <TableHead className="!text-right">가격</TableHead>
+                    <TableHead className="!text-left font-bold">주문 일시</TableHead>
+                    <TableHead className="!text-right">상태</TableHead>
+                    <TableHead className="!text-right">금액</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {menuOrderInfos.map((menuOrderInfo, index) => (
+                  {orders.map((order, index) => (
                     <TableRow
-                      key={menuOrderInfo!.menuId}
-                      onClick={() => {
-                        console.log(menuOrders[index]);
-                        setModalMenuOrder(menuOrders[index]);
-                        setModalOpenState(true)
-                      }}
+                      key={order.id}
+                      onClick={() => {}}
                       className="h-14 *:text-base"
                     >
                       {/* <TableCell className="text-center">{index + 1}</TableCell> */}
-                      <TableCell className="text-left font-bold">{menuOrderInfo!.menuName}</TableCell>
-                      <TableCell className="text-right">{menuOrderInfo!.menuPrice.toLocaleString()}</TableCell>
+                      <TableCell className="text-left font-bold">{order.createdAt}</TableCell>
+                      <TableCell className="text-right">{order.}</TableCell>
                       <TableCell className="text-right">{menuOrderInfo!.quantity}</TableCell>
                       <TableCell className="text-right">{menuOrderInfo!.totalPrice.toLocaleString()}</TableCell>
                     </TableRow>
