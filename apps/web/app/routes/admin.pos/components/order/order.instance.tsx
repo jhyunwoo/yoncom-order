@@ -12,10 +12,9 @@ export default function OrderInstance({ order }: { order: TableResponse.AdminGet
 
   const { tables } = useTableStore();
   const { menus } = useMenuStore();
-  const table = tables.find((table) => table.id === order.tableContextId);
-  // if (!table) return null;
+  const table = tables.find((table) => table.tableContexts.some((tableContext) => tableContext.id === order.tableContextId));
   const tableContext = table!.tableContexts.find((tableContext) => tableContext.id === order.tableContextId);
-  // if (!tableContext) return null;
+  console.debug("tableContext", tableContext);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,7 +54,7 @@ export default function OrderInstance({ order }: { order: TableResponse.AdminGet
               )
             })}
           </ul>
-          <span className="w-fit font-bold my-1">{order.payment.paid ? "조리 중" : "결제 대기"}</span>
+          <span className="w-fit font-bold my-1">{order.payment?.paid ? "조리 중" : "결제 대기"}</span>
         </CardContent>
       </Card>
     </>

@@ -17,9 +17,6 @@ export default function OrderHistoryModal({
   const tableContext = clientTable!.tableContexts[0];
   const orders = tableContext!.orders;
 
-  const handleConfirm = () => {
-    setOpenState(false);
-  }
   const handleClose = () => {
     setOpenState(false);
   }
@@ -49,17 +46,16 @@ export default function OrderHistoryModal({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders.map((order, index) => (
+                  {orders.map((order) => (
                     <TableRow
                       key={order.id}
                       onClick={() => {}}
                       className="h-14 *:text-base"
                     >
                       {/* <TableCell className="text-center">{index + 1}</TableCell> */}
-                      <TableCell className="text-left font-bold">{order.createdAt}</TableCell>
-                      <TableCell className="text-right">{order.}</TableCell>
-                      <TableCell className="text-right">{menuOrderInfo!.quantity}</TableCell>
-                      <TableCell className="text-right">{menuOrderInfo!.totalPrice.toLocaleString()}</TableCell>
+                      <TableCell className="text-left font-bold">{order.createdAt.toLocaleString()}</TableCell>
+                      <TableCell className="text-right">{order.payment.paid}</TableCell>
+                      <TableCell className="text-right">{order.payment.amount.toLocaleString()}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -67,28 +63,16 @@ export default function OrderHistoryModal({
               <div className="text-right">
                 <span className="text-right text-lg mr-2">총액</span>
                 <span className="text-right text-2xl font-bold">
-                  {menuOrderInfos.reduce((acc, menuOrderInfo) => acc + menuOrderInfo!.totalPrice, 0).toLocaleString()} 원
+                  {orders.reduce((acc, order) => acc + order.payment.amount, 0).toLocaleString()} 원
                 </span>
               </div>
               <DialogFooter className="h-fit fr *:flex-1 *:mx-2 *:h-14 *:rounded-2xl *:text-lg">
-                <Button variant="outline" onClick={handleClose}>취소</Button>
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={handleConfirm}>주문하기</Button>
+                <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={handleClose}>닫기</Button>
               </DialogFooter>
             </>
           )}
         </DialogContent>
       </Dialog>
-      {modalMenuOrder && (
-        <OrderUpdateModal
-          menuOrder={modalMenuOrder}
-          openState={modalOpenState}
-          setOpenState={setModalOpenState}
-        />
-      )}
-      <OrderConfirmModal
-        openState={confirmModalOpenState}
-        setOpenState={setConfirmModalOpenState}
-      />
     </>
   )
 }

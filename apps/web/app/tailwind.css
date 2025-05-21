@@ -11,6 +11,10 @@ body {
   }
 }
 
+* {
+  font-family: 'Noto Sans KR', sans-serif !important;
+}
+
 .screen {
   width: 100vw;
   height: 100vh;

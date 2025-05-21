@@ -72,6 +72,7 @@ const useCartStore = create<CartState>((set, get) => ({
           duration: 3000,
         });
         get().clearMenuOrders();
+        useTableStore.getState().clientGetTable({ tableId: table.id });
       },
     })
   },

@@ -22,21 +22,23 @@ export default function Client() {
 
   useEffect(() => {
     if (table) {
-      useTableStore.getState().clientGetTable({ tableId: table.id});
+      useTableStore.getState().clientGetTable({ tableId: table.id });
       useMenuStore.getState().clientLoad({ userId: table.userId });
     }
   }, [table])
 
   return (
     <div className="screen fc items-center justify-center overflow-hidden">
-      <Header />
-      {clientTable && clientMenuCategories 
+      {clientTable && clientMenuCategories
         ? (
-          <div className="w-full flex-1 max-w-[600px] fc px-2 overflow-hidden">
+          <>
+            <Header />
+            <div className="w-full flex-1 max-w-[600px] fc px-2 overflow-hidden">
               <ShopIntro tableName={clientTable.name} tableSeats={clientTable.seats} />
               <Menus menuCategories={clientMenuCategories} />
-              <Footer onClick={() => {}} />
+              <Footer />
             </div>
+          </>
         ) : <h1>존재하지 않는 테이블입니다.</h1>
       }
     </div>

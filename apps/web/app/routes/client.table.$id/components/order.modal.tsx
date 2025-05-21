@@ -11,9 +11,11 @@ import OrderConfirmModal from "./order.confirm.modal";
 
 export default function OrderModal({
   openState, setOpenState,
+  setPurchaseModalOpenState,
 }: {
   openState: boolean;
   setOpenState: (open: boolean) => void;
+  setPurchaseModalOpenState: (open: boolean) => void;
 }) {
   const [confirmModalOpenState, setConfirmModalOpenState] = useState(false);
   const [modalOpenState, setModalOpenState] = useState(false);
@@ -118,6 +120,7 @@ export default function OrderModal({
       <OrderConfirmModal
         openState={confirmModalOpenState}
         setOpenState={setConfirmModalOpenState}
+        setPurchaseModalOpenState={setPurchaseModalOpenState}
       />
     </>
   )

@@ -11,8 +11,8 @@ export default function Orders() {
     .filter((table) => table.tableContexts[0]?.deletedAt === null)
     .flatMap((table) => table.tableContexts[0].orders);
   const inProgressOrders = orders.filter((order) => (
-    order.payment.paid === false
-    || order.menuOrders.some((menuOrder) => menuOrder.status === Schema.menuOrderStatus.PENDING))
+    order.deletedAt === null
+    && order.menuOrders.some((menuOrder) => menuOrder.status === Schema.menuOrderStatus.PENDING))
   );
 
   return (

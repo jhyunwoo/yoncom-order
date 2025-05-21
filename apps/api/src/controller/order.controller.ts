@@ -4,7 +4,7 @@ import * as TableController from "api/controller/table.controller";
 import * as OrderRequest from "shared/api/types/requests/order";
 import * as OrderResponse from "shared/api/types/responses/order";
 import ControllerResult from "api/types/controller";
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 // TODO: 주문 가능 수량 체크 필요
 export const create = async (
@@ -25,9 +25,20 @@ export const create = async (
     if (!isTablesOnActivate)
       await TableController.occupy(db, table.userId, { tableId });
 
-    const activeTableContext = (
+    const tableContexts = (
       await QueryDB.queryTables(db, [table], { tableContexts: true })
-    )[0].tableContexts[0];
+    )[0].tableContexts;
+
+    const activeTableContext = (
+      await QueryDB.queryTableContexts(db, [QueryDB.chooseActiveTableContext(tableContexts)!.id], { orders: true })
+    )[0];
+
+
+    // 활성화되어있는 tableContext에 미결제 주문이 존재하는지
+    const orders = await QueryDB.queryOrders(db, activeTableContext.orders, { payment: true });
+    const hasUnpaidOrder = orders.some((order) => !order.payment?.paid && order.deletedAt === null);
+    if (hasUnpaidOrder)
+      return { error: "Unpaid Order Exists", status: 409 };
 
     // 주문에 들어온 메뉴가 모두 존재하는지 확인
     const menuIds = menuOrders.map((menuOrder) => menuOrder.menuId);
@@ -76,6 +87,22 @@ export const create = async (
         orderId: order.id,
       }))
     );
+
+    // payment 생성
+    const payment = (
+      await db
+        .insert(Schema.payments)
+        .values({
+          orderId: order.id,
+          amount: menuOrders.reduce((acc, menuOrder) => acc + menuOrder.quantity * menus.find((menu) => menu.id === menuOrder.menuId)?.price!, 0),
+          paid: false,
+        }).returning()
+    )[0];
+
+    await db
+      .update(Schema.orders)
+      .set({ paymentId: payment.id })
+      .where(eq(Schema.orders.id, order.id));
 
     return { result: "Order Created", status: 200 };
   } catch (e) {

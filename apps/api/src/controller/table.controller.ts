@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
 import * as TableRequest from "shared/api/types/requests/table";
@@ -196,7 +196,10 @@ export const clientGet = async (
       return { result: { ...table, tableContexts: [] }, status: 200 };
 
     const tableContextWithOrders = (await QueryDB.queryTableContexts(db, [activeTableContext.id], { orders: true }))[0];
-    const orders = await QueryDB.queryOrders(db, tableContextWithOrders.orders, { menuOrders: true, payment: true });
+    const orders = (
+      await QueryDB.queryOrders(db, tableContextWithOrders.orders, { menuOrders: true, payment: true })
+    ).filter((order) => order.deletedAt === null);
+    
     return { 
       result: { ...table, tableContexts: [{ ...activeTableContext, orders }] },
       status: 200 
@@ -208,6 +211,9 @@ export const clientGet = async (
   }
 }
 
+// adminGet은 1초마다 일어날 예정
+// 그래서 그냥 이때 order 전부 순회하면서 만료된 order를 파기하는게 나아보임
+// 이거 개위험한데 뭐 어쩔 수 없음 사실 어쩔수 없다기보다 interval 핸들러 만들었다가 서버 꺼졌다 켜지면 답 없음
 export const adminGet = async (
   db: QueryDB.DB,
   userId: string,
@@ -233,8 +239,23 @@ export const adminGet = async (
             return { ...tableContext, orders };
           }));
           return { ...table, tableContexts: resolvedTableContexts };
-        })
+        })  
       ));
+
+    // 만료된 order 미리 파기
+    const expiredOrders = result.flatMap((table) => 
+      table.tableContexts.flatMap((tableContext) => 
+        tableContext.orders.filter((order) => 
+          order.payment.createdAt + 5 * 60 * 1000 < Date.now() 
+          && !order.payment.paid 
+          && order.deletedAt === null
+        )
+      )
+    );
+    await db
+      .update(Schema.orders)
+      .set({ deletedAt: Date.now() })
+      .where(inArray(Schema.orders.id, expiredOrders.map((order) => order.id)));
 
     return { result, status: 200 };
   } catch (e) {
