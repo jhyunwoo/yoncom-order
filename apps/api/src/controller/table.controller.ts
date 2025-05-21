@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
 import * as TableRequest from "shared/api/types/requests/table";
@@ -241,21 +241,6 @@ export const adminGet = async (
           return { ...table, tableContexts: resolvedTableContexts };
         })  
       ));
-
-    // 만료된 order 미리 파기
-    const expiredOrders = result.flatMap((table) => 
-      table.tableContexts.flatMap((tableContext) => 
-        tableContext.orders.filter((order) => 
-          order.payment.createdAt + 5 * 60 * 1000 < Date.now() 
-          && !order.payment.paid 
-          && order.deletedAt === null
-        )
-      )
-    );
-    await db
-      .update(Schema.orders)
-      .set({ deletedAt: Date.now() })
-      .where(inArray(Schema.orders.id, expiredOrders.map((order) => order.id)));
 
     return { result, status: 200 };
   } catch (e) {
