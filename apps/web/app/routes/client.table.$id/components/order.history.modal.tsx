@@ -4,7 +4,7 @@ import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } fr
 import { DialogContent } from "~/components/ui/dialog";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import OrderUpdateModal from "./order.update.modal";
-import OrderConfirmModal from "./order.confirm.modal";
+import OrderModal from "./order.modal";
 import useTableStore from "~/stores/table.store";
 
 export default function OrderHistoryModal({
@@ -39,7 +39,6 @@ export default function OrderHistoryModal({
               <Table>
                 <TableHeader className="bg-gray-200">
                   <TableRow>
-                    {/* <TableHead></TableHead> */}
                     <TableHead className="!text-left font-bold">주문 일시</TableHead>
                     <TableHead className="!text-right">상태</TableHead>
                     <TableHead className="!text-right">금액</TableHead>
@@ -52,7 +51,6 @@ export default function OrderHistoryModal({
                       onClick={() => {}}
                       className="h-14 *:text-base"
                     >
-                      {/* <TableCell className="text-center">{index + 1}</TableCell> */}
                       <TableCell className="text-left font-bold">{order.createdAt.toLocaleString()}</TableCell>
                       <TableCell className="text-right">{order.payment.paid}</TableCell>
                       <TableCell className="text-right">{order.payment.amount.toLocaleString()}</TableCell>

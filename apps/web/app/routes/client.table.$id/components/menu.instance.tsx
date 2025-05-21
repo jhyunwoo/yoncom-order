@@ -1,7 +1,7 @@
 import { Card } from "~/components/ui/card";
 import * as MenuResponse from "shared/api/types/responses/menu";
 import { useState } from "react";
-import OrderAddModal from "./order.add.modal";
+import CartAddModal from "./cart.add.modal";
 
 export default function MenuInstance({ menu }: { menu: MenuResponse.ClientGet["result"][number]["menus"][number] }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function MenuInstance({ menu }: { menu: MenuResponse.ClientGet["r
             </div>
           </Card>
         )}
-      <OrderAddModal
+      <CartAddModal
         menu={menu}
         openState={modalOpen}
         setOpenState={setModalOpen}

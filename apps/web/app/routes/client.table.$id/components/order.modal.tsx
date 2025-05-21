@@ -1,13 +1,10 @@
 
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
-import { DialogContent } from "~/components/ui/dialog";
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import useCartStore, { CartState } from "~/stores/cart.store";
-import useMenuStore from "~/stores/menu.store";
-import OrderUpdateModal from "./order.update.modal";
-import OrderConfirmModal from "./order.confirm.modal";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import useCartStore from "~/stores/cart.store";
+import * as MenuResponse from "shared/api/types/responses/menu";
 
 export default function OrderModal({
   openState, setOpenState,
@@ -17,111 +14,33 @@ export default function OrderModal({
   setOpenState: (open: boolean) => void;
   setPurchaseModalOpenState: (open: boolean) => void;
 }) {
-  const [confirmModalOpenState, setConfirmModalOpenState] = useState(false);
-  const [modalOpenState, setModalOpenState] = useState(false);
-  const [modalMenuOrder, setModalMenuOrder] = useState<CartState["menuOrders"][number] | null>(null);
+  const { purchaseMenuOrders } = useCartStore();
 
-  const { clientMenuCategories } = useMenuStore();
-  const { menuOrders } = useCartStore();
-
-  const menus = clientMenuCategories?.flatMap((menuCategory) => menuCategory.menus) ?? [];
-  const menuOrderInfos = menuOrders.map((menuOrder) => {
-    const menu = menus.find((menu) => menu.id === menuOrder.menuId);
-    if (!menu) return null;
-    return {
-      menuId: menuOrder.menuId,
-      menuName: menu.name,
-      menuPrice: menu.price,
-      quantity: menuOrder.quantity,
-      totalPrice: menu.price * menuOrder.quantity,
-    }
-  })
-
-  const noMenuOrder = menuOrderInfos.length === 0;
-  const invalidMenuOrder = menuOrderInfos.length === 0
-    || menuOrderInfos.some((menuOrderInfo) => menuOrderInfo === null)
-
-  const handleConfirm = () => {
-    setConfirmModalOpenState(true);
-    setOpenState(false);
+  const handleConfirm = async () => {
+    purchaseMenuOrders();
+    handleClose();
+    setPurchaseModalOpenState(true);
   }
+
   const handleClose = () => {
     setOpenState(false);
   }
 
   return (
-    <>
-      <Dialog open={openState} onOpenChange={setOpenState}>
-        <DialogContent className="fc w-[96%] min-h-[25rem] max-h-[40rem] justify-between border-blue-500 border-2 rounded-xl">
-          {noMenuOrder || invalidMenuOrder ? (
-            <DialogHeader >
-              <DialogTitle>{
-                noMenuOrder ? "장바구니에 담은 메뉴가 없습니다" : "주문 정보가 잘못되었습니다"
-              }</DialogTitle>
-              <DialogDescription />
-            </DialogHeader>
-          ) : (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-2xl">주문 확인</DialogTitle>
-                <DialogDescription className="text-md text-center">주문을 수정하려면 주문 목록을 클릭하세요.</DialogDescription>
-              </DialogHeader>
-              <Table>
-                <TableHeader className="bg-gray-200">
-                  <TableRow>
-                    {/* <TableHead></TableHead> */}
-                    <TableHead className="!text-left font-bold">메뉴{"".repeat(100)}</TableHead>
-                    <TableHead className="!text-right">단가</TableHead>
-                    <TableHead className="!text-right">수량</TableHead>
-                    <TableHead className="!text-right">가격</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {menuOrderInfos.map((menuOrderInfo, index) => (
-                    <TableRow
-                      key={menuOrderInfo!.menuId}
-                      onClick={() => {
-                        console.log(menuOrders[index]);
-                        setModalMenuOrder(menuOrders[index]);
-                        setModalOpenState(true)
-                      }}
-                      className="h-14 *:text-base"
-                    >
-                      {/* <TableCell className="text-center">{index + 1}</TableCell> */}
-                      <TableCell className="text-left font-bold">{menuOrderInfo!.menuName}</TableCell>
-                      <TableCell className="text-right">{menuOrderInfo!.menuPrice.toLocaleString()}</TableCell>
-                      <TableCell className="text-right">{menuOrderInfo!.quantity}</TableCell>
-                      <TableCell className="text-right">{menuOrderInfo!.totalPrice.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <div className="text-right">
-                <span className="text-right text-lg mr-2">총액</span>
-                <span className="text-right text-2xl font-bold">
-                  {menuOrderInfos.reduce((acc, menuOrderInfo) => acc + menuOrderInfo!.totalPrice, 0).toLocaleString()} 원
-                </span>
-              </div>
-              <DialogFooter className="h-fit fr *:flex-1 *:mx-2 *:h-14 *:rounded-2xl *:text-lg">
-                <Button variant="outline" onClick={handleClose}>취소</Button>
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={handleConfirm}>주문하기</Button>
-              </DialogFooter>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-      {modalMenuOrder && (
-        <OrderUpdateModal
-          menuOrder={modalMenuOrder}
-          openState={modalOpenState}
-          setOpenState={setModalOpenState}
-        />
-      )}
-      <OrderConfirmModal
-        openState={confirmModalOpenState}
-        setOpenState={setConfirmModalOpenState}
-        setPurchaseModalOpenState={setPurchaseModalOpenState}
-      />
-    </>
-  )
+    <Dialog open={openState} onOpenChange={handleClose}>
+      <DialogContent className="w-[96%] border-blue-500 border-2 rounded-xl">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold">주문을 진행할까요?</DialogTitle>
+          <DialogDescription className="fc text-md !mt-4 *:my-2">
+            <span>⋅ 꼭! 제공드리는 토스 링크를 통해서 <b className="dangerTXT">금액을 절대 변경하지 말고</b> 입금해주세요.</span>
+            <span>⋅ 입금 전까지 다른 주문이 불가하며, <b className="dangerTXT">5분 동안 입금되지 않을 경우 주문이 자동취소</b>됩니다.</span>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="fr *:flex-1 *:mx-2 *:h-14 *:rounded-2xl *:text-lg">
+          <Button variant="outline" onClick={handleClose}>취소</Button>
+          <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={handleConfirm}>주문하기</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog >
+  );
 }

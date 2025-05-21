@@ -3,7 +3,7 @@ import * as TableRequest from 'shared/api/types/requests/table';
 import * as TableResponse from 'shared/api/types/responses/table';
 import queryStore from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
-import { Table } from 'db/schema';
+import useCartStore from './cart.store';
 
 type TableState = {
   clientTable: TableResponse.ClientGet["result"] | null;
@@ -105,7 +105,10 @@ const useTableStore = create<TableState>((set, get) => ({
     method: "get",
     query,
     setter: set,
-    onSuccess: (res) => set({ clientTable: res.result }),
+    onSuccess: (res) => {
+      set({ clientTable: res.result });
+      set({ orders: res.result.tableContexts[0].orders });
+    },
   }),
 
   _setTables: (tables: TableResponse.AdminGet["result"]) => set({ tables }),

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button"
-import OrderModal from "./order.modal";
+import CartModal from "./cart.modal";
 import useCartStore from "~/stores/cart.store";
 import useTableStore from "~/stores/table.store";
 import PurchaseModal from "./purchase.modal";
@@ -30,7 +30,7 @@ export default function Footer() {
             <Button
               onClick={() => setOrderModalOpen(true)}
               className="flex-1 h-full rounded-3xl bg-blue-500 text-white text-2xl hover:bg-blue-600"
-            >주문하기
+            >장바구니
               {menuOrders.length > 0 && (
                 <span className="block -mr-4 w-7 h-7 text-lg text-center text-blue-600 bg-white rounded-full">{menuOrders.length}</span>
               )}
@@ -41,9 +41,10 @@ export default function Footer() {
           openState={purchaseModalOpen}
           setOpenState={setPurchaseModalOpen}
         />
-        <OrderModal
+        <CartModal
           openState={orderModalOpen}
           setOpenState={setOrderModalOpen}
+          setPurchaseModalOpenState={setPurchaseModalOpen}
         />
       </div>
     </>

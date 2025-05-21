@@ -7,7 +7,7 @@ import useCartStore from "~/stores/cart.store";
 import * as MenuResponse from "shared/api/types/responses/menu";
 import { MinusIcon, Plus, PlusIcon } from "lucide-react";
 
-export default function OrderAddModal({
+export default function CartAddModal({
   menu,
   openState, setOpenState,
 }: {
