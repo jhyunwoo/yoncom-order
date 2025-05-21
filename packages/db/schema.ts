@@ -1,7 +1,6 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { generateId } from "lucia";
-import { v4 as uuidv4 } from "uuid";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 
 export const userRole = {
   UNVERIFIED: "UNVERIFIED",
@@ -16,14 +15,6 @@ export const menuOrderStatus = {
 } as const;
 export type MenuOrderStatus =
   (typeof menuOrderStatus)[keyof typeof menuOrderStatus];
-
-export const paymentMethod = {
-  NONE: "NONE",
-  CASH: "CASH",
-  TRANSFER: "TRANSFER",
-  AUTO_TRANSFER: "AUTO_TRANSFER",
-} as const;
-export type PaymentMethod = (typeof paymentMethod)[keyof typeof paymentMethod];
 
 export const sessions = sqliteTable("sessions", {
   id: text("id").primaryKey().notNull(),
@@ -228,8 +219,9 @@ export const payments = sqliteTable("payments", {
     .$defaultFn(() => generateId(15)),
   paid: integer("paid", { mode: "boolean" }).notNull().default(false),
   amount: integer("amount").notNull(),
+    bank: text("bank"),
+  depositor: text("depositor"),
   orderId: text("orderId")
-    .notNull()
     .references(() => orders.id),
   createdAt: integer("createdAt")
     .notNull()
