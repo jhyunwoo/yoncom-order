@@ -10,7 +10,7 @@
     {
       "binding": "DB",
       "database_name": "yoncom-order-db",
-      "database_id": "<CLOUDFLARE_DATABASE_ID>",
+      "database_id": "8ed44017-94a9-48cb-a4bd-182767bcbaac",
       "migrations_dir": "../../packages/db/.migrations"
     }
   ]

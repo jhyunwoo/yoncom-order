@@ -6,7 +6,6 @@ import * as OrderResponse from "shared/api/types/responses/order";
 import ControllerResult from "api/types/controller";
 import { eq, inArray } from "drizzle-orm";
 
-// TODO: 주문 가능 수량 체크 필요
 export const create = async (
   db: QueryDB.DB,
   query: OrderRequest.CreateQuery
@@ -111,7 +110,7 @@ export const create = async (
   }
 };
 
-// TODO: 뭔갈 해야함. 하여튼 이거 아님.
+
 export const get = async (
   db: QueryDB.DB,
   query: OrderRequest.GetQuery
