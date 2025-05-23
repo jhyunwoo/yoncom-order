@@ -1,7 +1,7 @@
 import { Card } from "~/components/ui/card";
 import * as MenuResponse from "shared/api/types/responses/menu";
 import { useState } from "react";
-import CartAddModal from "./cart.add.modal";
+import CartAddModal from "../cart/cart.add.modal";
 
 export default function MenuInstance({ menu }: { menu: MenuResponse.ClientGet["result"][number]["menus"][number] }) {
   const [modalOpen, setModalOpen] = useState(false);

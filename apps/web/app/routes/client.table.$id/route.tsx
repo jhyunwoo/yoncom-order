@@ -2,7 +2,7 @@ import { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import useTableStore from "~/stores/table.store";
 import Header from "./components/header";
-import Menus from "./components/menus";
+import Menus from "./components/menu/menus";
 import ShopIntro from "./components/shop.intro";
 import Footer from "./components/footer";
 import useMenuStore from "~/stores/menu.store";

@@ -4,13 +4,11 @@ import * as OrderResponse from "shared/api/types/responses/order";
 import queryStore from "~/lib/query";
 import useTableStore from "./table.store";
 import { toast } from "~/hooks/use-toast";
-import * as TableResponse from "shared/api/types/responses/table";
 
-type MenuOrderQuery = OrderRequest.CreateQuery["menuOrders"][number]
+type MenuOrderQuery = OrderRequest.CreateQuery["menuOrders"][number];
 
 export type CartState = {
   menuOrders: MenuOrderQuery[];
-  orders: TableResponse.ClientGet["result"]["tableContexts"][number]["orders"];
 
   addMenuOrder: (menuOrder: MenuOrderQuery) => void;
   removeMenuOrder: (menuOrderId: string) => void;
@@ -22,7 +20,6 @@ export type CartState = {
 
 const useCartStore = create<CartState>((set, get) => ({
   menuOrders: [],
-  orders: [],
 
   addMenuOrder: (menuOrder: MenuOrderQuery) => {
     const recentOrder = get().menuOrders.find((order) => order.menuId === menuOrder.menuId);

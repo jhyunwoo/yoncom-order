@@ -7,14 +7,18 @@ import { dateDiffString } from "~/lib/date";
 import { useEffect, useState } from "react";
 import * as Schema from "db/schema";
 
-export default function OrderInstance({ order }: { order: TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number] }) {
+export default function OrderInstance({ 
+  order,
+  onClick,
+}: { 
+  order: TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number];
+  onClick: () => void;
+}) {
   const [now, setNow] = useState(0);
 
   const { tables } = useTableStore();
   const { menus } = useMenuStore();
   const table = tables.find((table) => table.tableContexts.some((tableContext) => tableContext.id === order.tableContextId));
-  const tableContext = table!.tableContexts.find((tableContext) => tableContext.id === order.tableContextId);
-  console.debug("tableContext", tableContext);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,8 +32,8 @@ export default function OrderInstance({ order }: { order: TableResponse.AdminGet
 
   return (
     <>
-      <Card className="rounded-3xl my-3">
-        <CardHeader className="py-2 rounded-t-3xl fr justify-between" style={{
+      <Card className="rounded-xl my-3" onClick={onClick}>
+        <CardHeader className="py-2 px-3 rounded-t-xl fr justify-between" style={{
             background: "linear-gradient(to right, #323232, #FFFFFF)",
           }}>
           <CardTitle className="text-white">{table!.name}</CardTitle>

@@ -211,9 +211,6 @@ export const clientGet = async (
   }
 }
 
-// adminGet은 1초마다 일어날 예정
-// 그래서 그냥 이때 order 전부 순회하면서 만료된 order를 파기하는게 나아보임
-// 이거 개위험한데 뭐 어쩔 수 없음 사실 어쩔수 없다기보다 interval 핸들러 만들었다가 서버 꺼졌다 켜지면 답 없음
 export const adminGet = async (
   db: QueryDB.DB,
   userId: string,

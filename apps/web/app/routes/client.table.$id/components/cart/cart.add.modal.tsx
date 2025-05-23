@@ -6,6 +6,8 @@ import { Input } from "~/components/ui/input";
 import useCartStore from "~/stores/cart.store";
 import * as MenuResponse from "shared/api/types/responses/menu";
 import { MinusIcon, Plus, PlusIcon } from "lucide-react";
+import useTableStore from "~/stores/table.store";
+import { toast } from "~/hooks/use-toast";
 
 export default function CartAddModal({
   menu,
@@ -19,10 +21,22 @@ export default function CartAddModal({
   const [invalid, setInvalid] = useState(false);
 
   const { addMenuOrder } = useCartStore();
+  const { clientTable } = useTableStore();
 
   const handleConfirm = async () => {
     if (quantity <= 0 || quantity > menu.quantity) {
       setInvalid(true);
+      return;
+    }
+
+    const inProgressOrder = clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid));
+    if (inProgressOrder) {
+      toast({
+        title: "결제되지 않은 주문이 있습니다.",
+        description: "결제를 완료하고 주문해주세요.",
+        variant: "destructive",
+      });
+      handleClose();
       return;
     }
 

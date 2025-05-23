@@ -1,21 +1,30 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button"
-import CartModal from "./cart.modal";
+import CartModal from "./cart/cart.modal";
 import useCartStore from "~/stores/cart.store";
 import useTableStore from "~/stores/table.store";
 import PurchaseModal from "./purchase.modal";
+import OrderModal from "./order/order.modal";
+import OrderHistoryModal from "./order/order.history.modal";
 
 export default function Footer() {
   const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const [orderModalOpen, setOrderModalOpen] = useState(false);
+  const [orderHistoryModalOpen, setOrderHistoryModalOpen] = useState(false);
   const { menuOrders } = useCartStore();
   const { clientTable } = useTableStore();
+
+  const quantity = menuOrders.reduce((acc, menuOrder) => acc + menuOrder.quantity, 0);
 
   return (
     <>
       <div className="w-full h-20 fr p-1 mb-3">
         <div className="w-fit h-full mr-2">
-          <Button variant="outline" className="w-full h-full text-center text-lg bg-gray-100 hover:bg-gray-200 rounded-3xl">
+          <Button 
+            variant="outline" 
+            className="w-full h-full text-center text-lg bg-gray-100 hover:bg-gray-200 rounded-3xl"
+            onClick={() => setOrderHistoryModalOpen(true)}
+          >
             <span className="leading-6 text-gray-500">이전<br />주문내역</span>
           </Button>
         </div>
@@ -31,13 +40,13 @@ export default function Footer() {
               onClick={() => setOrderModalOpen(true)}
               className="flex-1 h-full rounded-3xl bg-blue-500 text-white text-2xl hover:bg-blue-600"
             >장바구니
-              {menuOrders.length > 0 && (
-                <span className="block -mr-4 w-7 h-7 text-lg text-center text-blue-600 bg-white rounded-full">{menuOrders.length}</span>
+              {quantity > 0 && (
+                <span className="block -mr-4 w-7 h-7 text-lg text-center text-blue-600 bg-white rounded-full leading-6">{quantity}</span>
               )}
             </Button>
           )
         }
-        <PurchaseModal
+        <OrderModal
           openState={purchaseModalOpen}
           setOpenState={setPurchaseModalOpen}
         />
@@ -45,6 +54,10 @@ export default function Footer() {
           openState={orderModalOpen}
           setOpenState={setOrderModalOpen}
           setPurchaseModalOpenState={setPurchaseModalOpen}
+        />
+        <OrderHistoryModal
+          openState={orderHistoryModalOpen}
+          setOpenState={setOrderHistoryModalOpen}
         />
       </div>
     </>

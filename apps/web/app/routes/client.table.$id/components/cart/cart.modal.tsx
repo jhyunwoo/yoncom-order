@@ -6,8 +6,8 @@ import { DialogContent } from "~/components/ui/dialog";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import useCartStore, { CartState } from "~/stores/cart.store";
 import useMenuStore from "~/stores/menu.store";
-import OrderUpdateModal from "./order.update.modal";
-import OrderModal from "./order.modal";
+import OrderUpdateModal from "../order/order.update.modal";
+import OrderModal from "../order/order.modal";
 
 export default function CartModal({
   openState, setOpenState,
@@ -22,7 +22,7 @@ export default function CartModal({
   const [modalMenuOrder, setModalMenuOrder] = useState<CartState["menuOrders"][number] | null>(null);
 
   const { clientMenuCategories } = useMenuStore();
-  const { menuOrders } = useCartStore();
+  const { menuOrders, purchaseMenuOrders } = useCartStore();
 
   const menus = clientMenuCategories?.flatMap((menuCategory) => menuCategory.menus) ?? [];
   const menuOrderInfos = menuOrders.map((menuOrder) => {
@@ -42,6 +42,7 @@ export default function CartModal({
     || menuOrderInfos.some((menuOrderInfo) => menuOrderInfo === null)
 
   const handleConfirm = () => {
+    purchaseMenuOrders();
     setConfirmModalOpenState(true);
     setOpenState(false);
   }
@@ -63,14 +64,14 @@ export default function CartModal({
           ) : (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl">주문 확인</DialogTitle>
+                <DialogTitle className="text-2xl">장바구니</DialogTitle>
                 <DialogDescription className="text-md text-center">주문을 수정하려면 주문 목록을 클릭하세요.</DialogDescription>
               </DialogHeader>
               <Table>
                 <TableHeader className="bg-gray-200">
                   <TableRow>
                     {/* <TableHead></TableHead> */}
-                    <TableHead className="!text-left font-bold">메뉴{"".repeat(100)}</TableHead>
+                    <TableHead className="!text-left font-bold">메뉴</TableHead>
                     <TableHead className="!text-right">단가</TableHead>
                     <TableHead className="!text-right">수량</TableHead>
                     <TableHead className="!text-right">가격</TableHead>
@@ -120,7 +121,6 @@ export default function CartModal({
       <OrderModal
         openState={confirmModalOpenState}
         setOpenState={setConfirmModalOpenState}
-        setPurchaseModalOpenState={setPurchaseModalOpenState}
       />
     </>
   )
