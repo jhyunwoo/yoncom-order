@@ -26,7 +26,7 @@ export default function Inventories() {
           <Button onClick={() => setCreateMenuModalOpen(true)}>메뉴 추가</Button>
           <Button variant="outline" onClick={() => setRemoveMenuModalOpen(true)}>메뉴 제거</Button>
         </div>
-        <CardContent className="p-0 overflow-scroll">
+        <CardContent className="p-0 overflow-y-auto">
           <Table className="rounded-xl overflow-hidden">
             <TableHeader>
               <TableRow className="bg-gray-500 *:text-white hover:bg-gray-500">
@@ -47,7 +47,7 @@ export default function Inventories() {
                   }}
                 >
                   <TableCell className="text-start">{menu.name}</TableCell>
-                  <TableCell className="text-center">{menu.quantity}</TableCell>
+                  <TableCell className="text-center border-l-[1px] font-bold">{menu.quantity}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

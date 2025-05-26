@@ -1,10 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import * as MenuResponse from "shared/types/responses/client/menu";
+import * as ClientMenuResponse from "shared/types/responses/client/menu";
 import MenuInstance from "./menu.instance";
 import useMenuStore from "~/stores/menu.store";
 import useTableStore from "~/stores/table.store";
 
-export default function Menus({ menuCategories }: { menuCategories: MenuResponse.ClientGet["result"] }) {
+export default function Menus({ menuCategories }: { menuCategories: ClientMenuResponse.Get["result"] }) {
   const { clientTable } = useTableStore();
 
   return (

@@ -1,13 +1,8 @@
-import { useEffect } from "react";
-import { Button } from "~/components/ui/button";
 import Tables from "./components/table/tables";
 import Orders from "./components/order/orders";
 import Inventories from "./components/inventory/inventories";
 
-// const socket: Socket = io("ws://localhost:8000");
-
 export default function POS() { 
-
   return (
     <div className="w-screen h-screen flex bg-white p-2">
       <div className="w-1/4 h-full">

@@ -3,7 +3,6 @@ import SignIn from "./components/sign-in";
 import { isSignedIn } from "~/lib/auth";
 import SignOut from "./components/sign-out";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { Card } from "~/components/ui/card";
 import SignUp from "./components/sign-up";
 
 export default function Auth() {

@@ -30,7 +30,7 @@ export default function Tables() {
             <Button variant="outline" onClick={() => setRemoveTableModalOpen(true)}>테이블 제거</Button>
           </div>
           {(isLoaded || tables.length > 0) ? (
-            <CardContent className="flex-1 p-2 overflow-y-scroll">
+            <CardContent className="flex-1 p-2 overflow-y-auto">
               <div className={"grid gap-4"} style={{
                 gridTemplateColumns: `repeat(${min(ceil(sqrt(tables.length)), 4)}, minmax(0, 1fr))`,
               }}>

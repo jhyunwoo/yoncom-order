@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import useTableStore from "~/stores/table.store";
 import * as Schema from "db/schema";
 import OrderInstance from "./order.instance";
-import { Divide } from "lucide-react";
 import OrderDetailModal from "./order.detail.modal";
-import * as TableResponse from "shared/types/responses/client/table";
+import * as AdminTableResponse from "shared/types/responses/admin/table";
 
 export default function Orders() {
-  const [orderDetail, setOrderDetail] = useState<TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number] | null>(null);
+  const [orderDetail, setOrderDetail] = useState<AdminTableResponse.Get["result"][number]["tableContexts"][number]["orders"][number] | null>(null);
   const [orderDetailModalOpenState, setOrderDetailModalOpenState] = useState(false);
 
   const { tables } = useTableStore();

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DialogContent } from "~/components/ui/dialog";
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import useCartStore, { CartState } from "~/stores/cart.store";
 import useMenuStore from "~/stores/menu.store";
 import OrderUpdateModal from "../order/order.update.modal";

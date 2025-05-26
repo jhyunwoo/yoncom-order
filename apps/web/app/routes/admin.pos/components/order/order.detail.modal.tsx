@@ -1,11 +1,10 @@
 
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DialogContent } from "~/components/ui/dialog";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import useMenuStore from "~/stores/menu.store";
-import * as TableResponse from "shared/types/responses/client/table";
+import * as AdminTableResponse from "shared/types/responses/admin/table";
 
 export default function OrderDetailModal({
   openState, setOpenState,
@@ -13,9 +12,9 @@ export default function OrderDetailModal({
 }: {
   openState: boolean;
   setOpenState: (open: boolean) => void;
-  order: TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number];
+  order: AdminTableResponse.Get["result"][number]["tableContexts"][number]["orders"][number];
 }) {
-  const { menuCategories, menus } = useMenuStore();
+  const { menus } = useMenuStore();
 
   const menuOrderInfos = order.menuOrders.map((menuOrder) => {
     const menu = menus.find((menu) => menu.id === menuOrder.menuId);

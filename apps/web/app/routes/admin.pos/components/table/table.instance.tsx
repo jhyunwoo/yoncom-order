@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import * as TableResponse from "shared/types/responses/client/table";
+import * as AdminTableResponse from "shared/types/responses/admin/table";
 import TableSetModal from "./table.set.modal";
 import * as Schema from "db/schema";
-import useTableStore from "~/stores/table.store";
 import { dateDiffString } from "~/lib/date";
 import useMenuStore from "~/stores/menu.store";
 import { TimerIcon } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 
 export default function TableInstance({
   table
 }: {
-  table: TableResponse.AdminGet["result"][0]
+  table: AdminTableResponse.Get["result"][0]
 }) {
   const activeTableContext = table.tableContexts.find((tableContext) => tableContext.deletedAt === null);
   const inUse = activeTableContext !== undefined;

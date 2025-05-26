@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import useTableStore from "~/stores/table.store";
 import useMenuStore from "~/stores/menu.store";
 import MenuInstance from "./menu.instance";

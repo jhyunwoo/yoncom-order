@@ -1,10 +1,6 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
-import useMenuStore from "~/stores/menu.store";
-import useTableStore from "~/stores/table.store";
-import * as TableResponse from "shared/types/responses/client/table";
-import { dateDiffString } from "~/lib/date";
 import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
+import { dateDiffString } from "~/lib/date";
 import * as Schema from "db/schema";
 
 export default function MenuInstance({ 

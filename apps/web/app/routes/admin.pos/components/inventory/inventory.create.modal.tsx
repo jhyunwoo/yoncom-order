@@ -1,13 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import useTableStore from "~/stores/table.store";
-import * as MenuResponse from "shared/types/responses/client/menu";
-import { Menu } from "db/schema";
 import useMenuStore from "~/stores/menu.store";
-import { API_BASE_URL } from "shared/constants";
 import { Checkbox } from "~/components/ui/checkbox";
 
 export default function InventoryCreateModal({

@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Input } from "~/components/ui/input";
 import { signUp } from "~/lib/auth";
 
-
 export default function SignUp() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");

@@ -1,12 +1,12 @@
 import { Card } from "~/components/ui/card";
-import * as MenuResponse from "shared/types/responses/client/menu";
+import * as ClientMenuResponse from "shared/types/responses/client/menu";
 import { useState } from "react";
 import CartAddModal from "../cart/cart.add.modal";
 import useMenuStore from "~/stores/menu.store";
 import useTableStore from "~/stores/table.store";
 import { toast } from "~/hooks/use-toast";
 
-export default function MenuInstance({ menu }: { menu: MenuResponse.ClientGet["result"][number]["menus"][number] }) {
+export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["result"][number]["menus"][number] }) {
   const [modalOpen, setModalOpen] = useState(false);
   const { clientTable } = useTableStore();
 
