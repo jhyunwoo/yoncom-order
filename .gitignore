@@ -3,6 +3,7 @@ node_modules
 .vscode
 packages/db/.env
 
+wrangler.jsonc
 wrangler.toml
 .wrangler
 .migrations

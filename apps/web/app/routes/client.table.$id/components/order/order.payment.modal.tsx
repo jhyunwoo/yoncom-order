@@ -7,7 +7,6 @@ import { QRCodeSVG } from "qrcode.react";
 import { dateDiffString } from "~/lib/date";
 import { ClipboardPasteIcon, LinkIcon, ListIcon } from "lucide-react";
 
-
 export default function OrderPaymentModal({
   openState, setOpenState,
   amount,
@@ -16,6 +15,8 @@ export default function OrderPaymentModal({
   setOpenState: (open: boolean) => void;
   amount: number;
 }) {
+  const { clientTable } = useTableStore();
+
   const copyAccount = () => {
     navigator.clipboard.writeText("국민은행 111102-04-273566");
     toast({
@@ -51,7 +52,7 @@ export default function OrderPaymentModal({
                   onClick={copyAccount}
                   className="fr w-full oveflow-hidden rounded-lg bg-gray-200 p-2 justify-center mb-2 items-center"
                 >
-                  <span className="truncate text-gray-600 text-xl font-semibold">국민은행 111102-04-273566</span>
+                  <span className="truncate text-gray-600 text-xl font-semibold hover:cursor-pointer">국민은행 111102-04-273566</span>
                   <ClipboardPasteIcon className="text-gray-600 scale-75 w-fit mt-[2px]" />
                 </div>
               </div>
@@ -61,7 +62,7 @@ export default function OrderPaymentModal({
                   onClick={copyAmount}
                   className="fr w-full oveflow-hidden rounded-lg bg-blue-100 p-2 justify-center mb-2 items-center"
                 >
-                  <span className="truncate text-blue-500 text-3xl font-bold">{amount.toLocaleString()}원</span>
+                  <span className="truncate text-blue-500 text-3xl font-bold hover:cursor-pointer">{amount.toLocaleString()}원</span>
                   <ClipboardPasteIcon className="text-blue-500 w-fit scale-110 ml-2 mt-[2px]" />
                 </div>
               </div>

@@ -47,7 +47,7 @@ body {
   border-color: rgb(191, 128, 0) !important;
 }
 .warningBG {
-  background: linear-gradient(135deg, rgb(191, 128, 0) 0%, rgb(191, 166, 0) 100%) !important;
+  background: linear-gradient(135deg, rgb(191, 128, 0) 0%, rgb(191, 185, 0) 100%) !important;
 }
 
 .dangerTXT {

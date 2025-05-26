@@ -8,6 +8,8 @@ import useCartStore, { CartState } from "~/stores/cart.store";
 import useMenuStore from "~/stores/menu.store";
 import OrderUpdateModal from "../order/order.update.modal";
 import OrderModal from "../order/order.modal";
+import useTableStore from "~/stores/table.store";
+import { toast } from "~/hooks/use-toast";
 
 export default function CartModal({
   openState, setOpenState,
@@ -23,6 +25,7 @@ export default function CartModal({
 
   const { clientMenuCategories } = useMenuStore();
   const { menuOrders, purchaseMenuOrders } = useCartStore();
+  const { clientTable } = useTableStore();
 
   const menus = clientMenuCategories?.flatMap((menuCategory) => menuCategory.menus) ?? [];
   const menuOrderInfos = menuOrders.map((menuOrder) => {
@@ -41,8 +44,38 @@ export default function CartModal({
   const invalidMenuOrder = menuOrderInfos.length === 0
     || menuOrderInfos.some((menuOrderInfo) => menuOrderInfo === null)
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    await useMenuStore.getState().clientLoad({ userId: clientTable?.userId ?? "" });
+    const updatedMenuCategories = useMenuStore.getState().clientMenuCategories;
+    const updatedMenuState = updatedMenuCategories?.flatMap((m) => m.menus);
+    
+    for (const menuOrder of menuOrders) {
+      const menu = updatedMenuState?.find((m) => m.id === menuOrder.menuId);
+      console.debug("menu", menu);
+      if (!menu) {
+        toast({
+          title: "메뉴가 삭제되었습니다.",
+          description: "다른 메뉴를 주문해주세요.",
+          variant: "destructive",
+        });
+        useCartStore.getState().removeMenuOrder(menuOrder.menuId);
+        return;
+      }
+      if (!menu.available || menu.quantity <= 0) {
+        toast({
+          title: "메뉴가 품절 또는 비활성화 되었습니다.",
+          description: "다른 메뉴를 주문해주세요.",
+          variant: "destructive",
+        });
+        useCartStore.getState().removeMenuOrder(menuOrder.menuId);
+        return;
+      }
+    }
+
     purchaseMenuOrders();
+    useTableStore.getState().clientGetTable({
+      tableId: clientTable!.id,
+    });
     setConfirmModalOpenState(true);
     setOpenState(false);
   }

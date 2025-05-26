@@ -5,17 +5,29 @@ import TableSetModal from "./table.set.modal";
 import * as Schema from "db/schema";
 import useTableStore from "~/stores/table.store";
 import { dateDiffString } from "~/lib/date";
-// import { diffString } from "~/utils/date";
+import useMenuStore from "~/stores/menu.store";
+import { TimerIcon } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 
 export default function TableInstance({
   table
-}: { 
+}: {
   table: TableResponse.AdminGet["result"][0]
 }) {
   const activeTableContext = table.tableContexts.find((tableContext) => tableContext.deletedAt === null);
   const inUse = activeTableContext !== undefined;
   const [modalOpen, setModalOpen] = useState(false);
   const [now, setNow] = useState(0);
+
+  const { menus } = useMenuStore();
+  const menuId2menu = (menuId: string) => menus.find((menu) => menu.id === menuId);
+  const menuOrders = activeTableContext?.orders.map((order) => order.menuOrders).flat() || [];
+  const amount = menuOrders.reduce((acc, menuOrder) => acc + (menuId2menu(menuOrder.menuId)!.price * menuOrder.quantity), 0) || 0;
+
+  const isOnOrder = activeTableContext?.orders.some((order) => 
+    order.paymentId === null 
+    || order.menuOrders.some((menuOrder) => menuOrder.status === Schema.menuOrderStatus.PENDING)
+  ) || false;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,8 +44,8 @@ export default function TableInstance({
       <Card className={
         `rounded-2xl aspect-square active:brightness-95 hover:cursor-pointer 
         ${inUse
-            ? "bg-[#D9D9D9]"
-            : "bg-white drop-shadow-lg"
+          ? "bg-[#D9D9D9]"
+          : "bg-white drop-shadow-lg"
         }`
       } style={{
         boxShadow: inUse ? "inset 2px 2px 8px rgba(0,0,0,0.2)" : "none",
@@ -49,16 +61,37 @@ export default function TableInstance({
 
         { /* CardContent: 테이블이 사용 중일때 표시 */
           inUse && (
-            <CardContent className={`${!inUse ? `hidden` : `full p-0`}`}>
-              <span className="block pl-3 pt-1 text-lg font-bold">{table.name}</span>
-            <span className="block pl-3 -mt-1 text-sm font-normal text-neutral-500">{
-              dateDiffString(now, activeTableContext.createdAt).startsWith("-")
-                ? "00:00"
-                : dateDiffString(now, activeTableContext.createdAt)
-            }
-            </span>
-          </CardContent>
-        )}
+            <CardContent className={`${!inUse ? `hidden` : `full p-0 fc`}`}>
+              <div className="w-full h-fit fc justify-between px-3 my-2 *:-mt-1">
+                <span className="fr justify-between block text-lg font-bold">
+                  <span>{table.name}</span>
+                  {isOnOrder && <TimerIcon className="mt-1"/>}
+                </span>
+                <span className="block font-normal text-neutral-500">{
+                  dateDiffString(now, activeTableContext.createdAt).startsWith("-")
+                    ? "00:00"
+                    : dateDiffString(now, activeTableContext.createdAt)
+                }
+                </span>
+              </div>
+              <div className="w-full flex-1 overflow-y-auto fc bg-[#F2F2F2]">
+                <Table>
+                  <TableBody>
+                    {menuOrders.filter(menuOrder => menuOrder.status === Schema.menuOrderStatus.PENDING).map((menuOrder) => (
+                      <TableRow key={menuOrder.id} className="*:py-1">
+                        <TableCell>⌛ {menuId2menu(menuOrder.menuId)!.name}</TableCell>
+                        <TableCell className="font-bold">{menuOrder.quantity}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="w-full h-fit fr font-bold justify-between px-3 my-2">
+                <span>{table.seats}인석</span>
+                <span>{amount.toLocaleString()} 원</span>
+              </div>
+            </CardContent>
+          )}
       </Card>
       <TableSetModal
         table={table}

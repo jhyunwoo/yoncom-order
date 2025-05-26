@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import Tables from "./components/table/tables";
 import Orders from "./components/order/orders";
+import Inventories from "./components/inventory/inventories";
 
 // const socket: Socket = io("ws://localhost:8000");
 
@@ -16,7 +17,7 @@ export default function POS() {
         <Tables></Tables>
       </div>
       <div className="w-1/4 h-full flex items-center justify-center">
-        <Button variant="default">Click Me</Button>
+        <Inventories></Inventories>
       </div>
     </div>
   )

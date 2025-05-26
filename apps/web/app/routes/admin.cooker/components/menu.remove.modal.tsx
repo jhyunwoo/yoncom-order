@@ -4,56 +4,57 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import useTableStore from "~/stores/table.store";
 import * as Schema from "db/schema";
+import useMenuStore from "~/stores/menu.store";
 
-export default function RemoveTableModal({
+export default function MenuRemoveModal({
   openState, setOpenState,
-  modalClassName,
+  monitoringMenus,
+  setMonitoringMenus,
 }: {
   openState: boolean;
   setOpenState: any;
-  modalClassName?: string;
+  monitoringMenus: string[];
+  setMonitoringMenus: (menus: string[]) => void;
 }) {
-  const [tableId, setTableId] = useState<string>("");
+  const { menus } = useMenuStore();
+
+  const [monitoringMenu, setMonitoringMenu] = useState<string>("");
   const [invalid, setInvalid] = useState(false);
 
-  const { tables, removeTable } = useTableStore();
-
   const handleConfirm = async () => {
-    if (tableId.length === 0) {
+    if (monitoringMenu.length === 0) {
       setInvalid(true);
       return;
     }
 
-    await removeTable({ tableId });
+    setMonitoringMenus(monitoringMenus.filter((menuId) => menuId !== monitoringMenu));
     handleClose();
   }
 
   const handleClose = () => {
-    setTableId("");
+    setMonitoringMenu("");
     setInvalid(false);
     setOpenState(false);
   }
 
   return (
     <Dialog open={openState} onOpenChange={handleClose}>
-      <DialogContent className={modalClassName}>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>테이블 제거</DialogTitle>
-          <DialogDescription>제거할 테이블을 선택하세요. 활성화 중인 테이블은 제거할 수 없습니다.</DialogDescription>
+          <DialogTitle>메뉴 제거</DialogTitle>
+          <DialogDescription>모니터링에서 제외할 메뉴를 선택하세요.</DialogDescription>
         </DialogHeader>
-        <Select value={tableId} onValueChange={setTableId}>
+        <Select value={monitoringMenu} onValueChange={setMonitoringMenu}>
           <SelectTrigger>
-            <SelectValue placeholder="제거할 테이블을 선택하세요"></SelectValue>
+            <SelectValue placeholder="모니터링에서 제외할 메뉴를 선택하세요"></SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {tables
-              .filter((table) => !table.tableContexts.some((tableContext) => tableContext.deletedAt === null))
-              .map((table) => 
-                <SelectItem key={table.id} value={table.id}>{table.name}</SelectItem>
+            {monitoringMenus.map((menuId) => 
+              <SelectItem key={menuId} value={menuId}>{menus.find((menu) => menu.id === menuId)?.name}</SelectItem>
             )}
           </SelectContent>
         </Select>
-        <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 테이블을 선택하세요.</DialogDescription>
+        <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 메뉴를 선택하세요.</DialogDescription>
         <DialogFooter className="">
           <Button onClick={handleClose} variant="outline">취소</Button>
           <Button onClick={handleConfirm}>확인</Button>

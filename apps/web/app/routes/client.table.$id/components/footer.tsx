@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button"
 import CartModal from "./cart/cart.modal";
 import useCartStore from "~/stores/cart.store";
@@ -12,9 +12,23 @@ export default function Footer() {
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [orderHistoryModalOpen, setOrderHistoryModalOpen] = useState(false);
   const { menuOrders } = useCartStore();
-  const { clientTable } = useTableStore();
+  const { clientTable, clientGetTable } = useTableStore();
 
   const quantity = menuOrders.reduce((acc, menuOrder) => acc + menuOrder.quantity, 0);
+
+  const inProgressOrderRemain = clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid));
+  useEffect(() => {
+    if (inProgressOrderRemain) {
+      const interval = setInterval(() => {
+        if (inProgressOrderRemain) {
+          clientGetTable({
+            tableId: clientTable!.id,
+          });
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [clientTable]);
 
   return (
     <>
@@ -28,11 +42,19 @@ export default function Footer() {
             <span className="leading-6 text-gray-500">이전<br />주문내역</span>
           </Button>
         </div>
-        {clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid))
+        {inProgressOrderRemain
           ? (
             <Button
-              onClick={() => setPurchaseModalOpen(true)}
-              className="fc flex-1 h-full rounded-3xl bg-gray-500 hover:bg-gray-500 text-white text-2xl hover:cursor-default"
+              onClick={async () => {
+                await useTableStore.getState().clientGetTable({
+                  tableId: clientTable!.id,
+                });
+                const newClientTable = useTableStore.getState().clientTable;
+                if (newClientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid))) {
+                  setPurchaseModalOpen(true);
+                }
+              }}
+              className="fc flex-1 h-full rounded-3xl bg-gray-500 text-white text-2xl hover:cursor-pointer hover:bg-gray-600"
             >결제하기<br /><span className="-mt-2 text-sm text-gray-300">결제 대기중인 항목이 있습니다.</span>
             </Button>
           ) : (

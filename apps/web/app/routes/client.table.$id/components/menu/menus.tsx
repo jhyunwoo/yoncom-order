@@ -1,8 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import * as MenuResponse from "shared/api/types/responses/menu";
 import MenuInstance from "./menu.instance";
+import useMenuStore from "~/stores/menu.store";
+import useTableStore from "~/stores/table.store";
 
 export default function Menus({ menuCategories }: { menuCategories: MenuResponse.ClientGet["result"] }) {
+  const { clientTable } = useTableStore();
+
   return (
     <Tabs
       className="w-full flex-1 fc overflow-hidden pb-2"
@@ -14,12 +18,15 @@ export default function Menus({ menuCategories }: { menuCategories: MenuResponse
             key={menuCategory.id} 
             value={menuCategory.id}
             className="text-lg font-semibold hover:bg-blue-100 hover:text-blue-600 m-1"
+            onClick={() => {
+              useMenuStore.getState().clientLoad({ userId: clientTable?.userId ?? "" });
+            }}
           >{menuCategory.name}</TabsTrigger>
         )}
       </TabsList>
       {menuCategories.map((menuCategory) => (
         <TabsContent className="flex-1 overflow-y-scroll" key={menuCategory.id} value={menuCategory.id}>
-          {menuCategory.menus.map((menu) =>
+          {menuCategory.menus.filter((menu) => !menu.deletedAt).map((menu) =>
             <MenuInstance key={menu.id} menu={menu} />
           )}
         </TabsContent>
