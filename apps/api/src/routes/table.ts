@@ -2,8 +2,6 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
-import { vacateValidation } from "shared/api/types/requests/admin/table";
-import { vacateTable } from "api/controller/admin/table.controller";
 import { getValidation } from "shared/api/types/requests/table";
 import { getTable } from "api/controller/table.controller";
 import { ContentfulStatusCode } from "hono/utils/http-status";
@@ -18,10 +16,4 @@ table.get("/", zValidator("query", getValidation), async (c) => {
   return c.json({ result, error }, status as ContentfulStatusCode);
 });
 
-table.put("/vacate", zValidator("json", vacateValidation), async (c) => {
-  const db = initializeDb(c.env.DB);
-
-  const { result, error, status } = await vacateTable(db, c.req.valid("json"));
-  return c.json({ result, error }, status);
-});
 export default table;

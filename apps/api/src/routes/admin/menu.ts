@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
-import * as MenuRequest from "shared/api/types/requests/admin/menu";
 import {
   adminCreateMenu,
   adminDeleteMenu,
@@ -11,53 +10,46 @@ import {
   adminUpdateMenu,
 } from "api/controller/admin/menu.controller";
 import { ContentfulStatusCode } from "hono/utils/http-status";
+import {
+  createValidation,
+  removeValidation,
+  updateValidation,
+} from "shared/api/types/requests/admin/menu";
 
 const adminMenu = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Create Menu
-adminMenu.post(
-  "/",
-  zValidator("json", MenuRequest.createValidation),
-  async (c) => {
-    const db = initializeDb(c.env.DB);
+adminMenu.post("/", zValidator("json", createValidation), async (c) => {
+  const db = initializeDb(c.env.DB);
 
-    const { result, error, status } = await adminCreateMenu(
-      db,
-      c.req.valid("json"),
-    );
-    return c.json({ result, error }, status as ContentfulStatusCode);
-  },
-);
+  const { result, error, status } = await adminCreateMenu(
+    db,
+    c.req.valid("json"),
+  );
+  return c.json({ result, error }, status as ContentfulStatusCode);
+});
 
 // Update Menu
-adminMenu.put(
-  "/",
-  zValidator("json", MenuRequest.updateValidation),
-  async (c) => {
-    const db = initializeDb(c.env.DB);
+adminMenu.put("/", zValidator("json", updateValidation), async (c) => {
+  const db = initializeDb(c.env.DB);
 
-    const { result, error, status } = await adminUpdateMenu(
-      db,
-      c.req.valid("json"),
-    );
-    return c.json({ result, error }, status as ContentfulStatusCode);
-  },
-);
+  const { result, error, status } = await adminUpdateMenu(
+    db,
+    c.req.valid("json"),
+  );
+  return c.json({ result, error }, status as ContentfulStatusCode);
+});
 
 // Remove Menu
-adminMenu.delete(
-  "/",
-  zValidator("json", MenuRequest.removeValidation),
-  async (c) => {
-    const db = initializeDb(c.env.DB);
+adminMenu.delete("/", zValidator("json", removeValidation), async (c) => {
+  const db = initializeDb(c.env.DB);
 
-    const { result, error, status } = await adminDeleteMenu(
-      db,
-      c.req.valid("json"),
-    );
-    return c.json({ result, error }, status as ContentfulStatusCode);
-  },
-);
+  const { result, error, status } = await adminDeleteMenu(
+    db,
+    c.req.valid("json"),
+  );
+  return c.json({ result, error }, status as ContentfulStatusCode);
+});
 
 adminMenu.get("/", async (c) => {
   const db = initializeDb(c.env.DB);

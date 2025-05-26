@@ -50,11 +50,6 @@ export const users = sqliteTable("users", {
   deletedAt: integer("deletedAt"),
 });
 
-export const userRelations = relations(users, ({ many }) => ({
-  menuCategories: many(menuCategories),
-  tables: many(tables),
-}));
-
 export type User = typeof users.$inferSelect;
 
 export const menuCategories = sqliteTable("menuCategories", {
@@ -178,7 +173,6 @@ export const orders = sqliteTable("orders", {
   tableContextId: text("tableContextId")
     .notNull()
     .references(() => tableContexts.id),
-  paymentId: text("paymentId"),
   createdAt: integer("createdAt")
     .notNull()
     .$defaultFn(() => Date.now()),
@@ -187,6 +181,15 @@ export const orders = sqliteTable("orders", {
     .$defaultFn(() => Date.now()),
   deletedAt: integer("deletedAt"),
 });
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  tableContext: one(tableContexts, {
+    fields: [orders.tableContextId],
+    references: [tableContexts.id],
+  }),
+  payment: one(payments),
+  menuOrders: many(menuOrders),
+}));
 
 export type Order = typeof orders.$inferSelect;
 
@@ -209,8 +212,6 @@ export const payments = sqliteTable("payments", {
   deletedAt: integer("deletedAt"),
 });
 
-export type Payment = typeof payments.$inferSelect;
-
 export const paymentsRelations = relations(payments, ({ one }) => ({
   order: one(orders, {
     fields: [payments.orderId],
@@ -218,17 +219,7 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
   }),
 }));
 
-export const ordersRelations = relations(orders, ({ one, many }) => ({
-  tableContext: one(tableContexts, {
-    fields: [orders.tableContextId],
-    references: [tableContexts.id],
-  }),
-  payment: one(payments, {
-    fields: [orders.paymentId],
-    references: [payments.id],
-  }),
-  menuOrders: many(menuOrders),
-}));
+export type Payment = typeof payments.$inferSelect;
 
 export const menuOrders = sqliteTable("menuOrders", {
   id: text("id")

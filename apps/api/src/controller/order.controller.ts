@@ -3,7 +3,14 @@ import * as QueryDB from "api/lib/queryDB";
 import * as OrderResponse from "shared/api/types/responses/order";
 import ControllerResult from "api/types/controller";
 import { and, eq, inArray, isNull } from "drizzle-orm";
-import { menuOrders, orders, payments, tableContexts, tables } from "db/schema";
+import {
+  menuOrders,
+  menus,
+  orders,
+  payments,
+  tableContexts,
+  tables,
+} from "db/schema";
 import { CreateOrder, DeleteOrder } from "shared/api/types/requests/order";
 
 export const createOrder = async (
@@ -14,27 +21,31 @@ export const createOrder = async (
 
   try {
     // 해당 테이블 존재 여부 확인
+    console.log("Checking table existence");
     const table = await db.query.tables.findFirst({
-      where: eq(tables.id, tableId),
+      where: and(eq(tables.id, tableId), isNull(tables.deletedAt)),
     });
     if (!table) return { error: "Table Not Found", status: 409 };
 
     // 해당 테이블에 활성 context가 없다면 occupy
-    const isTablesOnActivate = await db.query.tableContexts.findFirst({
+    console.log("Checking table context existence");
+    let tableContextsData = await db.query.tableContexts.findFirst({
       where: and(
         eq(tableContexts.tableId, table.id),
         isNull(tableContexts.deletedAt),
       ),
     });
-    if (!isTablesOnActivate) {
-      await db.insert(tableContexts).values({ tableId });
+    if (!tableContextsData) {
+      console.log("Creating new table context");
+      tableContextsData = (
+        await db.insert(tableContexts).values({ tableId }).returning()
+      )[0];
     }
+
     // 활성화되어있는 tableContext에 미결제 주문이 존재하는지
-    const tableContextsData = await db.query.tableContexts.findFirst({
-      where: and(
-        eq(tableContexts.tableId, table.id),
-        isNull(tableContexts.deletedAt),
-      ),
+    console.log("Checking unfinished orders");
+    const checkUnpaidOrder = await db.query.tableContexts.findFirst({
+      where: eq(tableContexts.tableId, tableContextsData.id),
       with: {
         orders: {
           where: and(isNull(orders.deletedAt), eq(payments.paid, false)),
@@ -45,28 +56,28 @@ export const createOrder = async (
       },
     });
 
-    if (!tableContextsData) {
-      return { error: "Table Context Not Found", status: 409 };
-    }
-
-    for (const order of tableContextsData?.orders) {
-      if (order.payment && !order.payment.paid) {
-        return { error: "Unpaid Order Exists", status: 409 };
+    if (checkUnpaidOrder) {
+      for (const order of checkUnpaidOrder?.orders) {
+        if (order.payment && !order.payment.paid) {
+          return { error: "Unpaid Order Exists", status: 409 };
+        }
       }
     }
 
     // 주문에 들어온 메뉴가 모두 존재하는지 확인
+    console.log("Checking menu existence");
     const menuIds = menuOrdersData.map((menuOrder) => menuOrder.menuId);
     const menuData = await db.query.menus.findMany({
-      where: inArray(Schema.menus.id, menuIds),
+      where: and(inArray(menus.id, menuIds), isNull(menus.deletedAt)),
     });
 
     if (menuData.length !== menuIds.length)
       return { error: "Menu Not Found", status: 409 };
 
     // 주문 들어온 메뉴의 수량이 남은 메뉴 수량을 안넘는지 확인
+    console.log("Checking menu quantity");
     const orderedMenuData = await db.query.menuOrders.findMany({
-      where: inArray(menuOrders.id, menuIds),
+      where: and(inArray(menuOrders.id, menuIds), isNull(menuOrders.deletedAt)),
     });
 
     const soldMenuData = orderedMenuData.map((menu) =>
@@ -84,6 +95,7 @@ export const createOrder = async (
     }
 
     // order 생성
+    console.log("Creating order");
     const order = (
       await db
         .insert(orders)
@@ -92,6 +104,7 @@ export const createOrder = async (
     )[0];
 
     // menuOrders 생성
+    console.log("Creating menu orders");
     await db.insert(menuOrders).values(
       menuOrdersData.map((menuOrder) => ({
         ...menuOrder,
@@ -100,27 +113,19 @@ export const createOrder = async (
     );
 
     // payment 생성
-    const payment = (
-      await db
-        .insert(payments)
-        .values({
-          orderId: order.id,
-          amount: menuOrdersData.reduce(
-            (acc, menuOrder) =>
-              acc +
-              menuOrder.quantity *
-                menuData.find((menu) => menu.id === menuOrder.menuId)?.price!,
-            0,
-          ),
-          paid: false,
-        })
-        .returning()
-    )[0];
-
-    await db
-      .update(Schema.orders)
-      .set({ paymentId: payment.id })
-      .where(eq(Schema.orders.id, order.id));
+    console.log("Creating payment");
+    await db.insert(payments).values({
+      orderId: order.id,
+      amount:
+        menuOrdersData.reduce(
+          (acc, menuOrder) =>
+            acc +
+            menuOrder.quantity *
+              menuData.find((menu) => menu.id === menuOrder.menuId)?.price!,
+          0,
+        ) - table.key,
+      paid: false,
+    });
 
     return { result: "Order Created", status: 200 };
   } catch (e) {

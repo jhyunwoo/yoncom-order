@@ -7,15 +7,15 @@ import {
   createValidation,
   removeValidation,
   updateValidation,
+  vacateValidation,
 } from "shared/api/types/requests/admin/table";
 import {
   createTable,
   getTables,
   removeTable,
   updateTable,
+  vacateTable,
 } from "api/controller/admin/table.controller";
-import { occupyValidation } from "shared/api/types/requests/table";
-import { occupyTable } from "api/controller/table.controller";
 import { ContentfulStatusCode } from "hono/utils/http-status";
 
 const adminTable = new Hono<{ Bindings: Bindings; Variables: Variables }>();
@@ -45,10 +45,10 @@ adminTable.put("/", zValidator("json", updateValidation), async (c) => {
 });
 
 // Occupy Table
-adminTable.put("/occupy", zValidator("json", occupyValidation), async (c) => {
+adminTable.put("/vacate", zValidator("json", vacateValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
-  const { result, error, status } = await occupyTable(db, c.req.valid("json"));
+  const { result, error, status } = await vacateTable(db, c.req.valid("json"));
   return c.json({ result, error }, status as ContentfulStatusCode);
 });
 

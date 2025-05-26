@@ -23,7 +23,7 @@ app.use(
     credentials: true, // <-- 이게 핵심
     allowHeaders: ["Content-Type"], // 필요한 헤더 추가
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"], // preflight 대응
-  })
+  }),
 );
 
 // 서버 정상 작동 확인용 API
@@ -31,6 +31,7 @@ const serverStartDate = new Date();
 
 app.get("/api", async (c) => {
   const db = initializeDb(c.env.DB);
+  // TODO: Remove this line in production
   await db.update(users).set({
     role: userRole.ADMIN,
   });
@@ -42,6 +43,5 @@ app.route("/api/auth", auth);
 app.route("/api/menu", menu);
 app.route("/api/order", order);
 app.route("/api/table", table);
-app.route("/order", order);
 
 export default app;
