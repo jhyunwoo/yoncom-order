@@ -24,6 +24,7 @@
     "@types/node": "^22.15.17",
     "concurrently": "^9.1.2",
     "dotenv": "^16.5.0",
+    "prettier": "^3.5.3",
     "typescript": "^5.8.3"
   }
 }

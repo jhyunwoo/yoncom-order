@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import * as Schema from 'db/schema';
-import * as MenuRequest from 'shared/api/types/requests/menu';
+import * as MenuRequest from 'shared/api/types/requests/admin/menu';
 import * as MenuResponse from 'shared/api/types/responses/menu';
-import * as MenuCategoryRequest from 'shared/api/types/requests/menuCategory';
-import * as MenuCategoryResponse from 'shared/api/types/responses/menuCategory';
+import * as MenuCategoryRequest from 'shared/api/types/requests/admin/menuCategory';
+import * as MenuCategoryResponse from 'shared/api/types/responses/admin/menuCategory';
 import queryStore from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
 

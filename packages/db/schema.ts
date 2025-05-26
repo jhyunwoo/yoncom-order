@@ -86,7 +86,7 @@ export const menuCategoriesRelations = relations(
       references: [users.id],
     }),
     menus: many(menus),
-  })
+  }),
 );
 
 export type MenuCategory = typeof menuCategories.$inferSelect;
@@ -101,7 +101,6 @@ export const menus = sqliteTable("menus", {
   description: text("description").notNull(),
   price: integer("price").notNull(),
   quantity: integer("quantity").notNull(),
-
   available: integer("available", { mode: "boolean" }).notNull().default(true),
   menuCategoryId: text("menuCategoryId")
     .notNull()
@@ -132,14 +131,8 @@ export const tables = sqliteTable("tables", {
     .notNull()
     .$defaultFn(() => generateId(15)),
   key: integer("key").notNull(),
-
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   seats: integer("seats").notNull(),
-
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id),
-
   createdAt: integer("createdAt")
     .notNull()
     .$defaultFn(() => Date.now()),
@@ -151,10 +144,6 @@ export const tables = sqliteTable("tables", {
 
 export const tablesRelations = relations(tables, ({ one, many }) => ({
   tableContexts: many(tableContexts),
-  user: one(users, {
-    fields: [tables.userId],
-    references: [users.id],
-  }),
 }));
 
 export type Table = typeof tables.$inferSelect;
@@ -186,7 +175,7 @@ export const tableContextsRelations = relations(
       references: [tables.id],
     }),
     orders: many(orders),
-  })
+  }),
 );
 
 export type TableContext = typeof tableContexts.$inferSelect;
@@ -200,7 +189,6 @@ export const orders = sqliteTable("orders", {
     .notNull()
     .references(() => tableContexts.id),
   paymentId: text("paymentId"),
-
   createdAt: integer("createdAt")
     .notNull()
     .$defaultFn(() => Date.now()),
@@ -219,10 +207,9 @@ export const payments = sqliteTable("payments", {
     .$defaultFn(() => generateId(15)),
   paid: integer("paid", { mode: "boolean" }).notNull().default(false),
   amount: integer("amount").notNull(),
-    bank: text("bank"),
+  bank: text("bank"),
   depositor: text("depositor"),
-  orderId: text("orderId")
-    .references(() => orders.id),
+  orderId: text("orderId").references(() => orders.id),
   createdAt: integer("createdAt")
     .notNull()
     .$defaultFn(() => Date.now()),

@@ -3,7 +3,7 @@ import {Bindings, Variables} from "api/lib/bindings";
 import {zValidator} from "@hono/zod-validator";
 import initializeDb from "api/lib/initialize-db";
 import { payments} from "db/schema";
-import {createValidation} from "shared/api/types/requests/deposit";
+import {createValidation} from "shared/api/types/requests/admin/deposit";
 import {desc, eq} from "drizzle-orm";
 
 const deposit = new Hono<{ Bindings: Bindings; Variables: Variables }>()

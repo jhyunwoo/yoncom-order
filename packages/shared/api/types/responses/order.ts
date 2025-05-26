@@ -10,3 +10,7 @@ export type Get = {
     payment: Schema.Payment;
   };
 }
+
+export type Delete = {
+  result: string;
+}

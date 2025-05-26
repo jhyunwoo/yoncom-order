@@ -1,42 +1,6 @@
-import { z } from "zod";
+import {z} from "zod";
 
-export const createValidation = z.object({
-  menuOptions: z.object({
-    name: z.string().min(1),
-    image: z.string(),
-    description: z.string().min(1),
-    price: z.number().int(),
-    quantity: z.number().int(),
-    menuCategoryId: z.string().length(15),
-    available: z.boolean(),
-  }),
+export const getValidation = z.object({
+    userId: z.string().length(15),
 });
-export type CreateQuery = z.infer<typeof createValidation>;
-
-export const updateValidation = z.object({
-  menuId: z.string().length(15),
-  menuOptions: z.object({
-    name: z.string().min(1),
-    image: z.string(),
-    description: z.string().min(1),
-    price: z.number().int(),
-    quantity: z.number().int(),
-    menuCategoryId: z.string().length(15),
-    available: z.boolean(),
-  }),
-});
-export type UpdateQuery = z.infer<typeof updateValidation>;
-
-export const removeValidation = z.object({
-  menuId: z.string().length(15),
-});
-export type RemoveQuery = z.infer<typeof removeValidation>;
-
-export const clientGetValidation = z.object({
-  userId: z.string().length(15),
-});
-export type ClientGetQuery = z.infer<typeof clientGetValidation>;
-
-export const adminGetValidation = z.object({
-});
-export type AdminGetQuery = z.infer<typeof adminGetValidation>;
+export type ClientGetQuery = z.infer<typeof getValidation>;
