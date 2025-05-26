@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import * as Schema from 'db/schema';
-import * as ClientMenuRequest from 'shared/types/requests/client/menu';
-import * as ClientMenuResponse from 'shared/types/responses/client/menu';
-import * as AdminMenuRequest from 'shared/types/requests/admin/menu';
-import * as AdminMenuResponse from 'shared/types/responses/admin/menu';
-import * as AdminMenuCategoryRequest from 'shared/types/requests/admin/menuCategory';
-import * as AdminMenuCategoryResponse from 'shared/types/responses/admin/menuCategory';
+import * as ClientMenuRequest from "types/requests/client/menu";
+import * as ClientMenuResponse from "types/responses/client/menu";
+import * as AdminMenuRequest from "types/requests/admin/menu";
+import * as AdminMenuResponse from "types/responses/admin/menu";
+import * as AdminMenuCategoryRequest from "types/requests/admin/menuCategory";
+import * as AdminMenuCategoryResponse from "types/responses/admin/menuCategory";
 import queryStore from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
 
