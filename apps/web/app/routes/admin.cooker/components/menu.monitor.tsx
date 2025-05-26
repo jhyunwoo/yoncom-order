@@ -41,7 +41,7 @@ export default function MenuMonitor({
         <CardHeader className="px-2">
           <CardTitle className="text-2xl">{menu.name}</CardTitle>
         </CardHeader>
-        <CardContent className="p-0 overflow-scroll *:hover:cursor-pointer">
+        <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer">
           {menuOrders.map((order) => 
             <MenuInstance 
               key={order.timestamp} 

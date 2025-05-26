@@ -14,7 +14,7 @@ export type CartState = {
   removeMenuOrder: (menuId: string) => void;
   updateMenuOrder: (menuOrderId: string, menuOrder: MenuOrderQuery) => void;
 
-  purchaseMenuOrders: () => Promise<void>;
+  purchaseMenuOrders: () => Promise<ClientOrderResponse.Create | null>;
   clearMenuOrders: () => void;
 }
 
@@ -56,10 +56,10 @@ const useCartStore = create<CartState>((set, get) => ({
         variant: "destructive",
         duration: 3000,
       });
-      return;
+      return null;
     }
 
-    await queryStore<ClientOrderRequest.Create, ClientOrderResponse.Create>({
+    return await queryStore<ClientOrderRequest.Create, ClientOrderResponse.Create>({
       route: "order",
       method: "post",
       query: {

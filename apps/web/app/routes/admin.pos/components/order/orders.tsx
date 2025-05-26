@@ -23,9 +23,9 @@ export default function Orders() {
     <div className="full p-2">
       <Card className="full bg-[#F2F2F2] px-3 fc rounded-3xl">
         <CardHeader className="px-2">
-          <CardTitle className="text-2xl">주문 현황</CardTitle>
+          <CardTitle className="text-2xl">주문 현황 <b className="font-light text-lg">({inProgressOrders.length})</b></CardTitle>
         </CardHeader>
-        <CardContent className="p-0 overflow-scroll *:hover:cursor-pointer">
+        <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {inProgressOrders.map((order) => 
             <OrderInstance 
               key={order.id} 

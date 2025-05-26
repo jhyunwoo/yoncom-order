@@ -8,6 +8,8 @@ import * as ClientMenuResponse from "shared/types/responses/client/menu";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import useTableStore from "~/stores/table.store";
 import { toast } from "~/hooks/use-toast";
+import useMenuStore from "~/stores/menu.store";
+import { useValidateOrder } from "~/hooks/validate-order";
 
 export default function CartAddModal({
   menu,
@@ -20,11 +22,15 @@ export default function CartAddModal({
   const [quantity, setQuantity] = useState<number>(1);
   const [invalid, setInvalid] = useState(false);
 
-  const { addMenuOrder } = useCartStore();
+  const { addMenuOrder, menuOrders } = useCartStore();
   const { clientTable } = useTableStore();
+  const validateOrder = useValidateOrder();
+
+  const recentOrderedQuantity = menuOrders.find((m) => m.menuId === menu.id)?.quantity ?? 0;
+  const maxQuantity = menu.quantity - recentOrderedQuantity;
 
   const handleConfirm = async () => {
-    if (quantity <= 0 || quantity > menu.quantity) {
+    if (quantity <= 0 || quantity > maxQuantity) {
       setInvalid(true);
       return;
     }
@@ -39,6 +45,9 @@ export default function CartAddModal({
       handleClose();
       return;
     }
+
+    const isValid = await validateOrder([{ menuId: menu.id, quantity: quantity + recentOrderedQuantity }]);
+    if (!isValid) return;
 
     addMenuOrder({ menuId: menu.id, quantity });
     handleClose();
@@ -69,17 +78,17 @@ export default function CartAddModal({
           <Input
             type="number"
             min={1}
-            max={menu.quantity}
+            max={maxQuantity}
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
             className="text-center w-16 !text-2xl font-bold h-16 mx-4 input-no-spinner"
           />
           <Button 
-            onClick={() => quantity < menu.quantity && setQuantity(quantity + 1)}
+            onClick={() => quantity < maxQuantity && setQuantity(quantity + 1)}
             className="w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white"
           ><PlusIcon className="scale-150"/></Button>
         </div>
-        <span className="text-sm text-center">주문 가능 수량: {menu.quantity}</span>
+        <span className="text-sm text-center">주문 가능 수량: {maxQuantity}</span>
         <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 수량을 입력하세요.</DialogDescription>
         <DialogFooter className="fr *:flex-1 *:mx-2 *:h-14 *:rounded-2xl *:text-lg">
           <Button variant="outline" onClick={handleClose}>취소</Button>

@@ -45,6 +45,7 @@ const useMenuStore = create<MenuState>((set, get) => ({
     setter: set,
     onSuccess: (res) => set({
       clientMenuCategories: res.result,
+      menus: res.result.flatMap((menuCategory) => menuCategory.menus),
     }),
   }),
 

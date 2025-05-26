@@ -10,6 +10,7 @@ import OrderUpdateModal from "../order/order.update.modal";
 import OrderModal from "../order/order.modal";
 import useTableStore from "~/stores/table.store";
 import { toast } from "~/hooks/use-toast";
+import { useValidateOrder } from "~/hooks/validate-order";
 
 export default function CartModal({
   openState, setOpenState,
@@ -26,6 +27,7 @@ export default function CartModal({
   const { clientMenuCategories } = useMenuStore();
   const { menuOrders, purchaseMenuOrders } = useCartStore();
   const { clientTable } = useTableStore();
+  const validateOrder = useValidateOrder();
 
   const menus = clientMenuCategories?.flatMap((menuCategory) => menuCategory.menus) ?? [];
   const menuOrderInfos = menuOrders.map((menuOrder) => {
@@ -45,34 +47,12 @@ export default function CartModal({
     || menuOrderInfos.some((menuOrderInfo) => menuOrderInfo === null)
 
   const handleConfirm = async () => {
-    await useMenuStore.getState().clientLoad({ userId: clientTable?.userId ?? "" });
-    const updatedMenuCategories = useMenuStore.getState().clientMenuCategories;
-    const updatedMenuState = updatedMenuCategories?.flatMap((m) => m.menus);
-    
-    for (const menuOrder of menuOrders) {
-      const menu = updatedMenuState?.find((m) => m.id === menuOrder.menuId);
-      console.debug("menu", menu);
-      if (!menu) {
-        toast({
-          title: "메뉴가 삭제되었습니다.",
-          description: "다른 메뉴를 주문해주세요.",
-          variant: "destructive",
-        });
-        useCartStore.getState().removeMenuOrder(menuOrder.menuId);
-        return;
-      }
-      if (!menu.available || menu.quantity <= 0) {
-        toast({
-          title: "메뉴가 품절 또는 비활성화 되었습니다.",
-          description: "다른 메뉴를 주문해주세요.",
-          variant: "destructive",
-        });
-        useCartStore.getState().removeMenuOrder(menuOrder.menuId);
-        return;
-      }
+    const res = await purchaseMenuOrders();
+    if (res === null) {
+      const isValid = await validateOrder(menuOrders);
+      return;
     }
 
-    purchaseMenuOrders();
     useTableStore.getState().clientGetTable({
       tableId: clientTable!.id,
     });

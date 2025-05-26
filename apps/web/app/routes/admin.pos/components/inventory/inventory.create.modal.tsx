@@ -54,7 +54,7 @@ export default function InventoryCreateModal({
   const handleConfirm = async () => {
     if (
       menuName.length === 0
-      || menuCategories.some(category => category.id === menuCategory)
+      || !menuCategories.some(category => category.id === menuCategory)
     ) {
       setInvalid(true);
       return;
@@ -226,9 +226,9 @@ export default function InventoryCreateModal({
           </div>
         </div>
 
-        {/* <DialogDescription className={`-mt-2 text-right`}>⚠︎ 올바른 이름과 좌석 수를 입력하세요.</DialogDescription> */}
+        <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 이름과 카테고리를 입력하세요.</DialogDescription>
         <DialogFooter className="">
-          <Button onClick={handleConfirm} className="dangerBG dangerB">저장</Button>
+          <Button onClick={handleConfirm} className="dangerBG dangerB">추가</Button>
           <Button onClick={handleClose}>닫기</Button>
         </DialogFooter>
       </DialogContent>

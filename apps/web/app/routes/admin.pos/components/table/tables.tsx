@@ -22,7 +22,7 @@ export default function Tables() {
       <div className="full p-2">
         <Card className="full bg-[#F2F2F2] px-3 pb-3 fc rounded-3xl">
           <CardHeader className="px-2">
-            <CardTitle className="text-2xl">테이블 현황</CardTitle>
+            <CardTitle className="text-2xl">테이블 현황 <b className="font-light text-lg">({tables.filter((table) => table.tableContexts[0]?.deletedAt === null).length}/{tables.length})</b></CardTitle>
           </CardHeader>
           <div className="fr justify-end *:mx-1 mb-3">
             <Button onClick={() => setCreateTableModalOpen(true)}>테이블 추가</Button>

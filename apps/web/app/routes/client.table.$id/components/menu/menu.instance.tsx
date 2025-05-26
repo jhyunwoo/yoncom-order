@@ -46,14 +46,14 @@ export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["r
             }}
           >
             <div className="fr justify-between items-center bg-none h-full">
-              <div className="fr">
-                <img src={"/" + "favicon.ico"} alt="" width={50} height={50} className="rounded-md" />
-                <div className="fc ml-4">
+              <div className="fr items-center">
+                <img src={menu.image ? menu.image : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
+                <div className="fc ml-4 flex-1">
                   <h1 className="font-bold text-xl flex items-center">{menu.name}</h1>
                   <span className="text-sm">{menu.description}</span>
                 </div>
               </div>
-              <span className="text-md">{menu.price.toLocaleString()}원</span>
+              <span className="text-md min-w-fit">{menu.price.toLocaleString()}원</span>
             </div>
           </Card>
         )}
