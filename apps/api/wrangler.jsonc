@@ -10,7 +10,7 @@
     {
       "binding": "DB",
       "database_name": "yoncom-order-db",
-      "database_id": "940650dc-dfb8-44ba-a732-207d73d2cb79",
+      "database_id": "8ed44017-94a9-48cb-a4bd-182767bcbaac",
       "migrations_dir": "../../packages/db/.migrations"
     }
   ]
