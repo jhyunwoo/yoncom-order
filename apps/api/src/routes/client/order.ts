@@ -2,29 +2,29 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
-import * as OrderRequest from "shared/api/types/requests/order";
-import * as OrderController from "api/controller/order.controller";
+import * as ClientOrderRequest from "types/requests/client/order";
+import * as ClientOrderController from "api/controller/client/order.controller";
 
 const order = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Create Order
-order.post("/", zValidator("json", OrderRequest.createValidation), 
+order.post("/", zValidator("json", ClientOrderRequest.createValidation), 
   async (c) => {
     const db = initializeDb(c.env.DB);
 
     const { result, error, status } = 
-      await OrderController.create(db, c.req.valid("json"));
+      await ClientOrderController.create(db, c.req.valid("json"));
     return c.json({ result, error }, status);
   }
 );
 
 // Get Order
-order.get("/", zValidator("query", OrderRequest.getValidation), 
+order.get("/", zValidator("query", ClientOrderRequest.getValidation), 
   async (c) => {
     const db = initializeDb(c.env.DB);
 
     const { result, error, status } = 
-      await OrderController.get(db, c.req.valid("query"));
+      await ClientOrderController.get(db, c.req.valid("query"));
     return c.json({ result, error }, status);
   }
 );

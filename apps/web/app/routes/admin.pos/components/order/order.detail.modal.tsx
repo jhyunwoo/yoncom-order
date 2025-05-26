@@ -5,7 +5,7 @@ import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } fr
 import { DialogContent } from "~/components/ui/dialog";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import useMenuStore from "~/stores/menu.store";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as TableResponse from "types/responses/client/table";
 
 export default function OrderDetailModal({
   openState, setOpenState,

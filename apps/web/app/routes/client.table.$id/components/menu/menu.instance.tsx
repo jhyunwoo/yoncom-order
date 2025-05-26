@@ -1,5 +1,5 @@
 import { Card } from "~/components/ui/card";
-import * as MenuResponse from "shared/api/types/responses/menu";
+import * as MenuResponse from "types/responses/client/menu";
 import { useState } from "react";
 import CartAddModal from "../cart/cart.add.modal";
 import useMenuStore from "~/stores/menu.store";

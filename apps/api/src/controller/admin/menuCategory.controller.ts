@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
-import * as MenuCategoryRequest from "shared/api/types/requests/menuCategory";
-import * as MenuCategoryResponse from "shared/api/types/responses/menuCategory";
+import * as AdminMenuCategoryRequest from "types/requests/admin/menuCategory";
+import * as AdminMenuCategoryResponse from "types/responses/admin/menuCategory";
 import ControllerResult from "api/types/controller";
 
 export const create = async (
   db: QueryDB.DB,
   userId: string,
-  query: MenuCategoryRequest.CreateQuery
-): Promise<ControllerResult<MenuCategoryResponse.Create>> => {
+  query: AdminMenuCategoryRequest.Create
+): Promise<ControllerResult<AdminMenuCategoryResponse.Create>> => {
   const { menuCategoryOptions } = query;
 
   try {
@@ -35,8 +35,8 @@ export const create = async (
 export const remove = async (
   db: QueryDB.DB,
   userId: string,
-  query: MenuCategoryRequest.DeleteQuery
-): Promise<ControllerResult<MenuCategoryResponse.Remove>> => {
+  query: AdminMenuCategoryRequest.Remove
+): Promise<ControllerResult<AdminMenuCategoryResponse.Remove>> => {
   const { menuCategoryId } = query;
 
   try {
@@ -74,8 +74,8 @@ export const remove = async (
 export const update = async (
   db: QueryDB.DB,
   userId: string,
-  query: MenuCategoryRequest.UpdateQuery
-): Promise<ControllerResult<MenuCategoryResponse.Update>> => {
+  query: AdminMenuCategoryRequest.Update
+): Promise<ControllerResult<AdminMenuCategoryResponse.Update>> => {
   const { menuCategoryId, menuCategoryOptions } = query;
 
   try {

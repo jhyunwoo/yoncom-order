@@ -5,7 +5,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import * as Schema from "db/schema";
 import useTableStore from "~/stores/table.store";
 import { toast } from "~/hooks/use-toast";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as TableResponse from "types/responses/client/table";
 
 export default function TableSetModal({
   table,

@@ -4,7 +4,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import useTableStore from "~/stores/table.store";
-import * as MenuResponse from "shared/api/types/responses/menu";
+import * as MenuResponse from "types/responses/client/menu";
 import { Menu } from "db/schema";
 import useMenuStore from "~/stores/menu.store";
 import { API_BASE_URL } from "shared/constants";

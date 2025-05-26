@@ -9,3 +9,5 @@ wrangler.toml
 .migrations
 
 .idea
+
+contracts

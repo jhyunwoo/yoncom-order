@@ -10,7 +10,7 @@ import OrderUpdateModal from "../order/order.update.modal";
 import OrderModal from "../order/order.modal";
 import useTableStore from "~/stores/table.store";
 import OrderDetailModal from "./order.detail.modal";
-import * as TableResponse from "shared/api/types/responses/table"
+import * as TableResponse from "types/responses/client/table"
 
 export default function OrderHistoryModal({
   openState, setOpenState,

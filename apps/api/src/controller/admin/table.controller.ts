@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
-import * as TableRequest from "shared/api/types/requests/table";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as AdminTableRequest from "types/requests/admin/table";
+import * as AdminTableResponse from "types/responses/admin/table";
 import ControllerResult from "api/types/controller";
 
 export const create = async (
   db: QueryDB.DB,
   userId: string,
-  query: TableRequest.CreateQuery
-): Promise<ControllerResult<TableResponse.Create>> => {
+  query: AdminTableRequest.Create
+): Promise<ControllerResult<AdminTableResponse.Create>> => {
   const { tableOptions } = query;
 
   try {
@@ -40,8 +40,8 @@ export const create = async (
 export const remove = async (
   db: QueryDB.DB,
   userId: string,
-  query: TableRequest.RemoveQuery
-): Promise<ControllerResult<TableResponse.Remove>> => {
+  query: AdminTableRequest.Remove
+): Promise<ControllerResult<AdminTableResponse.Remove>> => {
   const { tableId } = query;
 
   try {
@@ -73,8 +73,8 @@ export const remove = async (
 export const vacate = async (
   db: QueryDB.DB,
   userId: string,
-  query: TableRequest.VacateQuery
-): Promise<ControllerResult<TableResponse.Vacate>> => {
+  query: AdminTableRequest.Vacate
+): Promise<ControllerResult<AdminTableResponse.Vacate>> => {
   const { tableId } = query;
 
   try {
@@ -113,8 +113,8 @@ export const vacate = async (
 export const occupy = async (
   db: QueryDB.DB,
   userId: string,
-  query: TableRequest.OccupyQuery
-): Promise<ControllerResult<TableResponse.Occupy>> => {
+  query: AdminTableRequest.Occupy
+): Promise<ControllerResult<AdminTableResponse.Occupy>> => {
   const { tableId } = query;
 
   try {
@@ -146,8 +146,8 @@ export const occupy = async (
 export const update = async (
   db: QueryDB.DB,
   userId: string,
-  query: TableRequest.UpdateQuery
-): Promise<ControllerResult<TableResponse.Update>> => {
+  query: AdminTableRequest.Update
+): Promise<ControllerResult<AdminTableResponse.Update>> => {
   const { tableId, tableOptions } = query;
 
   try {
@@ -177,45 +177,11 @@ export const update = async (
   }
 }
 
-export const clientGet = async (
-  db: QueryDB.DB,
-  query: TableRequest.ClientGetQuery
-): Promise<ControllerResult<TableResponse.ClientGet>> => {
-  const { tableId } = query;
-
-  try {
-    const table = (await QueryDB.queryTables(db, [tableId], { tableContexts: true }))[0];
-    if (!table)
-      return { error: "Table Not Found", status: 409 };
-
-    // 활성화 table context가 있다면 해당 내역을 같이 첨부.
-    // 없다면 비활성화된 table context는 보여주면 안되므로 빈 배열 첨부
-
-    const activeTableContext = QueryDB.chooseActiveTableContext(table.tableContexts);
-    if (!activeTableContext) 
-      return { result: { ...table, tableContexts: [] }, status: 200 };
-
-    const tableContextWithOrders = (await QueryDB.queryTableContexts(db, [activeTableContext.id], { orders: true }))[0];
-    const orders = (
-      await QueryDB.queryOrders(db, tableContextWithOrders.orders, { menuOrders: true, payment: true })
-    ).filter((order) => order.deletedAt === null);
-    
-    return { 
-      result: { ...table, tableContexts: [{ ...activeTableContext, orders }] },
-      status: 200 
-    };
-
-  } catch (e) {
-    console.error(e);
-    return { error: "DB Select Error", status: 500 };
-  }
-}
-
 export const adminGet = async (
   db: QueryDB.DB,
   userId: string,
-  query: TableRequest.AdminGetQuery
-): Promise<ControllerResult<TableResponse.AdminGet>> => {
+  query: AdminTableRequest.Get
+): Promise<ControllerResult<AdminTableResponse.Get>> => {
   const { tableIds } = query;
 
   try {

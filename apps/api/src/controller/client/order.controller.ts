@@ -1,15 +1,15 @@
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
-import * as TableController from "api/controller/table.controller";
-import * as OrderRequest from "shared/api/types/requests/order";
-import * as OrderResponse from "shared/api/types/responses/order";
+import * as AdminTableController from "api/controller/admin/table.controller";
+import * as ClientOrderRequest from "types/requests/client/order";
+import * as ClientOrderResponse from "types/responses/client/order";
 import ControllerResult from "api/types/controller";
 import { eq, inArray } from "drizzle-orm";
 
 export const create = async (
   db: QueryDB.DB,
-  query: OrderRequest.CreateQuery
-): Promise<ControllerResult<OrderResponse.Create>> => {
+  query: ClientOrderRequest.Create
+): Promise<ControllerResult<ClientOrderResponse.Create>> => {
   const { tableId, menuOrders } = query;
 
   try {
@@ -22,7 +22,7 @@ export const create = async (
     // 해당 테이블에 활성 context가 없다면 occupy
     const isTablesOnActivate = QueryDB.isTablesOnActivate([table]);
     if (!isTablesOnActivate)
-      await TableController.occupy(db, table.userId, { tableId });
+      await AdminTableController.occupy(db, table.userId, { tableId });
 
     const tableContexts = (
       await QueryDB.queryTables(db, [table], { tableContexts: true })
@@ -122,8 +122,8 @@ export const create = async (
 
 export const get = async (
   db: QueryDB.DB,
-  query: OrderRequest.GetQuery
-): Promise<ControllerResult<OrderResponse.Get>> => {
+  query: ClientOrderRequest.Get
+): Promise<ControllerResult<ClientOrderResponse.Get>> => {
   const { orderId } = query;
 
   try {

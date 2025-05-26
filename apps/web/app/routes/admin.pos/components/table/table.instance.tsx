@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as TableResponse from "types/responses/client/table";
 import TableSetModal from "./table.set.modal";
 import * as Schema from "db/schema";
 import useTableStore from "~/stores/table.store";

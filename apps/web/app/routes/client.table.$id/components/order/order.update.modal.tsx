@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import useCartStore, { CartState } from "~/stores/cart.store";
-import * as MenuResponse from "shared/api/types/responses/menu";
+import * as MenuResponse from "types/responses/client/menu";
 import { MinusIcon, Plus, PlusIcon } from "lucide-react";
 import useMenuStore from "~/stores/menu.store";
 

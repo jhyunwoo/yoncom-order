@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
-import * as MenuRequest from "shared/api/types/requests/menu";
-import * as MenuResponse from "shared/api/types/responses/menu";
+import * as AdminMenuRequest from "types/requests/admin/menu";
+import * as AdminMenuResponse from "types/responses/admin/menu";
 import ControllerResult from "api/types/controller";
 
 export const create = async (
   db: QueryDB.DB,
   userId: string,
-  query: MenuRequest.CreateQuery
-): Promise<ControllerResult<MenuResponse.Create>> => {
+  query: AdminMenuRequest.Create
+): Promise<ControllerResult<AdminMenuResponse.Create>> => {
   const { menuOptions } = query;
   try {
     const user = (await QueryDB.queryUsers(db, [userId]))[0];
@@ -38,8 +38,8 @@ export const create = async (
 export const update = async (
   db: QueryDB.DB,
   userId: string,
-  query: MenuRequest.UpdateQuery
-): Promise<ControllerResult<MenuResponse.Update>> => {
+  query: AdminMenuRequest.Update
+): Promise<ControllerResult<AdminMenuResponse.Update>> => {
   const { menuId, menuOptions } = query;
   try {
     const user = (await QueryDB.queryUsers(db, [userId], { menuCategories: true }))[0];
@@ -76,8 +76,8 @@ export const update = async (
 export const remove = async (
   db: QueryDB.DB,
   userId: string,
-  query: MenuRequest.RemoveQuery
-): Promise<ControllerResult<MenuResponse.Remove>> => {
+  query: AdminMenuRequest.Remove
+): Promise<ControllerResult<AdminMenuResponse.Remove>> => {
   const { menuId } = query;
 
   try {
@@ -103,37 +103,12 @@ export const remove = async (
   }
 }
 
-export const clientGet = async (
-  db: QueryDB.DB,
-  query: MenuRequest.ClientGetQuery
-): Promise<ControllerResult<MenuResponse.ClientGet>> => {
-  const { userId } = query;
-  
-  try {
-    const user = (await QueryDB.queryUsers(db, [userId], { menuCategories: true }))[0];
-    const data = await Promise.all(
-      user.menuCategories
-        .filter((menuCategory) => menuCategory.deletedAt === null)
-        .map(async (menuCategory) => ({ 
-          ...menuCategory, 
-          menus: (await QueryDB.queryMenuCategories(db, [menuCategory], { menus: true }))[0].menus
-        }))
-    );
-
-    return { result: data, status: 200 };
-  } catch (e) {
-    console.error(e);
-    return { error: "DB Query Error", status: 500 };
-  }
-}
-
-export const adminGet = async (
+export const get = async (
   db: QueryDB.DB,
   userId: string,
-  query: MenuRequest.AdminGetQuery
-): Promise<ControllerResult<MenuResponse.AdminGet>> => {
+  query: AdminMenuRequest.Get
+): Promise<ControllerResult<AdminMenuResponse.Get>> => {
   const { } = query;
-
   
   try {
     const user = (await QueryDB.queryUsers(db, [userId], { menuCategories: true }))[0];

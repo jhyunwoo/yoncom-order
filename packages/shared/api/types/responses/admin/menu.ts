@@ -12,13 +12,7 @@ export type Remove = {
   result: string;
 }
 
-export type ClientGet = {
-  result: (Schema.MenuCategory & {
-    menus: Schema.Menu[]
-  })[];
-}
-
-export type AdminGet = {
+export type Get = {
   result: (Schema.MenuCategory & {
     menus: Schema.Menu[];
   })[];

@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import * as OrderRequest from "shared/api/types/requests/order";
-import * as OrderResponse from "shared/api/types/responses/order";
+import * as ClientOrderRequest from "types/requests/client/order";
+import * as ClientOrderResponse from "types/responses/client/order";
 import queryStore from "~/lib/query";
 import useTableStore from "./table.store";
 import { toast } from "~/hooks/use-toast";
 
-type MenuOrderQuery = OrderRequest.CreateQuery["menuOrders"][number];
+type MenuOrderQuery = ClientOrderRequest.Create["menuOrders"][number];
 
 export type CartState = {
   menuOrders: MenuOrderQuery[];
@@ -59,7 +59,7 @@ const useCartStore = create<CartState>((set, get) => ({
       return;
     }
 
-    await queryStore<OrderRequest.CreateQuery, OrderResponse.Create>({
+    await queryStore<ClientOrderRequest.Create, ClientOrderResponse.Create>({
       route: "order",
       method: "post",
       query: {

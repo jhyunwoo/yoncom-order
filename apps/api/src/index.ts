@@ -3,11 +3,11 @@ import { Bindings, Variables } from "./lib/bindings";
 import { authProvider } from "./middlewares/auth-provider";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
-import order from "./routes/order";
-import table from "./routes/table";
-import menu from "./routes/menu";
+import order from "./routes/client/order";
+import table from "./routes/client/table";
+import menu from "./routes/client/menu";
+import auth from "./routes/client/auth";
 import admin from "./routes/admin";
-import auth from "./routes/auth";
 import initializeDb from "api/lib/initialize-db";
 import { users, userRole } from "db/schema";
 

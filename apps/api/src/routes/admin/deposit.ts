@@ -1,15 +1,14 @@
-import {Hono} from "hono";
-import {Bindings, Variables} from "api/lib/bindings";
-import {zValidator} from "@hono/zod-validator";
+import { Hono } from "hono";
+import { Bindings, Variables } from "api/lib/bindings";
+import { zValidator } from "@hono/zod-validator";
 import initializeDb from "api/lib/initialize-db";
-import { payments, tables} from "db/schema";
-import {createValidation} from "shared/api/types/requests/deposit";
-import {and, desc, eq, isNotNull} from "drizzle-orm";
+import { payments } from "db/schema";
+import { createValidation } from "types/requests/admin/deposit";
+import { and, desc, eq } from "drizzle-orm";
 
 const adminDeposit = new Hono<{ Bindings: Bindings; Variables: Variables }>()
 
 adminDeposit.post('/', zValidator('json', createValidation), async (c)=>{
-    // body에서 데이터를 가져옴
     const {amount, bank, timestamp, name} = c.req.valid('json')
 
     const db = initializeDb(c.env.DB)

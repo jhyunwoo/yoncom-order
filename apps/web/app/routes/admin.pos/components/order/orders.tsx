@@ -5,7 +5,7 @@ import * as Schema from "db/schema";
 import OrderInstance from "./order.instance";
 import { Divide } from "lucide-react";
 import OrderDetailModal from "./order.detail.modal";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as TableResponse from "types/responses/client/table";
 
 export default function Orders() {
   const [orderDetail, setOrderDetail] = useState<TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number] | null>(null);

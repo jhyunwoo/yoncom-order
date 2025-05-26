@@ -11,7 +11,7 @@ export const createValidation = z.object({
     available: z.boolean(),
   }),
 });
-export type CreateQuery = z.infer<typeof createValidation>;
+export type Create = z.infer<typeof createValidation>;
 
 export const updateValidation = z.object({
   menuId: z.string().length(15),
@@ -25,18 +25,13 @@ export const updateValidation = z.object({
     available: z.boolean(),
   }),
 });
-export type UpdateQuery = z.infer<typeof updateValidation>;
+export type Update = z.infer<typeof updateValidation>;
 
 export const removeValidation = z.object({
   menuId: z.string().length(15),
 });
-export type RemoveQuery = z.infer<typeof removeValidation>;
+export type Remove = z.infer<typeof removeValidation>;
 
-export const clientGetValidation = z.object({
-  userId: z.string().length(15),
+export const getValidation = z.object({
 });
-export type ClientGetQuery = z.infer<typeof clientGetValidation>;
-
-export const adminGetValidation = z.object({
-});
-export type AdminGetQuery = z.infer<typeof adminGetValidation>;
+export type Get = z.infer<typeof getValidation>;

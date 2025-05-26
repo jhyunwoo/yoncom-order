@@ -7,9 +7,9 @@ export const createValidation = z.object({
     quantity: z.number().int().min(1),
   })),
 });
-export type CreateQuery = z.infer<typeof createValidation>;
+export type Create = z.infer<typeof createValidation>;
 
 export const getValidation = z.object({
   orderId: z.string().length(15),
 });
-export type GetQuery = z.infer<typeof getValidation>;
+export type Get = z.infer<typeof getValidation>;

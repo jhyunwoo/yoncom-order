@@ -6,3 +6,4 @@ export const createValidation  = z.object({
     timestamp: z.number(),
     name: z.string(),
 })
+export type Create = z.infer<typeof createValidation>;

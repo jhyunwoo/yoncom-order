@@ -1,4 +1,5 @@
 import { ContentfulStatusCode } from "hono/utils/http-status";
+import type { DB } from "api/lib/queryDB";
 
 type ControllerSuccess<T extends { result: unknown }> = {
   result: T["result"];
@@ -13,4 +14,5 @@ type ControllerFailure = {
 }
 
 type ControllerResult<T extends { result: unknown }> = ControllerSuccess<T> | ControllerFailure;
+
 export default ControllerResult;
