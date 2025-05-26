@@ -58,67 +58,82 @@ const useMenuStore = create<MenuState>((set, get) => ({
   }),
 
   createMenu: async (query: MenuRequest.CreateQuery) => queryStore<MenuRequest.CreateQuery, MenuResponse.Create>({
-    route: "menu",
+    route: "admin/menu",
     method: "post",
     query,
     setter: set,
-    onSuccess: (res) => toast({
-      title: "메뉴 생성 완료",
-      description: "메뉴가 성공적으로 생성되었습니다.",
-      duration: 3000,
-    }),
+    onSuccess: (res) => {
+      toast({
+        title: "메뉴 생성 완료",
+        description: "메뉴가 성공적으로 생성되었습니다.",
+        duration: 3000,
+      });
+      get().adminLoad({});
+    }
   }),
 
   removeMenu: async (query: MenuRequest.RemoveQuery) => queryStore<MenuRequest.RemoveQuery, MenuResponse.Remove>({
-    route: "menu",
+    route: "admin/menu",
     method: "delete",
     query,
     setter: set,
-    onSuccess: (res) => toast({
-      title: "메뉴 삭제 완료",
-      description: "메뉴가 성공적으로 삭제되었습니다.",
-      duration: 3000,
-    }),
+    onSuccess: (res) => {
+      toast({
+        title: "메뉴 삭제 완료",
+        description: "메뉴가 성공적으로 삭제되었습니다.",
+        duration: 3000,
+      });
+      get().adminLoad({});
+    },
   }),
 
   updateMenu: async (query: MenuRequest.UpdateQuery) => queryStore<MenuRequest.UpdateQuery, MenuResponse.Update>({
-    route: "menu",
+    route: "admin/menu",
     method: "put",
     query,
     setter: set,
-    onSuccess: (res) => toast({
-      title: "메뉴 수정 완료",
-      description: "메뉴가 성공적으로 수정되었습니다.",
-      duration: 3000,
-    }),
+    onSuccess: (res) => {
+      toast({
+        title: "메뉴 수정 완료",
+        description: "메뉴가 성공적으로 수정되었습니다.",
+        duration: 3000,
+      });
+      get().adminLoad({});
+    },
   }),
 
   createMenuCategory: async (query: MenuCategoryRequest.CreateQuery) => queryStore<MenuCategoryRequest.CreateQuery, MenuCategoryResponse.Create>({
-    route: "menuCategory",
+    route: "admin/menuCategory",
     method: "post",
     query,
     setter: set,
-    onSuccess: (res) => toast({
-      title: "메뉴 카테고리 생성 완료",
-      description: "메뉴 카테고리가 성공적으로 생성되었습니다.",
-      duration: 3000,
-    }),
+    onSuccess: (res) => {
+      toast({
+        title: "메뉴 카테고리 생성 완료",
+        description: "메뉴 카테고리가 성공적으로 생성되었습니다.",
+        duration: 3000,
+      });
+      get().adminLoad({});
+    },
   }),
 
   removeMenuCategory: async (query: MenuCategoryRequest.RemoveQuery) => queryStore<MenuCategoryRequest.RemoveQuery, MenuCategoryResponse.Remove>({
-    route: "menuCategory",
+    route: "admin/menuCategory",
     method: "delete",
     query,
     setter: set,
-    onSuccess: (res) => toast({
+    onSuccess: (res) => {
+      toast({
       title: "메뉴 카테고리 삭제 완료",
       description: "메뉴 카테고리가 성공적으로 삭제되었습니다.",
       duration: 3000,
-    }),
+    });
+      get().adminLoad({});
+    },
   }),
 
   updateMenuCategory: async (query: MenuCategoryRequest.UpdateQuery) => queryStore<MenuCategoryRequest.UpdateQuery, MenuCategoryResponse.Update>({
-    route: "menuCategory",
+    route: "admin/menuCategory",
     method: "put",
     query,
     setter: set,

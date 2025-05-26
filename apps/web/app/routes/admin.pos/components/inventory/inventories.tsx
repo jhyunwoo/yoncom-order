@@ -7,11 +7,17 @@ import useMenuStore from "~/stores/menu.store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import InventoryDetailModal from "./inventory.detail.modal";
 import { Menu } from "db/schema";
+import { Button } from "~/components/ui/button";
+import InventoryCreateModal from "./inventory.create.modal";
+import InventoryRemoveModal from "./inventory.remove.modal";
 
 export default function Inventories() {
   const [menuDetail, setMenuDetail] = useState<Menu | null>(null);
   const [menuDetailModalOpenState, setMenuDetailModalOpenState] = useState(false);
   const { menus } = useMenuStore();
+
+  const [createMenuModalOpen, setCreateMenuModalOpen] = useState(false);
+  const [removeMenuModalOpen, setRemoveMenuModalOpen] = useState(false);
 
   return (
     <div className="full p-2">
@@ -19,6 +25,10 @@ export default function Inventories() {
         <CardHeader className="px-2">
           <CardTitle className="text-2xl">재고 현황</CardTitle>
         </CardHeader>
+        <div className="fr justify-end *:mx-1 mb-3">
+          <Button onClick={() => setCreateMenuModalOpen(true)}>메뉴 추가</Button>
+          <Button variant="outline" onClick={() => setRemoveMenuModalOpen(true)}>메뉴 제거</Button>
+        </div>
         <CardContent className="p-0 overflow-scroll">
           <Table className="rounded-xl overflow-hidden">
             <TableHeader>
@@ -28,9 +38,11 @@ export default function Inventories() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {menus.map((menu) => (
-                <TableRow 
-                  key={menu.id} 
+              {menus
+                .filter((menu) => !menu.deletedAt)
+                .map((menu) => (
+                <TableRow
+                  key={menu.id}
                   className="bg-white hover:bg-gray-100 hover:cursor-pointer"
                   onClick={() => {
                     setMenuDetail(menu);
@@ -52,6 +64,14 @@ export default function Inventories() {
           setOpenState={setMenuDetailModalOpenState}
         />
       )}
+      <InventoryCreateModal
+        openState={createMenuModalOpen}
+        setOpenState={setCreateMenuModalOpen}
+      />
+      <InventoryRemoveModal
+        openState={removeMenuModalOpen}
+        setOpenState={setRemoveMenuModalOpen}
+      />
     </div>
   );
 }

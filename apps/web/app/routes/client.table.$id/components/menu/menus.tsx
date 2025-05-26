@@ -19,7 +19,7 @@ export default function Menus({ menuCategories }: { menuCategories: MenuResponse
       </TabsList>
       {menuCategories.map((menuCategory) => (
         <TabsContent className="flex-1 overflow-y-scroll" key={menuCategory.id} value={menuCategory.id}>
-          {menuCategory.menus.map((menu) =>
+          {menuCategory.menus.filter((menu) => !menu.deletedAt).map((menu) =>
             <MenuInstance key={menu.id} menu={menu} />
           )}
         </TabsContent>

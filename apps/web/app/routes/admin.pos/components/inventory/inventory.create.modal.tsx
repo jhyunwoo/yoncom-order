@@ -9,23 +9,22 @@ import { Menu } from "db/schema";
 import useMenuStore from "~/stores/menu.store";
 import { API_BASE_URL } from "shared/constants";
 
-export default function InventoryDetailModal({
+export default function InventoryCreateModal({
   openState, setOpenState,
-  menu,
 }: {
   openState: boolean;
   setOpenState: any;
-  menu: Menu;
 }) {
-  const { menuCategories } = useMenuStore();
-  const menuCategoryName = menuCategories.find((category) => category.id === menu.menuCategoryId)?.name;
+  const [invalid, setInvalid] = useState(false);
+  const { menuCategories, createMenu } = useMenuStore();
 
-  const [menuName, setMenuName] = useState(menu.name || "");
-  const [menuCategory, setMenuCategory] = useState(menu.menuCategoryId || "");
-  const [menuDescription, setMenuDescription] = useState(menu.description || "");
-  const [menuImage, setMenuImage] = useState(menu.image || "");
-  const [menuPrice, setMenuPrice] = useState(menu.price || 0);
-  const [menuQuantity, setMenuQuantity] = useState(menu.quantity || 0);
+  const [menuName, setMenuName] = useState("");
+  const [menuCategory, setMenuCategory] = useState("");
+  const [menuDescription, setMenuDescription] = useState("");
+  const [menuImage, setMenuImage] = useState("");
+  const [menuPrice, setMenuPrice] = useState(0);
+  const [menuQuantity, setMenuQuantity] = useState(0);
+  const [menuAvailable, setMenuAvailable] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,30 +55,46 @@ export default function InventoryDetailModal({
   };
 
   const handleConfirm = async () => {
-    // TODO: 메뉴 정보 업데이트 API 호출
-    // menuName, menuCategory, menuDescription, menuImage, menuPrice, menuStock 사용
+    if (
+      menuName.length === 0 
+      || menuCategories.some(category => category.id === menuCategory)
+    ) {
+      setInvalid(true);
+      return;
+    }
+
+    await createMenu({
+      menuOptions: {
+        name: menuName,
+        description: menuDescription,
+        image: menuImage,
+        price: menuPrice,
+        quantity: menuQuantity,
+        available: menuAvailable,
+        menuCategoryId: menuCategory,
+      },
+    });
+
     handleClose();
   }
 
   const handleClose = () => {
+    setInvalid(false);
+    setMenuName("");
+    setMenuCategory("");
+    setMenuDescription("");
+    setMenuImage("");
+    setMenuPrice(0);
+    setMenuQuantity(0);
     setOpenState(false);
   }
-
-  useEffect(() => {
-    setMenuName(menu.name || "");
-    setMenuCategory(menu.menuCategoryId || "");
-    setMenuDescription(menu.description || "");
-    setMenuImage(menu.image || "");
-    setMenuPrice(menu.price || 0);
-    setMenuQuantity(menu.quantity || 0);
-  }, [menu]);
 
   return (
     <Dialog open={openState} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{`메뉴 상세 정보 - ${menu.name}`}</DialogTitle>
-          <DialogDescription>메뉴와 재고 사항을 확인 및 설정합니다.</DialogDescription>
+          <DialogTitle>{`메뉴 추가`}</DialogTitle>
+          <DialogDescription>메뉴 정보를 입력합니다.</DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-3 gap-4">
           {/* 메뉴 이름 */}

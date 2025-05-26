@@ -117,7 +117,6 @@ export const clientGet = async (
         .map(async (menuCategory) => ({ 
           ...menuCategory, 
           menus: (await QueryDB.queryMenuCategories(db, [menuCategory], { menus: true }))[0].menus
-            .filter((menu) => menu.deletedAt === null)
         }))
     );
 
@@ -144,7 +143,6 @@ export const adminGet = async (
         .map(async (menuCategory) => ({ 
           ...menuCategory, 
           menus: (await QueryDB.queryMenuCategories(db, [menuCategory], { menus: true }))[0].menus
-            .filter((menu) => menu.deletedAt === null)
         }))
     );
 
