@@ -65,10 +65,6 @@ export const menuCategories = sqliteTable("menuCategories", {
   name: text("name").notNull(),
   description: text("description").notNull(),
 
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id),
-
   createdAt: integer("createdAt")
     .notNull()
     .$defaultFn(() => Date.now()),
@@ -80,11 +76,7 @@ export const menuCategories = sqliteTable("menuCategories", {
 
 export const menuCategoriesRelations = relations(
   menuCategories,
-  ({ one, many }) => ({
-    user: one(users, {
-      fields: [menuCategories.userId],
-      references: [users.id],
-    }),
+  ({ many }) => ({
     menus: many(menus),
   }),
 );
@@ -153,11 +145,9 @@ export const tableContexts = sqliteTable("tableContexts", {
     .primaryKey()
     .notNull()
     .$defaultFn(() => generateId(15)),
-
   tableId: text("tableId")
     .notNull()
     .references(() => tables.id),
-
   createdAt: integer("createdAt")
     .notNull()
     .$defaultFn(() => Date.now()),

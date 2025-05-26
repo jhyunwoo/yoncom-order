@@ -1,13 +1,33 @@
 import * as QueryDB from "api/lib/queryDB";
-import { orders } from "db/schema";
-import { eq } from "drizzle-orm";
+import { orders, tableContexts } from "db/schema";
+import { and, eq, isNull } from "drizzle-orm";
+import { CreateOrder } from "shared/api/types/requests/admin/order";
 
-export const createOrder = async (
-  db: QueryDB.DB,
-  data: orders.$inferInsert,
-) => {
+export const createOrder = async (db: QueryDB.DB, data: CreateOrder) => {
   try {
-    const newOrder = await db.insert(orders).values(data).returning();
+    let findTableContext = await db.query.tableContexts.findFirst({
+      where: and(
+        eq(tableContexts.tableId, data.tableId),
+        isNull(tableContexts.deletedAt),
+      ),
+    });
+    if (!findTableContext) {
+      findTableContext = (
+        await db
+          .insert(tableContexts)
+          .values({
+            tableId: data.tableId,
+          })
+          .returning()
+      )[0];
+    }
+
+    const newOrder = await db
+      .insert(orders)
+      .values({
+        tableContextId: findTableContext.id,
+      })
+      .returning();
     return { result: newOrder, status: 201 };
   } catch (e) {
     console.error(e);
@@ -21,6 +41,7 @@ export const deleteOrder = async (db: QueryDB.DB, orderId: string) => {
       .update(orders)
       .set({ deletedAt: new Date().getTime() })
       .where(eq(orders.id, orderId));
+    return { result: "Order deleted successfully", status: 200 };
   } catch (e) {
     return { error: "DB Insert Error", status: 500 };
   }

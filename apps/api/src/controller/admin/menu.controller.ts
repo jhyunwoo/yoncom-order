@@ -1,6 +1,11 @@
 import * as QueryDB from "api/lib/queryDB";
 import { eq, isNull } from "drizzle-orm";
 import { menuCategories, menus } from "db/schema";
+import {
+  CreateMenu,
+  RemoveMenu,
+  UpdateMenu,
+} from "shared/api/types/requests/admin/menu";
 
 export const adminGetMenus = async (db: QueryDB.DB) => {
   try {
@@ -25,12 +30,33 @@ export const adminGetMenus = async (db: QueryDB.DB) => {
   }
 };
 
-export const adminCreateMenu = async (
-  db: QueryDB.DB,
-  data: typeof menus.$inferInsert,
-) => {
+export const adminGetMenu = async (db: QueryDB.DB, menuId: string) => {
   try {
-    const newMenu = await db.insert(menus).values(data).returning();
+    const menuData = await db.query.menus.findFirst({
+      where: eq(menus.id, menuId),
+    });
+    if (!menuData) {
+      return { error: "Menu not found", status: 404 };
+    }
+
+    const menuCategoryData = await db.query.menuCategories.findFirst({
+      where: eq(menuCategories.id, menuData.menuCategoryId),
+    });
+
+    return {
+      result: { menuCategory: menuCategoryData, menu: menuData },
+      status: 200,
+    };
+  } catch (e) {
+    console.error(e);
+    return { error: "DB Query Error", status: 500 };
+  }
+};
+
+export const adminCreateMenu = async (db: QueryDB.DB, data: CreateMenu) => {
+  const { menuOptions } = data;
+  try {
+    const newMenu = await db.insert(menus).values(menuOptions).returning();
     return { result: newMenu, status: 201 };
   } catch (e) {
     console.error(e);
@@ -38,15 +64,12 @@ export const adminCreateMenu = async (
   }
 };
 
-export const adminUpdateMenu = async (
-  db: QueryDB.DB,
-  data: typeof menus.$inferInsert,
-  menuId: string,
-) => {
+export const adminUpdateMenu = async (db: QueryDB.DB, data: UpdateMenu) => {
+  const { menuId, menuOptions } = data;
   try {
     const updateMenu = await db
       .update(menus)
-      .set(data)
+      .set(menuOptions)
       .where(eq(menus.id, menuId))
       .returning();
     return { result: updateMenu, status: 200 };
@@ -56,7 +79,8 @@ export const adminUpdateMenu = async (
   }
 };
 
-export const adminDeleteMenu = async (db: QueryDB.DB, menuId: string) => {
+export const adminDeleteMenu = async (db: QueryDB.DB, data: RemoveMenu) => {
+  const { menuId } = data;
   try {
     await db
       .update(menus)

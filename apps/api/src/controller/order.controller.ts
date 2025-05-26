@@ -152,10 +152,23 @@ export const getOrders = async (db: QueryDB.DB, tableId: string) => {
   }
 };
 
-export const getOrder = async (db: QueryDB.DB, orderId: string) => {
+export const getOrder = async (
+  db: QueryDB.DB,
+  tableId: string,
+  orderId: string,
+) => {
   try {
+    const findTableContext = await db.query.tableContexts.findFirst({
+      where: and(
+        eq(tableContexts.tableId, tableId),
+        isNull(tableContexts.deletedAt),
+      ),
+    });
     const orderData = await db.query.orders.findMany({
-      where: eq(orders.id, orderId),
+      where: and(
+        eq(orders.id, orderId),
+        eq(orders.tableContextId, findTableContext?.id!),
+      ),
     });
     if (!orderData) return { error: "Order Not Found", status: 403 };
 

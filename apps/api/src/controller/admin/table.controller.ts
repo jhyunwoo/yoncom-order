@@ -162,7 +162,7 @@ export const updateTable = async (
   }
 };
 
-export const adminGet = async (
+export const getTables = async (
   db: QueryDB.DB,
 ): Promise<ControllerResult<TableResponse.AdminGet>> => {
   try {

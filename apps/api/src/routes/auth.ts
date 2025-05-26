@@ -9,73 +9,79 @@ import { initializeLucia } from "api/lib/lucia";
 import * as AuthRequest from "shared/api/types/requests/auth";
 import createSession from "api/lib/create-session";
 
-// TODO: 형식 통일 필요
-
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Sign Up Route
-auth.post("/sign-up", zValidator("json", AuthRequest.signUpValidation), async (c) => {
-  const { email, password, name } = c.req.valid("json");
+auth.post(
+  "/sign-up",
+  zValidator("json", AuthRequest.signUpValidation),
+  async (c) => {
+    const { email, password, name } = c.req.valid("json");
 
-  const db = initializeDb(c.env.DB);
+    const db = initializeDb(c.env.DB);
 
-  // 기존 사용자인지 확인
-  const existingUser = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
+    // 기존 사용자인지 확인
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
 
-  if (existingUser) {
-    return c.json({ error: "User with that email already exists." }, 400);
-  }
+    if (existingUser) {
+      return c.json({ error: "User with that email already exists." }, 400);
+    }
 
-  // 비밀번호 해싱
-  const passwordHash = await new Scrypt().hash(password);
+    // 비밀번호 해싱
+    const passwordHash = await new Scrypt().hash(password);
 
-  // 사용자 정보 추가
-  const user = await db
-    .insert(users)
-    .values({ email, password: passwordHash, name })
-    .returning({ id: users.id, email: users.email });
+    // 사용자 정보 추가
+    const user = await db
+      .insert(users)
+      .values({ email, password: passwordHash, name })
+      .returning({ id: users.id, email: users.email });
 
-  if (!user || user.length === 0) {
-    return c.json({ error: "An error occured during sign up." }, 500);
-  }
+    if (!user || user.length === 0) {
+      return c.json({ error: "An error occured during sign up." }, 500);
+    }
 
-  // 세션 생성
-  const { cookie } = await createSession(c.env.DB, user[0].id);
+    // 세션 생성
+    const { cookie } = await createSession(c.env.DB, user[0].id);
 
-  c.header("Set-Cookie", cookie.serialize(), { append: true });
+    c.header("Set-Cookie", cookie.serialize(), { append: true });
 
-  return c.json({ result: "Success" }, 200);
-});
+    return c.json({ result: "Success" }, 200);
+  },
+);
 
 // Sign In Route
-auth.post("/sign-in", zValidator("json", AuthRequest.signInValidation), async (c) => {
-  const { email, password } = c.req.valid("json");
-  const db = initializeDb(c.env.DB);
+auth.post(
+  "/sign-in",
+  zValidator("json", AuthRequest.signInValidation),
+  async (c) => {
+    const { email, password } = c.req.valid("json");
+    const db = initializeDb(c.env.DB);
 
-  // 사용자 정보 확인
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
+    // 사용자 정보 확인
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
 
-  if (!user) {
-    return c.json({ error: "Email or password is incorrect." }, 400);
-  }
+    if (!user) {
+      return c.json({ error: "Email or password is incorrect." }, 400);
+    }
 
-  // 비밀번호 확인
-  const isValidPassword = await new Scrypt().verify(user.password, password);
+    // 비밀번호 확인
+    const isValidPassword = await new Scrypt().verify(user.password, password);
 
-  if (!isValidPassword) {
-    return c.json({ error: "Email or password is incorrect." }, 400);
-  }
+    if (!isValidPassword) {
+      return c.json({ error: "Email or password is incorrect." }, 400);
+    }
 
-  const { cookie } = await createSession(c.env.DB, user.id);
+    const { cookie } = await createSession(c.env.DB, user.id);
 
-  c.header("Set-Cookie", cookie.serialize(), { append: true });
+    c.header("Set-Cookie", cookie.serialize(), { append: true });
 
-  return c.json({ result: "Success" }, 200);
-});
+    return c.json({ result: "Success" }, 200);
+  },
+);
 
 // Sign Out Route
 auth.post("/sign-out", async (c) => {

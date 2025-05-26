@@ -4,29 +4,37 @@ import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
 import * as OrderRequest from "shared/api/types/requests/order";
 import * as OrderController from "api/controller/order.controller";
+import { createValidation } from "shared/api/types/requests/order";
+import {
+  createOrder,
+  getOrder,
+  getOrders,
+} from "api/controller/order.controller";
+import { ContentfulStatusCode } from "hono/utils/http-status";
 
 const order = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Create Order
-order.post("/", zValidator("json", OrderRequest.createValidation), 
-  async (c) => {
-    const db = initializeDb(c.env.DB);
+order.post("/", zValidator("json", createValidation), async (c) => {
+  const db = initializeDb(c.env.DB);
 
-    const { result, error, status } = 
-      await OrderController.create(db, c.req.valid("json"));
-    return c.json({ result, error }, status);
-  }
-);
+  const { result, error, status } = await createOrder(db, c.req.valid("json"));
+  return c.json({ result, error }, status);
+});
 
 // Get Order
-order.get("/", zValidator("query", OrderRequest.getValidation), 
-  async (c) => {
-    const db = initializeDb(c.env.DB);
+order.get("/:tableId", async (c) => {
+  const db = initializeDb(c.env.DB);
+  const { tableId } = c.req.param();
+  const { result, error, status } = await getOrders(db, tableId);
+  return c.json({ result, error }, status as ContentfulStatusCode);
+});
 
-    const { result, error, status } = 
-      await OrderController.get(db, c.req.valid("query"));
-    return c.json({ result, error }, status);
-  }
-);
+order.get("/:tableId/:orderId", async (c) => {
+  const db = initializeDb(c.env.DB);
+  const { tableId, orderId } = c.req.param();
+  const { result, error, status } = await getOrder(db, tableId, orderId);
+  return c.json({ result, error }, status as ContentfulStatusCode);
+});
 
 export default order;
