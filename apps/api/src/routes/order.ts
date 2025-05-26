@@ -2,8 +2,6 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
-import * as OrderRequest from "shared/api/types/requests/order";
-import * as OrderController from "api/controller/order.controller";
 import { createValidation } from "shared/api/types/requests/order";
 import {
   createOrder,

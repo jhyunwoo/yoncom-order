@@ -134,7 +134,7 @@ export const tables = sqliteTable("tables", {
   deletedAt: integer("deletedAt"),
 });
 
-export const tablesRelations = relations(tables, ({ one, many }) => ({
+export const tablesRelations = relations(tables, ({ many }) => ({
   tableContexts: many(tableContexts),
 }));
 

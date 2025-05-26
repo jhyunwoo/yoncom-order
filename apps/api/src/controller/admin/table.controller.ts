@@ -35,7 +35,7 @@ export const createTable = async (
     // create 1 to 100 array
     const keyList = Array.from({ length: 100 }, (_, i) => i + 1);
 
-    let lowestKey = 1;
+    let lowestKey;
     // 테이블 키 중복 체크
     for (const table of tableData) {
       if (keyList.includes(table.key)) {
@@ -60,7 +60,6 @@ export const createTable = async (
  * Admin에서 테이블을 삭제하는 함수
  * deleteAt 컬럼에 현재 시간을 넣어 soft delete를 수행
  * @param db
- * @param userId
  * @param query
  */
 export const removeTable = async (
@@ -97,7 +96,6 @@ export const removeTable = async (
 /**
  * Admin에서 테이블 점유를 푸는 함수
  * @param db
- * @param userId
  * @param query
  */
 export const vacateTable = async (
