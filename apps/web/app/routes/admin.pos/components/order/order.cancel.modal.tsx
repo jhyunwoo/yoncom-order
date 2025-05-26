@@ -5,10 +5,10 @@ import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } fr
 import { DialogContent } from "~/components/ui/dialog";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import useMenuStore from "~/stores/menu.store";
-import * as TableResponse from "types/responses/client/table";
+import * as TableResponse from "shared/types/responses/client/table";
 import queryStore from "~/lib/query";
-import * as OrderRequest from "types/requests/client/order";
-import * as OrderResponse from "types/responses/client/order";
+import * as OrderRequest from "shared/types/requests/client/order";
+import * as OrderResponse from "shared/types/responses/client/order";
 
 export default function OrderCancelModal({
   openState, setOpenState,

@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import * as ClientOrderRequest from "types/requests/client/order";
-import * as ClientOrderResponse from "types/responses/client/order";
+import * as ClientOrderRequest from "shared/types/requests/client/order";
+import * as ClientOrderResponse from "shared/types/responses/client/order";
 import queryStore from "~/lib/query";
 import useTableStore from "./table.store";
 import { toast } from "~/hooks/use-toast";

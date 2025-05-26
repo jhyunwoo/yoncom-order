@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
-import * as ClientTableRequest from "types/requests/client/table";
-import * as ClientTableResponse from "types/responses/client/table";
+import * as ClientTableRequest from "shared/types/requests/client/table";
+import * as ClientTableResponse from "shared/types/responses/client/table";
 import ControllerResult from "api/types/controller";
 
 export const get = async (

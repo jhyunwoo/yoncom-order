@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import * as MenuResponse from "types/responses/client/menu";
+import * as MenuResponse from "shared/types/responses/client/menu";
 import MenuInstance from "./menu.instance";
 import useMenuStore from "~/stores/menu.store";
 import useTableStore from "~/stores/table.store";

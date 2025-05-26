@@ -9,7 +9,7 @@ import useMenuStore from "~/stores/menu.store";
 import OrderUpdateModal from "../order/order.update.modal";
 import OrderModal from "../order/order.modal";
 import useTableStore from "~/stores/table.store";
-import * as TableResponse from "types/responses/client/table";
+import * as TableResponse from "shared/types/responses/client/table";
 
 export default function OrderDetailModal({
   openState, setOpenState,

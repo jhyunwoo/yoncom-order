@@ -1,5 +1,5 @@
 import { HTTPError } from "ky";
-import * as ClientErrorResponse from "types/responses/client/error";
+import * as ClientErrorResponse from "shared/types/responses/client/error";
 import { toast } from "~/hooks/use-toast";
 
 export default async function kyErrorHandler(error: unknown) {

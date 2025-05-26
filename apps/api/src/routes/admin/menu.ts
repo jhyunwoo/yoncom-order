@@ -3,7 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
 import * as AdminMenuController from "api/controller/admin/menu.controller";
-import * as AdminMenuRequest from "types/requests/admin/menu";
+import * as AdminMenuRequest from "shared/types/requests/admin/menu";
 
 const adminMenu = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 

@@ -1,8 +1,8 @@
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
 import * as AdminTableController from "api/controller/admin/table.controller";
-import * as ClientOrderRequest from "types/requests/client/order";
-import * as ClientOrderResponse from "types/responses/client/order";
+import * as ClientOrderRequest from "shared/types/requests/client/order";
+import * as ClientOrderResponse from "shared/types/responses/client/order";
 import ControllerResult from "api/types/controller";
 import { eq, inArray } from "drizzle-orm";
 

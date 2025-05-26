@@ -2,9 +2,9 @@
 import { redirect } from "@remix-run/node";
 import { API_BASE_URL } from "shared/constants";
 import queryStore from "~/lib/query";
-import * as AuthRequest from "types/requests/client/auth";
-import * as AuthResponse from "types/responses/client/auth";
-import * as AdminResponse from "types/responses/client/admin";
+import * as AuthRequest from "shared/types/requests/client/auth";
+import * as AuthResponse from "shared/types/responses/client/auth";
+import * as AdminResponse from "shared/types/responses/client/admin";
 
 export async function requireUser(request: Request) {
   const cookie = request.headers.get("cookie");

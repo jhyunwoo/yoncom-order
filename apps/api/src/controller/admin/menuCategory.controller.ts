@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
-import * as AdminMenuCategoryRequest from "types/requests/admin/menuCategory";
-import * as AdminMenuCategoryResponse from "types/responses/admin/menuCategory";
+import * as AdminMenuCategoryRequest from "shared/types/requests/admin/menuCategory";
+import * as AdminMenuCategoryResponse from "shared/types/responses/admin/menuCategory";
 import ControllerResult from "api/types/controller";
 
 export const create = async (

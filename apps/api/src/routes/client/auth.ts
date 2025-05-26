@@ -6,7 +6,7 @@ import { users } from "db/schema";
 import { Scrypt } from "lucia";
 import initializeDb from "api/lib/initialize-db";
 import { initializeLucia } from "api/lib/lucia";
-import * as ClientAuthRequest from "types/requests/client/auth";
+import * as ClientAuthRequest from "shared/types/requests/client/auth";
 import createSession from "api/lib/create-session";
 
 // TODO: 형식 통일 필요

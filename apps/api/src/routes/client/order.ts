@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
-import * as ClientOrderRequest from "types/requests/client/order";
+import * as ClientOrderRequest from "shared/types/requests/client/order";
 import * as ClientOrderController from "api/controller/client/order.controller";
 
 const order = new Hono<{ Bindings: Bindings; Variables: Variables }>();

@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import * as ClientTableRequest from 'shared/api/types/requests/client/table';
-import * as ClientTableResponse from 'shared/api/types/responses/client/table';
-import * as AdminTableRequest from 'shared/api/types/requests/admin/table';
-import * as AdminTableResponse from 'shared/api/types/responses/admin/table';
+import * as ClientTableRequest from 'shared/types/requests/client/table';
+import * as ClientTableResponse from 'shared/types/responses/client/table';
+import * as AdminTableRequest from 'shared/types/requests/admin/table';
+import * as AdminTableResponse from 'shared/types/responses/admin/table';
 import queryStore from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
 import { Table } from 'db/schema';

@@ -8,8 +8,8 @@ import adminMenuCategory from "./menuCategory";
 import adminDeposit from "./deposit";
 
 import { zValidator } from "@hono/zod-validator";
-import * as AdminRequest from "types/requests/client/admin";
-import * as AdminResponse from "types/responses/client/admin";
+import * as AdminRequest from "shared/types/requests/client/admin";
+import * as AdminResponse from "shared/types/responses/client/admin";
 
 const admin = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 

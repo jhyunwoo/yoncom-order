@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
-import * as ClientTableRequest from "types/requests/client/table";
+import * as ClientTableRequest from "shared/types/requests/client/table";
 import * as ClientTableController from "api/controller/client/table.controller";
 
 const table = new Hono<{ Bindings: Bindings; Variables: Variables }>();
