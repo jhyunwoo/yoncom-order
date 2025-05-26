@@ -8,6 +8,7 @@ import * as MenuResponse from "shared/api/types/responses/menu";
 import { Menu } from "db/schema";
 import useMenuStore from "~/stores/menu.store";
 import { API_BASE_URL } from "shared/constants";
+import { Checkbox } from "~/components/ui/checkbox";
 
 export default function InventoryCreateModal({
   openState, setOpenState,
@@ -56,7 +57,7 @@ export default function InventoryCreateModal({
 
   const handleConfirm = async () => {
     if (
-      menuName.length === 0 
+      menuName.length === 0
       || menuCategories.some(category => category.id === menuCategory)
     ) {
       setInvalid(true);
@@ -98,7 +99,7 @@ export default function InventoryCreateModal({
         </DialogHeader>
         <div className="grid grid-cols-3 gap-4">
           {/* 메뉴 이름 */}
-          <div className="space-y-2 col-span-2 fc">
+          <div className="space-y-2 col-span-1 fc">
             <label className="text-sm font-medium -mb-1">이름</label>
             <Input
               value={menuName}
@@ -107,16 +108,31 @@ export default function InventoryCreateModal({
             />
           </div>
 
+          {/* 메뉴 카테고리 */}
+          <div className="space-y-2 col-span-1 fc">
+            <label className="text-sm font-medium -mb-1">카테고리</label>
+            <Select value={menuCategory} onValueChange={setMenuCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="카테고리를 선택하세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {menuCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* 메뉴 이미지 */}
           <div className="space-y-2 row-span-4 fc">
             <label className="text-sm font-medium -mb-1">이미지</label>
-            
+
             {/* 이미지 미리보기 */}
             <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
               {menuImage ? (
-                <img 
-                  src={menuImage} 
-                  alt="메뉴 이미지" 
+                <img
+                  src={menuImage}
+                  alt="메뉴 이미지"
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -141,8 +157,8 @@ export default function InventoryCreateModal({
               />
               <div className={`
                 w-full px-4 py-2 border-2 border-dashed rounded-lg text-center transition-colors
-                ${isUploading 
-                  ? 'border-gray-300 bg-gray-100 cursor-not-allowed' 
+                ${isUploading
+                  ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
                   : 'border-blue-300 bg-blue-50 hover:border-blue-400 hover:bg-blue-100 cursor-pointer'
                 }
               `}>
@@ -168,21 +184,6 @@ export default function InventoryCreateModal({
             <p className="text-xs text-gray-500 text-center">
               JPG, PNG, GIF 파일만 업로드 가능 (최대 5MB)
             </p>
-          </div>
-
-          {/* 메뉴 카테고리 */}
-          <div className="space-y-2 col-span-2 fc">
-            <label className="text-sm font-medium -mb-1">카테고리</label>
-            <Select value={menuCategory} onValueChange={setMenuCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="카테고리를 선택하세요" />
-              </SelectTrigger>
-              <SelectContent>
-                {menuCategories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           {/* 메뉴 설명 */}
@@ -216,6 +217,15 @@ export default function InventoryCreateModal({
               min={0}
               onChange={(e) => setMenuQuantity(Number(e.target.value))}
               placeholder="재고 수량을 입력하세요"
+            />
+          </div>
+
+          {/* 메뉴 활성화 */}
+          <div className="space-y-2 fc">
+            <label className="text-sm font-medium -mb-1">활성화</label>
+            <Checkbox
+              checked={menuAvailable}
+              onCheckedChange={(checked) => setMenuAvailable(checked === "indeterminate" ? false : checked === true)}
             />
           </div>
         </div>

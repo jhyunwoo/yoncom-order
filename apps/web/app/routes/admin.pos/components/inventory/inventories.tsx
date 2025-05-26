@@ -1,8 +1,5 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import useTableStore from "~/stores/table.store";
-import * as Schema from "db/schema";
-import * as TableResponse from "shared/api/types/responses/table";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import useMenuStore from "~/stores/menu.store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import InventoryDetailModal from "./inventory.detail.modal";
@@ -32,7 +29,7 @@ export default function Inventories() {
         <CardContent className="p-0 overflow-scroll">
           <Table className="rounded-xl overflow-hidden">
             <TableHeader>
-              <TableRow className="bg-gray-500 *:text-white">
+              <TableRow className="bg-gray-500 *:text-white hover:bg-gray-500">
                 <TableHead className="text-start">메뉴</TableHead>
                 <TableHead className="text-center">재고</TableHead>
               </TableRow>

@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import OrderPaymentModal from "./order.payment.modal";
 import useMenuStore from "~/stores/menu.store";
 import useTableStore from "~/stores/table.store";
+import { toast } from "~/hooks/use-toast";
 
 export default function OrderModal({
   openState, setOpenState,
@@ -26,16 +27,53 @@ export default function OrderModal({
   const amountWithKey = amount - clientTable!.key;
 
   const handleTossPayment = async () => {
+    await useTableStore.getState().clientGetTable({
+      tableId: clientTable!.id,
+    });
+    const latestOrder = clientTable?.tableContexts[0]?.orders[0];
+    if (!latestOrder || latestOrder.payment.paid) {
+      toast({
+        title: "주문이 이미 완료되었습니다.",
+      });
+      handleClose();
+      return;
+    }
+
     window.open(`supertoss://send?amount=${amountWithKey}&bank=토스뱅크&accountNo=100052690732`, "_blank");
     handleClose();
   }
 
-  const handleDirectTransfer = () => {
+  const handleDirectTransfer = async () => {
+    await useTableStore.getState().clientGetTable({
+      tableId: clientTable!.id,
+    });
+    const latestOrder = clientTable?.tableContexts[0]?.orders[0];
+    if (!latestOrder || latestOrder.payment.paid) {
+      toast({
+        title: "주문이 이미 완료되었습니다.",
+      });
+      handleClose();
+      return;
+    }
     setOrderPaymentModalOpen(true);
     handleClose();
   }
 
-  const handleCancelOrder = () => {
+  const handleCancelOrder = async () => {
+    await useTableStore.getState().clientGetTable({
+      tableId: clientTable!.id,
+    });
+    const latestOrder = clientTable?.tableContexts[0]?.orders[0];
+    if (!latestOrder || latestOrder.payment.paid) {
+      toast({
+        title: "주문이 이미 완료되었습니다.",
+      });
+      handleClose();
+      return;
+    }
+
+    //TODO: 주문 취소 로직
+
     setOpenState(false);
   }
 

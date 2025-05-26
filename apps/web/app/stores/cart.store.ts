@@ -11,7 +11,7 @@ export type CartState = {
   menuOrders: MenuOrderQuery[];
 
   addMenuOrder: (menuOrder: MenuOrderQuery) => void;
-  removeMenuOrder: (menuOrderId: string) => void;
+  removeMenuOrder: (menuId: string) => void;
   updateMenuOrder: (menuOrderId: string, menuOrder: MenuOrderQuery) => void;
 
   purchaseMenuOrders: () => Promise<void>;
@@ -35,9 +35,9 @@ const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  removeMenuOrder: (menuOrderId: string) => {
+  removeMenuOrder: (menuId: string) => {
     set((state) => ({
-      menuOrders: state.menuOrders.filter((menuOrder) => menuOrder.menuId !== menuOrderId),
+      menuOrders: state.menuOrders.filter((menuOrder) => menuOrder.menuId !== menuId),
     }))
   },
 

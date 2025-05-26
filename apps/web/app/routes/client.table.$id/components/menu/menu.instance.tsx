@@ -2,13 +2,17 @@ import { Card } from "~/components/ui/card";
 import * as MenuResponse from "shared/api/types/responses/menu";
 import { useState } from "react";
 import CartAddModal from "../cart/cart.add.modal";
+import useMenuStore from "~/stores/menu.store";
+import useTableStore from "~/stores/table.store";
+import { toast } from "~/hooks/use-toast";
 
 export default function MenuInstance({ menu }: { menu: MenuResponse.ClientGet["result"][number]["menus"][number] }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const { clientTable } = useTableStore();
 
   return (
     <>
-      {menu.quantity <= 0
+      {menu.quantity <= 0 || !menu.available
         ? ( // 품절
           <Card className="fc mb-3 p-4 bg-gray-50 [&_*]:text-gray-300">
             <div className="fr justify-between items-center bg-none h-full">
@@ -25,7 +29,21 @@ export default function MenuInstance({ menu }: { menu: MenuResponse.ClientGet["r
         ) : (
           <Card
             className="fc mb-3 p-4 hover:cursor-pointer hover:bg-gray-100"
-            onClick={() => setModalOpen(true)}
+            onClick={async () => {
+              await useMenuStore.getState().clientLoad({ userId: clientTable?.userId ?? "" });
+              const updatedMenuCategories = useMenuStore.getState().clientMenuCategories;
+              const updatedMenuState = updatedMenuCategories?.flatMap((m) => m.menus).find((m) => m.id === menu.id);
+              console.debug("updatedMenuState", updatedMenuState);
+              if (!updatedMenuState?.available || updatedMenuState.quantity <= 0) {
+                toast({
+                  title: "메뉴가 품절 또는 비활성화 되었습니다.",
+                  description: "다른 메뉴를 주문해주세요.",
+                  variant: "destructive",
+                });
+                return;
+              }
+              setModalOpen(true);
+            }}
           >
             <div className="fr justify-between items-center bg-none h-full">
               <div className="fr">

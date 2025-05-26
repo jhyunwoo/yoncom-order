@@ -8,6 +8,7 @@ import * as MenuResponse from "shared/api/types/responses/menu";
 import { Menu } from "db/schema";
 import useMenuStore from "~/stores/menu.store";
 import { API_BASE_URL } from "shared/constants";
+import { Checkbox } from "~/components/ui/checkbox";
 
 export default function InventoryDetailModal({
   openState, setOpenState,
@@ -26,6 +27,7 @@ export default function InventoryDetailModal({
   const [menuImage, setMenuImage] = useState(menu.image || "");
   const [menuPrice, setMenuPrice] = useState(menu.price || 0);
   const [menuQuantity, setMenuQuantity] = useState(menu.quantity || 0);
+  const [menuAvailable, setMenuAvailable] = useState(menu.available || false);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +59,18 @@ export default function InventoryDetailModal({
 
   const handleConfirm = async () => {
     // TODO: 메뉴 정보 업데이트 API 호출
-    // menuName, menuCategory, menuDescription, menuImage, menuPrice, menuStock 사용
+    await useMenuStore.getState().updateMenu({
+      menuOptions: {
+        name: menuName,
+        menuCategoryId: menuCategory,
+        description: menuDescription,
+        image: menuImage,
+        price: menuPrice,
+        quantity: menuQuantity,
+        available: menuAvailable,
+      },
+      menuId: menu.id,
+    });
     handleClose();
   }
 
@@ -72,6 +85,7 @@ export default function InventoryDetailModal({
     setMenuImage(menu.image || "");
     setMenuPrice(menu.price || 0);
     setMenuQuantity(menu.quantity || 0);
+    setMenuAvailable(menu.available || false);
   }, [menu]);
 
   return (
@@ -83,7 +97,7 @@ export default function InventoryDetailModal({
         </DialogHeader>
         <div className="grid grid-cols-3 gap-4">
           {/* 메뉴 이름 */}
-          <div className="space-y-2 col-span-2 fc">
+          <div className="space-y-2 col-span-1 fc">
             <label className="text-sm font-medium -mb-1">이름</label>
             <Input
               value={menuName}
@@ -92,16 +106,31 @@ export default function InventoryDetailModal({
             />
           </div>
 
+          {/* 메뉴 카테고리 */}
+          <div className="space-y-2 col-span-1 fc">
+            <label className="text-sm font-medium -mb-1">카테고리</label>
+            <Select value={menuCategory} onValueChange={setMenuCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="카테고리를 선택하세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {menuCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* 메뉴 이미지 */}
           <div className="space-y-2 row-span-4 fc">
             <label className="text-sm font-medium -mb-1">이미지</label>
-            
+
             {/* 이미지 미리보기 */}
             <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
               {menuImage ? (
-                <img 
-                  src={menuImage} 
-                  alt="메뉴 이미지" 
+                <img
+                  src={menuImage}
+                  alt="메뉴 이미지"
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -126,8 +155,8 @@ export default function InventoryDetailModal({
               />
               <div className={`
                 w-full px-4 py-2 border-2 border-dashed rounded-lg text-center transition-colors
-                ${isUploading 
-                  ? 'border-gray-300 bg-gray-100 cursor-not-allowed' 
+                ${isUploading
+                  ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
                   : 'border-blue-300 bg-blue-50 hover:border-blue-400 hover:bg-blue-100 cursor-pointer'
                 }
               `}>
@@ -203,7 +232,17 @@ export default function InventoryDetailModal({
               placeholder="재고 수량을 입력하세요"
             />
           </div>
+
+          {/* 메뉴 활성화 */}
+          <div className="space-y-2 fc">
+            <label className="text-sm font-medium -mb-1">활성화</label>
+            <Checkbox
+              checked={menuAvailable}
+              onCheckedChange={(checked) => setMenuAvailable(checked === "indeterminate" ? false : checked === true)}
+            />
+          </div>
         </div>
+
 
         {/* <DialogDescription className={`-mt-2 text-right`}>⚠︎ 올바른 이름과 좌석 수를 입력하세요.</DialogDescription> */}
         <DialogFooter className="">
