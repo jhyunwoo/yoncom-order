@@ -8,6 +8,7 @@ import useCartStore, { CartState } from "~/stores/cart.store";
 import useMenuStore from "~/stores/menu.store";
 import OrderUpdateModal from "../order/order.update.modal";
 import OrderModal from "../order/order.modal";
+import useTableStore from "~/stores/table.store";
 
 export default function CartModal({
   openState, setOpenState,
@@ -23,6 +24,7 @@ export default function CartModal({
 
   const { clientMenuCategories } = useMenuStore();
   const { menuOrders, purchaseMenuOrders } = useCartStore();
+  const { clientTable } = useTableStore();
 
   const menus = clientMenuCategories?.flatMap((menuCategory) => menuCategory.menus) ?? [];
   const menuOrderInfos = menuOrders.map((menuOrder) => {
@@ -43,6 +45,9 @@ export default function CartModal({
 
   const handleConfirm = () => {
     purchaseMenuOrders();
+    useTableStore.getState().clientGetTable({
+      tableId: clientTable!.id,
+    });
     setConfirmModalOpenState(true);
     setOpenState(false);
   }

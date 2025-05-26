@@ -5,7 +5,7 @@ import * as Schema from "db/schema";
 import adminMenu from "./menu";
 import adminTable from "./table";
 import adminMenuCategory from "./menuCategory";
-import * as AdminResponse from "shared/api/types/responses/admin";
+import adminDeposit from "./deposit";
 
 const admin = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -18,5 +18,6 @@ admin.get("/", async (c) => {
 admin.route("/menu", adminMenu);
 admin.route("/table", adminTable);
 admin.route("/menuCategory", adminMenuCategory);
+admin.route("/deposit", adminDeposit);
 
 export default admin;

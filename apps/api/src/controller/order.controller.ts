@@ -84,6 +84,7 @@ export const create = async (
       menuOrders.map((menuOrder) => ({
         ...menuOrder,
         orderId: order.id,
+        status: Schema.menuOrderStatus.PENDING,
       }))
     );
 
@@ -97,6 +98,14 @@ export const create = async (
           paid: false,
         }).returning()
     )[0];
+
+    // 주문 가능 수량 변경
+    for (const menuOrder of menuOrders) {
+      const menu = menus.find((menu) => menu.id === menuOrder.menuId)!;
+      await db.update(Schema.menus).set({
+        quantity: menu.quantity - menuOrder.quantity
+      }).where(eq(Schema.menus.id, menu.id));
+    }
 
     await db
       .update(Schema.orders)

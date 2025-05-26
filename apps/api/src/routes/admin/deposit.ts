@@ -2,36 +2,53 @@ import {Hono} from "hono";
 import {Bindings, Variables} from "api/lib/bindings";
 import {zValidator} from "@hono/zod-validator";
 import initializeDb from "api/lib/initialize-db";
-import { payments} from "db/schema";
+import { payments, tables} from "db/schema";
 import {createValidation} from "shared/api/types/requests/deposit";
-import {desc, eq} from "drizzle-orm";
+import {and, desc, eq, isNotNull} from "drizzle-orm";
 
-const deposit = new Hono<{ Bindings: Bindings; Variables: Variables }>()
+const adminDeposit = new Hono<{ Bindings: Bindings; Variables: Variables }>()
 
-deposit.post('/', zValidator('json',createValidation), async (c)=>{
+adminDeposit.post('/', zValidator('json', createValidation), async (c)=>{
     // body에서 데이터를 가져옴
     const {amount, bank, timestamp, name} = c.req.valid('json')
 
     const db = initializeDb(c.env.DB)
 
+    const realAmount = Math.ceil(amount / 100) * 100;
+    const tableKey = realAmount - amount;
+
+    console.debug(realAmount, tableKey)
+
     // 사용자가 입금한 금액과 동일한 금액을 입금 받아야하는 payments를 모두 조회
-    const remainingPayments = await db.query.payments.findMany(
-        {
-            where: eq(payments.amount, amount),
-            orderBy: desc(payments.createdAt)
+    const remainingPayments = (await db.query.payments.findMany({
+        where: and(
+            eq(payments.amount, realAmount),
+            eq(payments.paid, false)
+        ),
+        orderBy: desc(payments.createdAt),
+        with: {
+            order: {
+                with: {
+                    tableContext: {
+                        with: {
+                            table: true
+                        }
+                    }
+                }
+            }
         }
-    )
+    })).filter((payment) => payment.order.tableContext.table.key === tableKey);
 
     // 만약 payment가 없으면 오류 후 종료
     if(remainingPayments.length === 0){
-        return c.json({result:'fail'}, 400)
+        return c.json({result:'there are no payments require requested deposit'}, 400)
     }
 
     // 입금 받은 payment의 상태를 paid로 변경
     const updatePaidStatus = await db.update(payments).set({
         paid:true,
         bank: bank,
-        createdAt: timestamp,
+        updatedAt: timestamp,
         depositor: name
     }).where(eq(payments.id, remainingPayments[0].id)).returning()
 
@@ -42,3 +59,5 @@ deposit.post('/', zValidator('json',createValidation), async (c)=>{
 
     return c.json({result: 'ok'}, 200)
 })
+
+export default adminDeposit;

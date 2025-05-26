@@ -31,7 +31,15 @@ export default function Footer() {
         {clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid))
           ? (
             <Button
-              onClick={() => setPurchaseModalOpen(true)}
+              onClick={async () => {
+                await useTableStore.getState().clientGetTable({
+                  tableId: clientTable!.id,
+                });
+                const newClientTable = useTableStore.getState().clientTable;
+                if (newClientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid))) {
+                  setPurchaseModalOpen(true);
+                }
+              }}
               className="fc flex-1 h-full rounded-3xl bg-gray-500 hover:bg-gray-500 text-white text-2xl hover:cursor-default"
             >결제하기<br /><span className="-mt-2 text-sm text-gray-300">결제 대기중인 항목이 있습니다.</span>
             </Button>

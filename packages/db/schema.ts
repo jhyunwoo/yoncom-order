@@ -219,10 +219,10 @@ export const payments = sqliteTable("payments", {
     .$defaultFn(() => generateId(15)),
   paid: integer("paid", { mode: "boolean" }).notNull().default(false),
   amount: integer("amount").notNull(),
-    bank: text("bank"),
+  bank: text("bank"),
   depositor: text("depositor"),
   orderId: text("orderId")
-    .references(() => orders.id),
+    .references(() => orders.id).notNull(),
   createdAt: integer("createdAt")
     .notNull()
     .$defaultFn(() => Date.now()),

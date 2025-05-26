@@ -39,15 +39,17 @@ export default function RemoveTableModal({
       <DialogContent className={modalClassName}>
         <DialogHeader>
           <DialogTitle>테이블 제거</DialogTitle>
-          <DialogDescription>제거할 테이블을 선택하세요.</DialogDescription>
+          <DialogDescription>제거할 테이블을 선택하세요. 활성화 중인 테이블은 제거할 수 없습니다.</DialogDescription>
         </DialogHeader>
         <Select value={tableId} onValueChange={setTableId}>
           <SelectTrigger>
             <SelectValue placeholder="제거할 테이블을 선택하세요"></SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {tables.map((table) =>
-              <SelectItem key={table.id} value={table.id}>{table.name}</SelectItem>
+            {tables
+              .filter((table) => !table.tableContexts.some((tableContext) => tableContext.deletedAt === null))
+              .map((table) => 
+                <SelectItem key={table.id} value={table.id}>{table.name}</SelectItem>
             )}
           </SelectContent>
         </Select>

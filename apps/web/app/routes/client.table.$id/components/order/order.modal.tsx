@@ -15,7 +15,14 @@ export default function OrderModal({
   const [orderPaymentModalOpen, setOrderPaymentModalOpen] = useState(false);
   const { clientTable } = useTableStore();
   const { clientMenuCategories } = useMenuStore();
-  const amount = clientMenuCategories!.reduce((acc, menuCategory) => acc + menuCategory.menus.reduce((acc, menu) => acc + menu.price, 0), 0);
+
+  const menus = clientMenuCategories!.flatMap((menuCategory) => menuCategory.menus);
+  const menuOrders = clientTable?.tableContexts[0]?.orders[0]?.menuOrders;
+  if (!menuOrders) return;
+
+  const amount = menuOrders.reduce((acc, menuOrder) => {
+    return acc + menus.find((menu) => menu.id === menuOrder.menuId)!.price * menuOrder.quantity;
+  }, 0);
   const amountWithKey = amount - clientTable!.key;
 
   const handleTossPayment = async () => {

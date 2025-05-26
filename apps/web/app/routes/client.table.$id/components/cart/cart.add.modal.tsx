@@ -83,7 +83,10 @@ export default function CartAddModal({
         <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 수량을 입력하세요.</DialogDescription>
         <DialogFooter className="fr *:flex-1 *:mx-2 *:h-14 *:rounded-2xl *:text-lg">
           <Button variant="outline" onClick={handleClose}>취소</Button>
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={handleConfirm}>장바구니 담기</Button>
+          <Button className="fc bg-blue-500 hover:bg-blue-600 text-white" onClick={handleConfirm}>
+            <span className="text-2xl font-bold -mt-1">{quantity * menu.price}원</span>
+            <span className="text-sm -mt-2">장바구니 담기</span>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog >
