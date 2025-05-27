@@ -9,6 +9,8 @@ import * as ClientOrderRequest from "shared/types/requests/client/order";
 import * as ClientOrderResponse from "shared/types/responses/client/order";
 import * as AdminOrderRequest from "shared/types/requests/admin/order";
 import * as AdminOrderResponse from "shared/types/responses/admin/order";
+import * as AdminDepositRequest from "shared/types/requests/admin/deposit";
+import * as AdminDepositResponse from "shared/types/responses/admin/deposit";
 
 type TableState = {
   clientTable: ClientTableResponse.Get["result"] | null;
@@ -29,6 +31,10 @@ type TableState = {
 
   clientCancelOrder: (query: ClientOrderRequest.Remove) => Promise<ClientOrderResponse.Remove | null>;
   adminCancelOrder: (query: AdminOrderRequest.RemoveOrderQuery) => Promise<AdminOrderResponse.Remove | null>;
+  
+  adminDeposit: (query: AdminDepositRequest.Create) => Promise<AdminDepositResponse.Create | null>;
+
+  adminCompleteOrder: (query: AdminOrderRequest.CompleteOrder) => Promise<AdminOrderResponse.Complete | null>;
 
   // 다른 store에서 사용하기 위해 노출. component에서 사용하지 않음.
   _setTables: (tables: AdminTableResponse.Get["result"]) => void;
@@ -155,6 +161,36 @@ const useTableStore = create<TableState>((set, get) => ({
       title: "주문 취소 완료",
       description: "주문이 성공적으로 취소되었습니다.",
       duration: 3000,
+      });
+      get().load({});
+    },
+  }),
+
+  adminCompleteOrder: async (query: AdminOrderRequest.CompleteOrder) => await queryStore<AdminOrderRequest.CompleteOrder, AdminOrderResponse.Complete>({
+    route: "admin/order/complete",
+    method: "put",
+    query,
+    setter: set,
+    onSuccess: (res) => {
+      toast({
+        title: "주문 완료 완료",
+        description: "주문이 성공적으로 완료되었습니다.",
+        duration: 3000,
+      });
+      get().load({});
+    },
+  }),
+
+  adminDeposit: async (query: AdminDepositRequest.Create) => await queryStore<AdminDepositRequest.Create, AdminDepositResponse.Create>({
+    route: "admin/deposit",
+    method: "post",
+    query,
+    setter: set,
+    onSuccess: (res) => {
+      toast({
+        title: "결제 처리 완료",
+        description: "결제가 성공적으로 처리되었습니다.",
+        duration: 3000,
       });
       get().load({});
     },

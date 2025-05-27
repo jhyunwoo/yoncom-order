@@ -47,9 +47,11 @@ export default function CartModal({
     || menuOrderInfos.some((menuOrderInfo) => menuOrderInfo === null)
 
   const handleConfirm = async () => {
+    const isValid = await validateOrder(menuOrders);
+    if (!isValid) return;
+    
     const res = await purchaseMenuOrders();
     if (res === null) {
-      const isValid = await validateOrder(menuOrders);
       return;
     }
 
@@ -101,12 +103,13 @@ export default function CartModal({
                         setModalMenuOrder(menuOrders[index]);
                         setModalOpenState(true)
                       }}
-                      className="h-14 *:text-base"
+                      className="h-14 *:text-base *:tracking-tighter"
                     >
                       {/* <TableCell className="text-center">{index + 1}</TableCell> */}
+                      {/* 자간 좁히기 */}
                       <TableCell className="text-left font-bold">{menuOrderInfo!.menuName}</TableCell>
                       <TableCell className="text-right">{menuOrderInfo!.menuPrice.toLocaleString()}</TableCell>
-                      <TableCell className="text-right">{menuOrderInfo!.quantity}</TableCell>
+                      <TableCell className="text-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{menuOrderInfo!.quantity}</TableCell>
                       <TableCell className="text-right">{menuOrderInfo!.totalPrice.toLocaleString()}</TableCell>
                     </TableRow>
                   ))}

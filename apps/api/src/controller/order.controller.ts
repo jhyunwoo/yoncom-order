@@ -80,28 +80,16 @@ export const createOrder = async (
 
     // 주문 들어온 메뉴의 수량이 남은 메뉴 수량을 안넘는지 확인
     console.log("Checking menu quantity");
-    const orderedMenuData = await db.query.menuOrders.findMany({
-      where: and(inArray(menuOrders.id, menuIds), isNull(menuOrders.deletedAt)),
-    });
 
-    const soldMenuData = orderedMenuData.map((menu) =>
-      orderedMenuData
-        .filter((orderedMenu) => orderedMenu.menuId === menu.id)
-        .reduce((acc, curr) => acc + curr.quantity, 0),
-    );
-
-    for (const index in menuData) {
-      if (
-        soldMenuData[index] + menuOrdersData[index].quantity >
-        menuData[index].quantity
-      )
+    for (const menuOrder of menuOrdersData) {
+      if (menuData.find((menu) => menu.id === menuOrder.menuId)!.quantity < menuOrder.quantity)
         return { error: "Menu Not Enough", status: 409 };
     }
     // 메뉴 수량 업데이트
-    for (const menu of menuData) {
+    for (const menuOrder of menuOrdersData) {
       await db.update(menus).set({
-        quantity: sql`${menus.quantity} - ${menu.quantity}`,
-      });
+        quantity: sql`${menus.quantity} - ${menuOrder.quantity}`,
+      }).where(eq(menus.id, menuOrder.menuId));
     }
 
     // order 생성

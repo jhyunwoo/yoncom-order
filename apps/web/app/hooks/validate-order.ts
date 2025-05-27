@@ -2,13 +2,15 @@ import useMenuStore from "~/stores/menu.store";
 import useTableStore from "~/stores/table.store";
 import { toast } from "./use-toast";
 import useCartStore, { CartState } from "~/stores/cart.store";
+import * as Schema from "db/schema";
 
 export function useValidateOrder() {
   const { clientTable } = useTableStore();
-  const { clientLoad } = useMenuStore();
+  const { menus, clientLoad } = useMenuStore();
 
   return async function validateOrder(menuOrders: CartState["menuOrders"]) {
-    const success = await clientLoad({ userId: clientTable?.userId ?? "" });
+    const beforeMenus = JSON.parse(JSON.stringify(menus)) as Schema.Menu[];
+    const success = await clientLoad({});
 
     if (!success) {
       toast({
@@ -22,6 +24,7 @@ export function useValidateOrder() {
     const updatedMenus = success.result.flatMap((m) => m.menus);
 
     for (const menuOrder of menuOrders) {
+      const beforeMenu = beforeMenus.find((m) => m.id === menuOrder.menuId);
       const updatedMenu = updatedMenus.find((m) => m.id === menuOrder.menuId);
       if (!updatedMenu) {
         toast({
@@ -36,6 +39,14 @@ export function useValidateOrder() {
         toast({
           title: "메뉴 수량이 변경되었습니다.",
           description: "다시 시도해주세요.",
+          variant: "default",
+        });
+        return false;
+      }
+      if (beforeMenu?.price !== updatedMenu.price) {
+        toast({
+          title: "메뉴 가격이 변경되었습니다.",
+          description: "변경 내역을 확인하고 다시 시도해주세요.",
           variant: "default",
         });
         return false;

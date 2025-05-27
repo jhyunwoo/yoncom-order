@@ -34,6 +34,7 @@ export default function TableSetModal({
         <DialogHeader>
           <DialogTitle>테이블 상태 변경</DialogTitle>
           <DialogDescription className="text-neutral-800"><b>{table.name}</b>을(를) {prompt} 중으로 변경하시겠습니까?</DialogDescription>
+          <DialogDescription className="text-neutral-800">tableId: <b>{table.id}</b></DialogDescription>
         </DialogHeader>
         <p className="dangerTXT text-sm" style={{
           opacity: inUse ? 1 : 0,

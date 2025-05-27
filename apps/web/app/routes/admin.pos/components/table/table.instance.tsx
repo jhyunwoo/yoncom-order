@@ -19,13 +19,14 @@ export default function TableInstance({
   const [now, setNow] = useState(0);
 
   const { menus } = useMenuStore();
+
   const menuId2menu = (menuId: string) => menus.find((menu) => menu.id === menuId);
   const menuOrders = activeTableContext?.orders
     .filter((order) => 
       order.deletedAt === null
       && order.payment.paid
     ).map((order) => order.menuOrders).flat() || [];
-  const amount = menuOrders.reduce((acc, menuOrder) => acc + (menuId2menu(menuOrder.menuId)!.price * menuOrder.quantity), 0) || 0;
+  const amount = menuOrders.reduce((acc, menuOrder) => acc + (menuId2menu(menuOrder.menuId)?.price ?? Infinity * menuOrder.quantity), 0) || 0;
 
   const isOnOrder = activeTableContext?.orders.some((order) => 
     order.deletedAt === null
@@ -81,9 +82,9 @@ export default function TableInstance({
               <div className="w-full flex-1 overflow-y-auto fc bg-[#F2F2F2]">
                 <Table>
                   <TableBody>
-                    {menuOrders.filter(menuOrder => menuOrder.status === Schema.menuOrderStatus.PENDING).map((menuOrder) => (
+                    {menuOrders.map((menuOrder) => (
                       <TableRow key={menuOrder.id} className="*:py-1">
-                        <TableCell>⌛ {menuId2menu(menuOrder.menuId)!.name}</TableCell>
+                        <TableCell>{menuOrder.status === Schema.menuOrderStatus.PENDING ? "⌛" : "✅"} {menuId2menu(menuOrder.menuId)?.name}</TableCell>
                         <TableCell className="font-bold">{menuOrder.quantity}</TableCell>
                       </TableRow>
                     ))}

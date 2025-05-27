@@ -51,7 +51,7 @@ export default function OrderInstance({
 
               return (
                 <li key={menuOrder.menuId} className="text-sm my-1">
-                  {status} {menu!.name} x{menuOrder.quantity}
+                  {status} {menu?.name} x{menuOrder.quantity}
                 </li>
               )
             })}

@@ -14,7 +14,7 @@ export const deleteOrder = async (db: QueryDB.DB, orderId: string) => {
     for (const menuOrder of orderData?.menuOrders || []) {
       await db.update(menus).set({
         quantity: sql`${menus.quantity} + ${menuOrder.quantity}`,
-      });
+      }).where(eq(menus.id, menuOrder.menuId));
     }
 
     await Promise.all([

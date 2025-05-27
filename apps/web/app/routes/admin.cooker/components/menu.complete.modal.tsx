@@ -6,14 +6,18 @@ export default function MenuCompleteModal({
   openState, setOpenState,
   menuName,
   tableName,
+  menuOrderId,
 }: {
   openState: boolean;
   setOpenState: (open: boolean) => void;
   menuName: string;
   tableName: string;
+  menuOrderId: string;
 }) {
   const handleConfirm = async () => {
-    //TODO: 조리 완료 처리 로직 구현
+    await useTableStore.getState().adminCompleteOrder({
+      menuOrderId,
+    });
     setOpenState(false);
   }
 

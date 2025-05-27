@@ -5,10 +5,10 @@ import CartAddModal from "../cart/cart.add.modal";
 import useMenuStore from "~/stores/menu.store";
 import useTableStore from "~/stores/table.store";
 import { toast } from "~/hooks/use-toast";
+import { API_BASE_URL } from "shared/constants";
 
 export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["result"][number]["menus"][number] }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const { clientTable } = useTableStore();
 
   return (
     <>
@@ -16,21 +16,29 @@ export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["r
         ? ( // 품절
           <Card className="fc mb-3 p-4 bg-gray-50 [&_*]:text-gray-300">
             <div className="fr justify-between items-center bg-none h-full">
-              <div className="fr">
-                <img src={"/" + "favicon.ico"} alt="" width={50} height={50} className="rounded-md" />
-                <div className="fc ml-4">
+              <div className="fr items-center">
+                <img src={menu.image ? `${API_BASE_URL.replace("/api", "")}/image/${menu.image}` : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
+                <div className="fc ml-4 flex-1">
                   <h1 className="font-bold text-xl flex items-center">{menu.name}</h1>
                   <span className="text-sm">{menu.description}</span>
                 </div>
               </div>
-              <span className="text-md">{menu.price.toLocaleString()}원</span>
+              <span className="text-md min-w-fit ml-2">{menu.price.toLocaleString()}원</span>
             </div>
           </Card>
         ) : (
           <Card
             className="fc mb-3 p-4 hover:cursor-pointer hover:bg-gray-100"
             onClick={async () => {
-              await useMenuStore.getState().clientLoad({ userId: clientTable?.userId ?? "" });
+              const res = await useMenuStore.getState().clientLoad({});
+              if (!res) {
+                toast({
+                  title: "메뉴 정보를 불러오는데 실패했습니다.",
+                  description: "다시 시도해주세요.",
+                  variant: "destructive",
+                });
+                return;
+              }
               const updatedMenuCategories = useMenuStore.getState().clientMenuCategories;
               const updatedMenuState = updatedMenuCategories?.flatMap((m) => m.menus).find((m) => m.id === menu.id);
               console.debug("updatedMenuState", updatedMenuState);
@@ -47,13 +55,13 @@ export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["r
           >
             <div className="fr justify-between items-center bg-none h-full">
               <div className="fr items-center">
-                <img src={menu.image ? menu.image : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
+                <img src={menu.image ? `${API_BASE_URL.replace("/api", "")}/image/${menu.image}` : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
                 <div className="fc ml-4 flex-1">
                   <h1 className="font-bold text-xl flex items-center">{menu.name}</h1>
                   <span className="text-sm">{menu.description}</span>
                 </div>
               </div>
-              <span className="text-md min-w-fit">{menu.price.toLocaleString()}원</span>
+              <span className="text-md min-w-fit ml-2">{menu.price.toLocaleString()}원</span>
             </div>
           </Card>
         )}
