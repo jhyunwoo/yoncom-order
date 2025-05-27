@@ -126,10 +126,14 @@ export const vacateTable = async (
       ),
       with: {
         payment: true,
+        menuOrders: true,
       },
     });
 
-    if (!unfinishedOrders?.payment?.paid) {
+    if (
+      !unfinishedOrders?.payment?.paid ||
+      unfinishedOrders?.menuOrders.some((order) => order.status === "PENDING")
+    ) {
       return { error: "There are on active orders in the table", status: 409 };
     }
 

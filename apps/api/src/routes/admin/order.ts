@@ -38,7 +38,6 @@ adminOrder.put("/", zValidator("json", paidValidation), async (c) => {
   }
 });
 
-// TODO: 특정 menuOrder 완료 처리
 adminOrder.put(
   "/complete",
   zValidator("json", completeValidation),
