@@ -84,7 +84,7 @@ export default function OrderHistoryModal({
                         setOrderDetail(orderHistory.order);
                         setOrderDetailModalOpenState(true)
                       }}
-                      className="h-14 *:text-base"
+                      className="h-14 *:text-base *:tracking-tighter"
                     >
                       {/* <TableCell className="text-center">{index + 1}</TableCell> */}
                       <TableCell className="text-left">{new Date(orderHistory.orderDate).toLocaleString("ko-KR", {

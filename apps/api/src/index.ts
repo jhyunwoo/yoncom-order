@@ -38,6 +38,23 @@ app.get("/api", async (c) => {
   return c.json({ result: "API is Healthy" + serverStartDate });
 });
 
+app.get("/image/:filename", async (c) => {
+  const filename = c.req.param("filename");
+
+  const object = await c.env.R2_BUCKET.get(filename);
+
+  if (!object || !object.body) {
+    return c.text("Image not found", 404);
+  }
+
+  return new Response(object.body, {
+    headers: {
+      "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
+      "Cache-Control": "public, max-age=86400",
+    },
+  });
+});
+
 app.route("/api/admin", admin);
 app.route("/api/auth", auth);
 app.route("/api/menu", menu);

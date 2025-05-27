@@ -5,6 +5,7 @@ import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import useMenuStore from "~/stores/menu.store";
 import { Checkbox } from "~/components/ui/checkbox";
+import { API_BASE_URL } from "shared/constants";
 
 export default function InventoryCreateModal({
   openState, setOpenState,
@@ -26,28 +27,14 @@ export default function InventoryCreateModal({
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.debug("file", file);
     if (!file) return;
 
-    setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch('/admin/image', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setMenuImage(result.path);
-      } else {
-        console.error('이미지 업로드 실패');
-      }
-    } catch (error) {
-      console.error('이미지 업로드 에러:', error);
-    } finally {
-      setIsUploading(false);
+    // setIsUploading(true);
+    const response = await useMenuStore.getState().uploadImage(file);
+    console.debug("response", response);
+    if (response) {
+      setMenuImage(response.filename);
     }
   };
 
@@ -127,7 +114,7 @@ export default function InventoryCreateModal({
             <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
               {menuImage ? (
                 <img
-                  src={menuImage}
+                  src={`${API_BASE_URL.replace("/api", "")}/image/${menuImage}`}
                   alt="메뉴 이미지"
                   className="w-full h-full object-cover"
                 />
@@ -199,6 +186,7 @@ export default function InventoryCreateModal({
               type="number"
               value={menuPrice}
               min={0}
+              step={100}
               onChange={(e) => setMenuPrice(Number(e.target.value))}
               placeholder="가격을 입력하세요"
             />

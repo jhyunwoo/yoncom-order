@@ -6,7 +6,9 @@ import * as AdminMenuRequest from "types/requests/admin/menu";
 import * as AdminMenuResponse from "types/responses/admin/menu";
 import * as AdminMenuCategoryRequest from "types/requests/admin/menuCategory";
 import * as AdminMenuCategoryResponse from "types/responses/admin/menuCategory";
-import queryStore from '~/lib/query';
+import * as AdminImageRequest from "types/requests/admin/image";
+import * as AdminImageResponse from "types/responses/admin/image";
+import queryStore, { api } from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
 
 export type MenuState = {
@@ -22,6 +24,7 @@ export type MenuState = {
   createMenu: (query: AdminMenuRequest.Create) => Promise<AdminMenuResponse.Create | null>;
   removeMenu: (query: AdminMenuRequest.Remove) => Promise<AdminMenuResponse.Remove | null>;
   updateMenu: (query: AdminMenuRequest.Update) => Promise<AdminMenuResponse.Update | null>;
+  uploadImage: (file: File) => Promise<{ filename: string } | null>;
 
   createMenuCategory: (query: AdminMenuCategoryRequest.Create) => Promise<AdminMenuCategoryResponse.Create | null>;
   removeMenuCategory: (query: AdminMenuCategoryRequest.Remove) => Promise<AdminMenuCategoryResponse.Remove | null>;
@@ -104,6 +107,21 @@ const useMenuStore = create<MenuState>((set, get) => ({
       get().adminLoad({});
     },
   }),
+
+  uploadImage: async (file: File): Promise<{ filename: string } | null> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.put('admin/image', {
+      body: formData,
+    }).json<{ result: { filename: string } }>();
+
+    if (response.result?.filename) {
+      return response.result;
+    }
+
+    return null;
+  },
 
   createMenuCategory: async (query: AdminMenuCategoryRequest.Create) => queryStore<AdminMenuCategoryRequest.Create, AdminMenuCategoryResponse.Create>({
     route: "admin/menuCategory",

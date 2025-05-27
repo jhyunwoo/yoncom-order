@@ -31,9 +31,18 @@ export default function OrderDetailModal({
   })
   
   const handelOrderCancel = async () => {
-    //TODO: 주문 취소 로직 구현
     await useTableStore.getState().adminCancelOrder({
       orderId: order.id,
+    });
+    handleClose();
+  }
+
+  const handlePay = async () => {
+    await useTableStore.getState().adminDeposit({
+      name: "임의 결제",
+      timestamp: new Date().getTime(),
+      amount: order.payment.amount,
+      bank: "임의 결제",
     });
     handleClose();
   }
@@ -89,7 +98,7 @@ export default function OrderDetailModal({
             <div className="w-fit *:mx-1">
               <Button className="dangerBG dangerB" onClick={handelOrderCancel}>주문 취소</Button>
               {!order.payment.paid && (
-                <Button className="dangerBG dangerB" onClick={handleClose}>결제</Button>
+                <Button className="dangerBG dangerB" onClick={handlePay}>결제</Button>
               )}
               <Button onClick={handleClose}>닫기</Button>
             </div>

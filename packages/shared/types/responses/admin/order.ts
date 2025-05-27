@@ -18,3 +18,7 @@ export type Remove = {
 export type Paid = {
   result: string;
 };
+
+export type Complete = {
+  result: string;
+};

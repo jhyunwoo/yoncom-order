@@ -4,6 +4,7 @@ import useMenuStore from "~/stores/menu.store";
 import MenuInstance from "./menu.instance";
 import MenuCompleteModal from "./menu.complete.modal";
 import { useState } from "react";
+import { menuOrderStatus } from "db/schema";
 
 export default function MenuMonitor({
   menuId,
@@ -12,6 +13,7 @@ export default function MenuMonitor({
 }) {
   const [menuCompleteModalOpen, setMenuCompleteModalOpen] = useState(false);
   const [menuName, setMenuName] = useState("");
+  const [menuOrderId, setMenuOrderId] = useState("");
   const [tableName, setTableName] = useState("");
 
   const { menus } = useMenuStore();
@@ -29,8 +31,10 @@ export default function MenuMonitor({
         .flatMap(
           (order) => order.menuOrders
             .filter(menuOrder => menuOrder.menuId === menuId)
+            .filter(menuOrder => menuOrder.status === menuOrderStatus.PENDING)
             .map(menuOrder => ({ ...menuOrder, timestamp: order.createdAt })),
         ).map((menuOrder) => ({
+          id: menuOrder.id,
           menuId: menu.id,
           menuName: menu.name,
           menuPrice: menu.price,
@@ -48,13 +52,14 @@ export default function MenuMonitor({
           <CardTitle className="text-xl font-bold">{menu.name}</CardTitle>
         </CardHeader>
         <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer">
-          {menuOrders.map((order) => 
+          {menuOrders.map((menuOrder) => 
             <MenuInstance 
-              key={order.timestamp} 
-              order={order} 
+              key={menuOrder.timestamp} 
+              order={menuOrder} 
               onClick={() => {
-                setMenuName(order.menuName);
-                setTableName(order.tableName);
+                setMenuName(menuOrder.menuName);
+                setMenuOrderId(menuOrder.id);
+                setTableName(menuOrder.tableName);
                 setMenuCompleteModalOpen(true);
               }}
             />
@@ -66,6 +71,7 @@ export default function MenuMonitor({
         setOpenState={setMenuCompleteModalOpen}
         menuName={menuName}
         tableName={tableName}
+        menuOrderId={menuOrderId}
       />
     </div>
   );

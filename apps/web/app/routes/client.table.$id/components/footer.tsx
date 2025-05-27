@@ -36,7 +36,12 @@ export default function Footer() {
           <Button 
             variant="outline" 
             className="w-full h-full text-center text-lg bg-gray-100 hover:bg-gray-200 rounded-3xl"
-            onClick={() => setOrderHistoryModalOpen(true)}
+            onClick={async () => {
+              await useTableStore.getState().clientGetTable({
+                tableId: clientTable!.id,
+              });
+              setOrderHistoryModalOpen(true);
+            }}
           >
             <span className="leading-6 text-gray-500">이전<br />주문내역</span>
           </Button>

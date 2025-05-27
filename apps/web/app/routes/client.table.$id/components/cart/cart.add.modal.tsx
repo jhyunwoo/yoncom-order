@@ -9,6 +9,7 @@ import { MinusIcon, PlusIcon } from "lucide-react";
 import useTableStore from "~/stores/table.store";
 import { toast } from "~/hooks/use-toast";
 import { useValidateOrder } from "~/hooks/validate-order";
+import { API_BASE_URL } from "shared/constants";
 
 export default function CartAddModal({
   menu,
@@ -62,10 +63,11 @@ export default function CartAddModal({
     <Dialog open={openState} onOpenChange={handleClose}>
       <DialogContent className="w-[96%] border-blue-500 border-2 rounded-xl">
         <DialogHeader className="fc justify-between items-center">
-          {menu.image && (
-            <img src={menu.image} alt="" width={120} height={120} className="rounded-md m-2" />
+          {menu.image.length !== 0 ? (
+            <img src={`${API_BASE_URL.replace("/api", "")}/image/${menu.image}`} alt="" width={120} height={120} className="rounded-md m-2 w-[120px] h-[120px]" />
+          ) : (
+            <img src={"/favicon.ico"} alt="" width={120} height={120} className="rounded-md m-2" />
           )}
-          <img src={"/" + "favicon.ico"} alt="" width={120} height={120} className="rounded-md m-2" />
           <DialogTitle className="text-2xl font-bold">{menu.name}</DialogTitle>
           <DialogDescription className="text-md !-mt-0">{menu.description}</DialogDescription>
         </DialogHeader>

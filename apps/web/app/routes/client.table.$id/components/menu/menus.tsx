@@ -19,7 +19,7 @@ export default function Menus({ menuCategories }: { menuCategories: ClientMenuRe
             value={menuCategory.id}
             className="text-lg font-semibold hover:bg-blue-100 hover:text-blue-600 m-1"
             onClick={() => {
-              useMenuStore.getState().clientLoad({ userId: clientTable?.userId ?? "" });
+              useMenuStore.getState().clientLoad({});
             }}
           >{menuCategory.name}</TabsTrigger>
         )}
