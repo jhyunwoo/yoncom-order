@@ -30,7 +30,15 @@ export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["r
           <Card
             className="fc mb-3 p-4 hover:cursor-pointer hover:bg-gray-100"
             onClick={async () => {
-              await useMenuStore.getState().clientLoad({ userId: clientTable?.userId ?? "" });
+              const res = await useMenuStore.getState().clientLoad({});
+              if (!res) {
+                toast({
+                  title: "메뉴 정보를 불러오는데 실패했습니다.",
+                  description: "다시 시도해주세요.",
+                  variant: "destructive",
+                });
+                return;
+              }
               const updatedMenuCategories = useMenuStore.getState().clientMenuCategories;
               const updatedMenuState = updatedMenuCategories?.flatMap((m) => m.menus).find((m) => m.id === menu.id);
               console.debug("updatedMenuState", updatedMenuState);
