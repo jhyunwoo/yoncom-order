@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Menu } from "db/schema";
 import useMenuStore from "~/stores/menu.store";
 import { Checkbox } from "~/components/ui/checkbox";
-import { API_BASE_URL } from "shared/constants";
 
 export default function InventoryDetailModal({
   openState, setOpenState,
@@ -17,7 +16,6 @@ export default function InventoryDetailModal({
   menu: Menu;
 }) {
   const { menuCategories } = useMenuStore();
-  const menuCategoryName = menuCategories.find((category) => category.id === menu.menuCategoryId)?.name;
 
   const [menuName, setMenuName] = useState(menu.name || "");
   const [menuCategory, setMenuCategory] = useState(menu.menuCategoryId || "");
@@ -113,7 +111,7 @@ export default function InventoryDetailModal({
             <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
               {menuImage ? (
                 <img
-                  src={`${API_BASE_URL.replace("/api", "")}/image/${menuImage}`}
+                  src={menu.image}
                   alt="메뉴 이미지"
                   className="w-full h-full object-cover"
                 />

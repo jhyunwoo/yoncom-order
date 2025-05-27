@@ -5,7 +5,6 @@ import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import useMenuStore from "~/stores/menu.store";
 import { Checkbox } from "~/components/ui/checkbox";
-import { API_BASE_URL } from "shared/constants";
 
 export default function InventoryCreateModal({
   openState, setOpenState,
@@ -114,7 +113,7 @@ export default function InventoryCreateModal({
             <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
               {menuImage ? (
                 <img
-                  src={`${API_BASE_URL.replace("/api", "")}/image/${menuImage}`}
+                  src={menuImage}
                   alt="메뉴 이미지"
                   className="w-full h-full object-cover"
                 />

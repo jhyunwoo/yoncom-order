@@ -17,7 +17,7 @@ export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["r
           <Card className="fc mb-3 p-4 bg-gray-50 [&_*]:text-gray-300">
             <div className="fr justify-between items-center bg-none h-full">
               <div className="fr items-center">
-                <img src={menu.image ? `${API_BASE_URL.replace("/api", "")}/image/${menu.image}` : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
+                <img src={menu.image ? menu.image : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
                 <div className="fc ml-4 flex-1">
                   <h1 className="font-bold text-xl flex items-center">{menu.name}</h1>
                   <span className="text-sm">{menu.description}</span>
@@ -55,7 +55,7 @@ export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["r
           >
             <div className="fr justify-between items-center bg-none h-full">
               <div className="fr items-center">
-                <img src={menu.image ? `${API_BASE_URL.replace("/api", "")}/image/${menu.image}` : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
+                <img src={menu.image ? menu.image : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
                 <div className="fc ml-4 flex-1">
                   <h1 className="font-bold text-xl flex items-center">{menu.name}</h1>
                   <span className="text-sm">{menu.description}</span>

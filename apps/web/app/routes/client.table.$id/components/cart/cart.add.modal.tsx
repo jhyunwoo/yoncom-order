@@ -64,7 +64,7 @@ export default function CartAddModal({
       <DialogContent className="w-[96%] border-blue-500 border-2 rounded-xl">
         <DialogHeader className="fc justify-between items-center">
           {menu.image.length !== 0 ? (
-            <img src={`${API_BASE_URL.replace("/api", "")}/image/${menu.image}`} alt="" width={120} height={120} className="rounded-md m-2 w-[120px] h-[120px]" />
+            <img src={menu.image} alt="" width={120} height={120} className="rounded-md m-2 w-[120px] h-[120px]" />
           ) : (
             <img src={"/favicon.ico"} alt="" width={120} height={120} className="rounded-md m-2" />
           )}
