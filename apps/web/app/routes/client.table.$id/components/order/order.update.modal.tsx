@@ -4,9 +4,11 @@ import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import useCartStore, { CartState } from "~/stores/cart.store";
-import * as MenuResponse from "shared/api/types/responses/menu";
-import { MinusIcon, Plus, PlusIcon } from "lucide-react";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import useMenuStore from "~/stores/menu.store";
+import { toast } from "~/hooks/use-toast";
+import useTableStore from "~/stores/table.store";
+import { useValidateOrder } from "~/hooks/validate-order";
 
 export default function OrderUpdateModal({
   menuOrder,
@@ -16,19 +18,19 @@ export default function OrderUpdateModal({
   openState: boolean;
   setOpenState: any;
 }) {
+  const { clientTable } = useTableStore();
   const [quantity, setQuantity] = useState<number>(0);
   const [invalid, setInvalid] = useState(false);
+  const validateOrder = useValidateOrder();
 
   const { updateMenuOrder } = useCartStore();
-  const { clientMenuCategories } = useMenuStore();
+  const { menus } = useMenuStore();
 
   useEffect(() => {
     setQuantity(menuOrder.quantity);
   }, [menuOrder]);
 
-  const menu = clientMenuCategories!
-    .flatMap((menuCategory) => menuCategory.menus)
-    .find((menu) => menu.id === menuOrder.menuId)!;
+  const menu = menus.find((m) => m.id === menuOrder.menuId)!;
 
   const handleConfirm = async () => {
     if (quantity < 0 || quantity > menu.quantity) {
@@ -36,12 +38,16 @@ export default function OrderUpdateModal({
       return;
     }
 
+    const isValid = await validateOrder([{ menuId: menu.id, quantity }]);
+    if (!isValid) return;
+
     updateMenuOrder(menuOrder.menuId, { menuId: menuOrder.menuId, quantity });
     handleClose();
   }
 
   const handleClose = () => {
     setInvalid(false);
+    setQuantity(menuOrder.quantity);
     setOpenState(false);
   }
 

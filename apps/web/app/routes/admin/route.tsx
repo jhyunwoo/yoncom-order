@@ -1,7 +1,7 @@
 // app/routes/admin.tsx
 import { Outlet, redirect } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
-import { isSignedIn, requireUser } from "~/lib/auth";
+import { requireUser } from "~/lib/auth";
 import { useEffect } from "react";
 
 import useMenuStore from "~/stores/menu.store";

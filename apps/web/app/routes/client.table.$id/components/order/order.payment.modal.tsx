@@ -1,11 +1,7 @@
-import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { toast } from "~/hooks/use-toast";
-import useTableStore from "~/stores/table.store";
-import { QRCodeSVG } from "qrcode.react";
-import { dateDiffString } from "~/lib/date";
-import { ClipboardPasteIcon, LinkIcon, ListIcon } from "lucide-react";
+import { ClipboardPasteIcon } from "lucide-react";
 
 export default function OrderPaymentModal({
   openState, setOpenState,
@@ -15,8 +11,6 @@ export default function OrderPaymentModal({
   setOpenState: (open: boolean) => void;
   amount: number;
 }) {
-  const { clientTable } = useTableStore();
-
   const copyAccount = () => {
     navigator.clipboard.writeText("국민은행 111102-04-273566");
     toast({

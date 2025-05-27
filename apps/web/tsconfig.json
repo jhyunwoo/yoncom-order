@@ -27,9 +27,9 @@
       "api/*": ["../api/src/*"],
       "web/*": ["./*"],
       "shared/*": ["../../packages/shared/*"],
-      "db/*": ["../../packages/db/*"]
+      "db/*": ["../../packages/db/*"],
+      "types/*": ["../../packages/shared/types/*"]
     },
-
     // Vite takes care of building everything, not tsc.
     "noEmit": true
   }

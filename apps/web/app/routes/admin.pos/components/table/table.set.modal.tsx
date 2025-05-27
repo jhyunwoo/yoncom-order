@@ -1,18 +1,14 @@
-import { useState } from "react";
-import ky, { HTTPError } from "ky";
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
-import * as Schema from "db/schema";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import useTableStore from "~/stores/table.store";
-import { toast } from "~/hooks/use-toast";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as AdminTableResponse from "shared/types/responses/admin/table";
 
 export default function TableSetModal({
   table,
   openState, setOpenState,
   modalClassName,
 }: {
-  table: TableResponse.AdminGet["result"][0];
+  table: AdminTableResponse.Get["result"][0];
   openState: boolean;
   setOpenState: (openState: boolean) => void;
   modalClassName?: string;

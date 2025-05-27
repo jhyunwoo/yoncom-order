@@ -1,10 +1,10 @@
 import { HTTPError } from "ky";
-import ErrorResponse from "shared/api/types/responses/error";
+import * as ClientErrorResponse from "shared/types/responses/client/error";
 import { toast } from "~/hooks/use-toast";
 
 export default async function kyErrorHandler(error: unknown) {
   if (error instanceof HTTPError) {
-    const res = await error.response.json<ErrorResponse>();
+    const res = await error.response.json<ClientErrorResponse.Error>();
     console.error(new Date().toLocaleString(), "HTTP Error:", res.error);
     toast({
       variant: "destructive",

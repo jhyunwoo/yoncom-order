@@ -3,7 +3,6 @@ import { Button } from "~/components/ui/button"
 import CartModal from "./cart/cart.modal";
 import useCartStore from "~/stores/cart.store";
 import useTableStore from "~/stores/table.store";
-import PurchaseModal from "./purchase.modal";
 import OrderModal from "./order/order.modal";
 import OrderHistoryModal from "./order/order.history.modal";
 

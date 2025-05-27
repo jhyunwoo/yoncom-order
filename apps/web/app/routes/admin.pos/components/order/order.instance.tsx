@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import useMenuStore from "~/stores/menu.store";
 import useTableStore from "~/stores/table.store";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as AdminTableResponse from "shared/types/responses/admin/table";
 import { dateDiffString } from "~/lib/date";
 import { useEffect, useState } from "react";
 import * as Schema from "db/schema";
@@ -11,7 +11,7 @@ export default function OrderInstance({
   order,
   onClick,
 }: { 
-  order: TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number];
+  order: AdminTableResponse.Get["result"][number]["tableContexts"][number]["orders"][number];
   onClick: () => void;
 }) {
   const [now, setNow] = useState(0);

@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import useTableStore from "~/stores/table.store";
 import useMenuStore from "~/stores/menu.store";
 import MenuInstance from "./menu.instance";
@@ -42,7 +41,7 @@ export default function MenuMonitor({
         <CardHeader className="px-2">
           <CardTitle className="text-2xl">{menu.name}</CardTitle>
         </CardHeader>
-        <CardContent className="p-0 overflow-scroll *:hover:cursor-pointer">
+        <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer">
           {menuOrders.map((order) => 
             <MenuInstance 
               key={order.timestamp} 

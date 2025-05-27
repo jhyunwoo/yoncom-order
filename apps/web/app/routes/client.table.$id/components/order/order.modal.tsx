@@ -27,10 +27,18 @@ export default function OrderModal({
   const amountWithKey = amount - clientTable!.key;
 
   const handleTossPayment = async () => {
-    await useTableStore.getState().clientGetTable({
+    const success = await useTableStore.getState().clientGetTable({
       tableId: clientTable!.id,
     });
-    const latestOrder = clientTable?.tableContexts[0]?.orders[0];
+    if (!success) {
+      toast({
+        title: "테이블 정보를 불러오는데 실패했습니다.",
+        description: "다시 시도해주세요.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const latestOrder = success.result.tableContexts[0]?.orders[0];
     if (!latestOrder || latestOrder.payment.paid) {
       toast({
         title: "주문이 이미 완료되었습니다.",
@@ -44,10 +52,18 @@ export default function OrderModal({
   }
 
   const handleDirectTransfer = async () => {
-    await useTableStore.getState().clientGetTable({
+    const success = await useTableStore.getState().clientGetTable({
       tableId: clientTable!.id,
     });
-    const latestOrder = clientTable?.tableContexts[0]?.orders[0];
+    if (!success) {
+      toast({
+        title: "테이블 정보를 불러오는데 실패했습니다.",
+        description: "다시 시도해주세요.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const latestOrder = success.result.tableContexts[0]?.orders[0];
     if (!latestOrder || latestOrder.payment.paid) {
       toast({
         title: "주문이 이미 완료되었습니다.",

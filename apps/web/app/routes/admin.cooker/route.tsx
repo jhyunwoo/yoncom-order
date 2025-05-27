@@ -1,4 +1,4 @@
-import { Menu } from "db/schema";
+
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import useMenuStore from "~/stores/menu.store";

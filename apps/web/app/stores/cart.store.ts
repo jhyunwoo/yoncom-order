@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import * as OrderRequest from "shared/api/types/requests/order";
-import * as OrderResponse from "shared/api/types/responses/order";
+import * as ClientOrderRequest from "shared/types/requests/client/order";
+import * as ClientOrderResponse from "shared/types/responses/client/order";
 import queryStore from "~/lib/query";
 import useTableStore from "./table.store";
 import { toast } from "~/hooks/use-toast";
 
-type MenuOrderQuery = OrderRequest.CreateQuery["menuOrders"][number];
+type MenuOrderQuery = ClientOrderRequest.Create["menuOrders"][number];
 
 export type CartState = {
   menuOrders: MenuOrderQuery[];
@@ -14,7 +14,7 @@ export type CartState = {
   removeMenuOrder: (menuId: string) => void;
   updateMenuOrder: (menuOrderId: string, menuOrder: MenuOrderQuery) => void;
 
-  purchaseMenuOrders: () => Promise<void>;
+  purchaseMenuOrders: () => Promise<ClientOrderResponse.Create | null>;
   clearMenuOrders: () => void;
 }
 
@@ -56,10 +56,10 @@ const useCartStore = create<CartState>((set, get) => ({
         variant: "destructive",
         duration: 3000,
       });
-      return;
+      return null;
     }
 
-    await queryStore<OrderRequest.CreateQuery, OrderResponse.Create>({
+    return await queryStore<ClientOrderRequest.Create, ClientOrderResponse.Create>({
       route: "order",
       method: "post",
       query: {
