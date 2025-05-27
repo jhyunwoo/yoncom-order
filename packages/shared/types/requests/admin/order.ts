@@ -26,3 +26,9 @@ export const paidValidation = z.object({
   orderId: z.string().length(15),
 });
 export type PaidOrder = z.infer<typeof paidValidation>;
+
+export const completeValidation = z.object({
+  menuOrderId: z.string().length(15),
+});
+
+export type CompleteOrder = z.infer<typeof completeValidation>;

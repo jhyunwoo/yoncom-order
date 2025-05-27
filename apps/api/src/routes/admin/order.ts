@@ -4,11 +4,12 @@ import { zValidator } from "@hono/zod-validator";
 import {
   removeValidation,
   paidValidation,
+  completeValidation,
 } from "shared/types/requests/admin/order";
 import initializeDb from "api/lib/initialize-db";
 import { deleteOrder } from "api/controller/admin/order.controller";
 import { ContentfulStatusCode } from "hono/dist/types/utils/http-status";
-import { payments } from "db/schema";
+import { menuOrders, payments } from "db/schema";
 import { eq } from "drizzle-orm";
 
 const adminOrder = new Hono<{ Bindings: Bindings; Variables: Variables }>();
@@ -38,5 +39,38 @@ adminOrder.put("/", zValidator("json", paidValidation), async (c) => {
 });
 
 // TODO: 특정 menuOrder 완료 처리
+adminOrder.put(
+  "/complete",
+  zValidator("json", completeValidation),
+  async (c) => {
+    const { menuOrderId } = c.req.valid("json");
+    const db = initializeDb(c.env.DB);
+
+    try {
+      await db
+        .update(menuOrders)
+        .set({ status: "SERVED" })
+        .where(eq(menuOrders.id, menuOrderId));
+    } catch (e) {
+      return c.json({ error: "Failed to complete menu order" }, 500);
+    }
+    return c.json({ result: completeValidation });
+  },
+);
+
+adminOrder.put("/cancel", zValidator("json", completeValidation), async (c) => {
+  const { menuOrderId } = c.req.valid("json");
+  const db = initializeDb(c.env.DB);
+
+  try {
+    await db
+      .update(menuOrders)
+      .set({ status: "CANCELLED" })
+      .where(eq(menuOrders.id, menuOrderId));
+  } catch (e) {
+    return c.json({ error: "Failed to cancel menu order" }, 500);
+  }
+  return c.json({ result: completeValidation });
+});
 
 export default adminOrder;
