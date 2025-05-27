@@ -34,7 +34,7 @@ export default function CartAddModal({
       return;
     }
 
-    const inProgressOrder = clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid));
+    const inProgressOrder = clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid && order.deletedAt === null));
     if (inProgressOrder) {
       toast({
         title: "결제되지 않은 주문이 있습니다.",
@@ -87,7 +87,8 @@ export default function CartAddModal({
             className="w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white"
           ><PlusIcon className="scale-150"/></Button>
         </div>
-        <span className="text-sm text-center">주문 가능 수량: {maxQuantity}</span>
+        <span className="text-sm text-center">추가 주문 가능 수량: {maxQuantity}</span>
+        {recentOrderedQuantity > 0 && <span className="text-sm text-center -mt-4 dangerTXT">이미 카트에 {recentOrderedQuantity}개 담았어요!</span>}
         <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 수량을 입력하세요.</DialogDescription>
         <DialogFooter className="fr *:flex-1 *:mx-2 *:h-14 *:rounded-2xl *:text-lg">
           <Button variant="outline" onClick={handleClose}>취소</Button>

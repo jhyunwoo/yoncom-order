@@ -27,10 +27,10 @@ export default function OrderHistoryModal({
       const menu = menus.find((menu) => menu.id === menuOrder.menuId);
       if (!menu) return null;
       return {
-      menuId: menuOrder.menuId,
-      menuName: menu.name,
-      menuPrice: menu.price,
-      quantity: menuOrder.quantity,
+        menuId: menuOrder.menuId,
+        menuName: menu.name,
+        menuPrice: menu.price,
+        quantity: menuOrder.quantity,
         totalPrice: menu.price * menuOrder.quantity,
       }
     }).filter((menuOrder) => menuOrder !== null);
@@ -72,7 +72,7 @@ export default function OrderHistoryModal({
                   <TableRow>
                     {/* <TableHead></TableHead> */}
                     <TableHead className="!text-left font-bold">주문 일시</TableHead>
-                    <TableHead className="!text-right">상태</TableHead>
+                    <TableHead className="!text-center">상태</TableHead>
                     <TableHead className="!text-right">금액</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -96,7 +96,9 @@ export default function OrderHistoryModal({
                         second: "2-digit",
                         hour12: false,
                       })}</TableCell>
-                      <TableCell className="text-right">{orderHistory.payment.paid ? "결제완료" : "결제대기"}</TableCell>
+                      <TableCell className="text-center">{
+                        orderHistory.order.deletedAt !== null ? "주문취소" :
+                      (orderHistory.payment.paid ? "결제완료" : "결제대기")}</TableCell>
                       <TableCell className="text-right">{orderHistory.totalPrice.toLocaleString()}</TableCell>
                     </TableRow>
                   ))}
@@ -105,7 +107,7 @@ export default function OrderHistoryModal({
               <div className="text-right">
                 <span className="text-right text-lg mr-2">총액</span>
                 <span className="text-right text-2xl font-bold">
-                  {orderHistories.reduce((acc, orderHistory) => acc + orderHistory.totalPrice, 0).toLocaleString()} 원
+                  {orderHistories.filter((orderHistory) => orderHistory.order.deletedAt === null).reduce((acc, orderHistory) => acc + orderHistory.totalPrice, 0).toLocaleString()} 원
                 </span>
               </div>
               <DialogFooter className="h-fit fr *:flex-1 *:mx-2 *:h-14 *:rounded-2xl *:text-lg">

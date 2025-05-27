@@ -20,12 +20,17 @@ export default function TableInstance({
 
   const { menus } = useMenuStore();
   const menuId2menu = (menuId: string) => menus.find((menu) => menu.id === menuId);
-  const menuOrders = activeTableContext?.orders.map((order) => order.menuOrders).flat() || [];
+  const menuOrders = activeTableContext?.orders
+    .filter((order) => 
+      order.deletedAt === null
+      && order.payment.paid
+    ).map((order) => order.menuOrders).flat() || [];
   const amount = menuOrders.reduce((acc, menuOrder) => acc + (menuId2menu(menuOrder.menuId)!.price * menuOrder.quantity), 0) || 0;
 
   const isOnOrder = activeTableContext?.orders.some((order) => 
-    order.paymentId === null 
-    || order.menuOrders.some((menuOrder) => menuOrder.status === Schema.menuOrderStatus.PENDING)
+    order.deletedAt === null
+    && order.payment.paid
+    && order.menuOrders.some((menuOrder) => menuOrder.status === Schema.menuOrderStatus.PENDING)
   ) || false;
 
   useEffect(() => {

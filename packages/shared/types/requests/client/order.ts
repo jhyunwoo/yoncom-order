@@ -13,11 +13,12 @@ export type Create = z.infer<typeof createValidation>;
 
 export const getValidation = z.object({
   orderId: z.string().length(15),
+  tableId: z.string().length(15),
 });
 export type Get = z.infer<typeof getValidation>;
 
-export const deleteValidation = z.object({
+export const removeValidation = z.object({
   orderId: z.string().length(15),
 });
 
-export type Delete = z.infer<typeof deleteValidation>;
+export type Remove = z.infer<typeof removeValidation>;

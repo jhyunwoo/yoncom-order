@@ -10,6 +10,11 @@ export type Get = {
     payment: Schema.Payment;
   };
 };
+
 export type Remove = {
+  result: string;
+};
+
+export type Paid = {
   result: string;
 };

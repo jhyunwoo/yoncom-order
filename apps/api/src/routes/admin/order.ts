@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { Bindings, Variables } from "api/lib/bindings";
 import { zValidator } from "@hono/zod-validator";
 import {
-  deleteValidation,
+  removeValidation,
   paidValidation,
 } from "shared/types/requests/admin/order";
 import initializeDb from "api/lib/initialize-db";
@@ -13,7 +13,7 @@ import { eq } from "drizzle-orm";
 
 const adminOrder = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-adminOrder.delete("/", zValidator("json", deleteValidation), async (c) => {
+adminOrder.delete("/", zValidator("json", removeValidation), async (c) => {
   const { orderId } = c.req.valid("json");
   const db = initializeDb(c.env.DB);
 
@@ -36,5 +36,7 @@ adminOrder.put("/", zValidator("json", paidValidation), async (c) => {
     return c.json({ error: "Failed to mark order as paid" }, 500);
   }
 });
+
+// TODO: 특정 menuOrder 완료 처리
 
 export default adminOrder;

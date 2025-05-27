@@ -45,10 +45,7 @@ export default function MenuInstance({
         </CardHeader>
         <CardContent className="fr px-4 py-2 items-end">
           <ul className="flex-1">
-            <li className="text-lg my-1">
-              {order.status === Schema.menuOrderStatus.PENDING ? "⌛"
-                : order.status === Schema.menuOrderStatus.SERVED ? "✅"
-                : "❌"} {order.menuName} <b>x{order.quantity}</b>
+            <li className="text-lg my-1">{order.menuName} <b>x{order.quantity}</b>
             </li>
           </ul>
         </CardContent>

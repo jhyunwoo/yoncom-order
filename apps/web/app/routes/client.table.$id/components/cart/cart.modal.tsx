@@ -53,7 +53,9 @@ export default function CartModal({
       return;
     }
 
-    useTableStore.getState().clientGetTable({
+    useCartStore.getState().clearMenuOrders();
+
+    await useTableStore.getState().clientGetTable({
       tableId: clientTable!.id,
     });
     setConfirmModalOpenState(true);

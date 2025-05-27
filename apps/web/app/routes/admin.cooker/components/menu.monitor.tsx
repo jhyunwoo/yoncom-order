@@ -2,12 +2,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import useTableStore from "~/stores/table.store";
 import useMenuStore from "~/stores/menu.store";
 import MenuInstance from "./menu.instance";
+import MenuCompleteModal from "./menu.complete.modal";
+import { useState } from "react";
 
 export default function MenuMonitor({
   menuId,
 }: {
   menuId: string;
 }) {
+  const [menuCompleteModalOpen, setMenuCompleteModalOpen] = useState(false);
+  const [menuName, setMenuName] = useState("");
+  const [tableName, setTableName] = useState("");
+
   const { menus } = useMenuStore();
   const { tables } = useTableStore();
 
@@ -19,7 +25,7 @@ export default function MenuMonitor({
       tableName: table.name,
     }))
     .flatMap(({ orders, tableName }) => orders
-        .filter((order) => order.payment.paid)
+        .filter((order) => order.payment.paid && order.deletedAt === null)
         .flatMap(
           (order) => order.menuOrders
             .filter(menuOrder => menuOrder.menuId === menuId)
@@ -39,18 +45,28 @@ export default function MenuMonitor({
     <div className="full p-2">
       <Card className="full bg-[#F2F2F2] px-3 fc rounded-3xl">
         <CardHeader className="px-2">
-          <CardTitle className="text-2xl">{menu.name}</CardTitle>
+          <CardTitle className="text-xl font-bold">{menu.name}</CardTitle>
         </CardHeader>
         <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer">
           {menuOrders.map((order) => 
             <MenuInstance 
               key={order.timestamp} 
               order={order} 
-              onClick={() => {}}
+              onClick={() => {
+                setMenuName(order.menuName);
+                setTableName(order.tableName);
+                setMenuCompleteModalOpen(true);
+              }}
             />
           )}
         </CardContent>
       </Card>
+      <MenuCompleteModal
+        openState={menuCompleteModalOpen}
+        setOpenState={setMenuCompleteModalOpen}
+        menuName={menuName}
+        tableName={tableName}
+      />
     </div>
   );
 }

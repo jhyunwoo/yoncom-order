@@ -5,7 +5,10 @@ import * as AdminTableRequest from "types/requests/admin/table";
 import * as AdminTableResponse from "types/responses/admin/table";
 import queryStore from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
-import { Table } from 'db/schema';
+import * as ClientOrderRequest from "shared/types/requests/client/order";
+import * as ClientOrderResponse from "shared/types/responses/client/order";
+import * as AdminOrderRequest from "shared/types/requests/admin/order";
+import * as AdminOrderResponse from "shared/types/responses/admin/order";
 
 type TableState = {
   clientTable: ClientTableResponse.Get["result"] | null;
@@ -24,6 +27,9 @@ type TableState = {
 
   clientGetTable: (query: ClientTableRequest.Get) => Promise<ClientTableResponse.Get | null>;
 
+  clientCancelOrder: (query: ClientOrderRequest.Remove) => Promise<ClientOrderResponse.Remove | null>;
+  adminCancelOrder: (query: AdminOrderRequest.RemoveOrderQuery) => Promise<AdminOrderResponse.Remove | null>;
+
   // 다른 store에서 사용하기 위해 노출. component에서 사용하지 않음.
   _setTables: (tables: AdminTableResponse.Get["result"]) => void;
 }
@@ -39,7 +45,14 @@ const useTableStore = create<TableState>((set, get) => ({
     method: "get",
     query,
     setter: set,
-    onSuccess: (res) => set({ tables: res.result }),
+    onSuccess: (res) => set({ tables: res.result.map((table) => ({
+      ...table,
+      tableContexts: table.tableContexts.sort((a, b) => b.createdAt - a.createdAt)
+        .map((tableContext) => ({
+          ...tableContext,
+          orders: tableContext.orders.sort((a, b) => b.createdAt - a.createdAt),
+        })),
+    })) }),
   }),
 
   createTable: async (query: AdminTableRequest.Create) => await queryStore<AdminTableRequest.Create, AdminTableResponse.Create>({
@@ -107,7 +120,44 @@ const useTableStore = create<TableState>((set, get) => ({
     method: "get",
     query,
     setter: set,
-    onSuccess: (res) => set({ clientTable: res.result }),
+    onSuccess: (res) => set({ clientTable: {
+      ...res.result,
+      tableContexts: res.result.tableContexts.sort((a, b) => b.createdAt - a.createdAt)
+        .map((tableContext) => ({
+          ...tableContext,
+          orders: tableContext.orders.sort((a, b) => b.createdAt - a.createdAt),
+        })),
+    }}),
+  }),
+
+  clientCancelOrder: async (query: ClientOrderRequest.Remove) => await queryStore<ClientOrderRequest.Remove, ClientOrderResponse.Remove>({
+    route: "order",
+    method: "delete",
+    query,
+    setter: set,
+    onSuccess: (res) => {
+      toast({
+        title: "주문 취소 완료",
+        description: "주문이 성공적으로 취소되었습니다.",
+        duration: 3000,
+      });
+      get().clientGetTable({ tableId: get().clientTable?.id ?? "" });
+    },
+  }),
+
+  adminCancelOrder: async (query: AdminOrderRequest.RemoveOrderQuery) => await queryStore<AdminOrderRequest.RemoveOrderQuery, AdminOrderResponse.Remove>({
+    route: "admin/order",
+    method: "delete",
+    query,
+    setter: set,
+    onSuccess: (res) => {
+      toast({
+      title: "주문 취소 완료",
+      description: "주문이 성공적으로 취소되었습니다.",
+      duration: 3000,
+      });
+      get().load({});
+    },
   }),
 
   _setTables: (tables: AdminTableResponse.Get["result"]) => set({ tables }),

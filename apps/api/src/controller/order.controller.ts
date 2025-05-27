@@ -1,5 +1,5 @@
 import * as QueryDB from "api/lib/queryDB";
-import * as OrderResponse from "shared/types/responses/client/order";
+import * as ClientOrderResponse from "shared/types/responses/client/order";
 import ControllerResult from "api/types/controller";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import {
@@ -15,7 +15,7 @@ import * as ClientOrderRequest from "shared/types/requests/client/order";
 export const createOrder = async (
   db: QueryDB.DB,
   query: ClientOrderRequest.Create,
-): Promise<ControllerResult<OrderResponse.Create>> => {
+): Promise<ControllerResult<ClientOrderResponse.Create>> => {
   const { tableId, menuOrders: menuOrdersData } = query;
 
   try {
@@ -167,9 +167,10 @@ export const getOrders = async (db: QueryDB.DB, tableId: string) => {
 
 export const getOrder = async (
   db: QueryDB.DB,
-  tableId: string,
-  orderId: string,
-) => {
+  query: ClientOrderRequest.Get,
+): Promise<ControllerResult<ClientOrderResponse.Get>> => {
+  const { orderId, tableId } = query;
+
   try {
     const findTableContext = await db.query.tableContexts.findFirst({
       where: and(
@@ -189,18 +190,17 @@ export const getOrder = async (
     });
     if (!orderData) return { error: "Order Not Found", status: 403 };
 
-    return { result: orderData, status: 200 };
+    return { result: orderData as unknown as ClientOrderResponse.Get["result"], status: 200 };
   } catch (e) {
     console.error(e);
     return { error: "DB Query Error", status: 500 };
   }
 };
 
-export const deleteOrder = async (
+export const removeOrder = async (
   db: QueryDB.DB,
-
-  query: ClientOrderRequest.Delete,
-): Promise<ControllerResult<OrderResponse.Delete>> => {
+  query: ClientOrderRequest.Remove,
+): Promise<ControllerResult<ClientOrderResponse.Remove>> => {
   const { orderId } = query;
   try {
     const orderData = await db.query.orders.findFirst({

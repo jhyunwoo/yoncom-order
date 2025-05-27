@@ -15,7 +15,7 @@ export default function Footer() {
 
   const quantity = menuOrders.reduce((acc, menuOrder) => acc + menuOrder.quantity, 0);
 
-  const inProgressOrderRemain = clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid));
+  const inProgressOrderRemain = clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid && order.deletedAt === null));
   useEffect(() => {
     if (inProgressOrderRemain) {
       const interval = setInterval(() => {

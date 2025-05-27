@@ -172,7 +172,12 @@ export const getTables = async (
       with: {
         tableContexts: {
           with: {
-            orders: true,
+            orders: {
+              with: {
+                payment: true,
+                menuOrders: true,
+              },
+            },
           },
         },
       },
