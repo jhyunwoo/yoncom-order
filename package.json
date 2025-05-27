@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "concurrently -n api,web -c cyan,magenta \"pnpm --filter api dev\" \"pnpm --filter web dev\"",
     "dev:local": "concurrently -n api,web -c cyan,magenta \"pnpm --filter api dev:local\" \"pnpm --filter web dev\"",
+    "build": "concurrently -n api,web -c cyan,magenta \"pnpm --filter api build\" \"pnpm --filter web build\"",
     "db:generate": "cd packages/db && pnpm db:generate",
     "db:migrate": "cd packages/db && pnpm db:migrate",
     "db:apply": "cd apps/api && pnpm db:apply",
