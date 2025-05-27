@@ -5,7 +5,7 @@ import initializeDb from "api/lib/initialize-db";
 import {
   createValidation,
   deleteValidation,
-} from "shared/api/types/requests/order";
+} from "shared/types/requests/client/order";
 import {
   createOrder,
   deleteOrder,

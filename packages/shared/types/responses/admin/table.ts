@@ -20,18 +20,7 @@ export type Update = {
   result: string;
 };
 
-export type ClientGet = {
-  result: Schema.Table & {
-    tableContexts: (Schema.TableContext & {
-      orders: (Schema.Order & {
-        menuOrders: Schema.MenuOrder[];
-        payment: Schema.Payment;
-      })[];
-    })[];
-  };
-};
-
-export type AdminGet = {
+export type Get = {
   result: (Schema.Table & {
     tableContexts: (Schema.TableContext & {
       orders: (Schema.Order & {

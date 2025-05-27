@@ -1,11 +1,7 @@
 import * as QueryDB from "api/lib/queryDB";
 import { eq, isNull } from "drizzle-orm";
 import { menuCategories, menus } from "db/schema";
-import {
-  CreateMenu,
-  RemoveMenu,
-  UpdateMenu,
-} from "shared/api/types/requests/admin/menu";
+import { Create, Remove, Update } from "shared/types/requests/admin/menu";
 
 export const adminGetMenus = async (db: QueryDB.DB) => {
   try {
@@ -53,7 +49,7 @@ export const adminGetMenu = async (db: QueryDB.DB, menuId: string) => {
   }
 };
 
-export const adminCreateMenu = async (db: QueryDB.DB, data: CreateMenu) => {
+export const adminCreateMenu = async (db: QueryDB.DB, data: Create) => {
   const { menuOptions } = data;
   try {
     const newMenu = await db.insert(menus).values(menuOptions).returning();
@@ -64,7 +60,7 @@ export const adminCreateMenu = async (db: QueryDB.DB, data: CreateMenu) => {
   }
 };
 
-export const adminUpdateMenu = async (db: QueryDB.DB, data: UpdateMenu) => {
+export const adminUpdateMenu = async (db: QueryDB.DB, data: Update) => {
   const { menuId, menuOptions } = data;
   try {
     const updateMenu = await db
@@ -79,7 +75,7 @@ export const adminUpdateMenu = async (db: QueryDB.DB, data: UpdateMenu) => {
   }
 };
 
-export const adminDeleteMenu = async (db: QueryDB.DB, data: RemoveMenu) => {
+export const adminDeleteMenu = async (db: QueryDB.DB, data: Remove) => {
   const { menuId } = data;
   try {
     await db

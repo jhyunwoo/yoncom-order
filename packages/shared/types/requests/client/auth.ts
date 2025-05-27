@@ -5,10 +5,14 @@ export const signUpValidation = z.object({
   password: z.string().min(8).max(255),
   name: z.string().min(1),
 });
-export type SignUpQuery = z.infer<typeof signUpValidation>;
+export type SignUp = z.infer<typeof signUpValidation>;
 
 export const signInValidation = z.object({
   email: z.string().email(),
   password: z.string().min(8).max(255),
 });
-export type SignInQuery = z.infer<typeof signInValidation>;
+export type SignIn = z.infer<typeof signInValidation>;
+
+export const signOutValidation = z.object({
+});
+export type SignOut = z.infer<typeof signOutValidation>;

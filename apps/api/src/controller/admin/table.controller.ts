@@ -1,14 +1,9 @@
 import { and, eq, isNull } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as TableResponse from "shared/types/responses/admin/table";
 import ControllerResult from "api/types/controller";
-import {
-  AdminCreateTable,
-  AdminRemoveTable,
-  AdminUpdateTable,
-  AdminVacateTable,
-} from "shared/api/types/requests/admin/table";
+import * as AdminTable from "shared/types/requests/admin/table";
 import { orders, tableContexts, tables } from "db/schema";
 
 /**
@@ -18,13 +13,16 @@ import { orders, tableContexts, tables } from "db/schema";
  */
 export const createTable = async (
   db: QueryDB.DB,
-  query: AdminCreateTable,
+  query: AdminTable.Create,
 ): Promise<ControllerResult<TableResponse.Create>> => {
   try {
     // 테이블 이름 중복 체크
     if (
-      (await db.query.tables.findFirst({ where: eq(tables.name, query.name) }))
-        ?.id
+      (
+        await db.query.tables.findFirst({
+          where: eq(tables.name, query.tableOptions.name),
+        })
+      )?.id
     )
       return { error: "Table name already exists", status: 409 };
 
@@ -45,9 +43,11 @@ export const createTable = async (
 
     lowestKey = keyList[0];
 
-    await db
-      .insert(Schema.tables)
-      .values({ name: query.name, seats: query.seats, key: lowestKey });
+    await db.insert(Schema.tables).values({
+      name: query.tableOptions.name,
+      seats: query.tableOptions.seats,
+      key: lowestKey,
+    });
 
     return { result: "Table created", status: 200 };
   } catch (e) {
@@ -64,7 +64,7 @@ export const createTable = async (
  */
 export const removeTable = async (
   db: QueryDB.DB,
-  query: AdminRemoveTable,
+  query: AdminTable.Remove,
 ): Promise<ControllerResult<TableResponse.Remove>> => {
   try {
     const { tableId } = query;
@@ -100,7 +100,7 @@ export const removeTable = async (
  */
 export const vacateTable = async (
   db: QueryDB.DB,
-  query: AdminVacateTable,
+  query: AdminTable.Vacate,
 ): Promise<ControllerResult<TableResponse.Vacate>> => {
   const { tableId } = query;
 
@@ -147,14 +147,14 @@ export const vacateTable = async (
 
 export const updateTable = async (
   db: QueryDB.DB,
-  query: AdminUpdateTable,
+  query: AdminTable.Update,
 ): Promise<ControllerResult<TableResponse.Update>> => {
-  const { tableId, name, seats } = query;
+  const { tableId, tableOptions } = query;
 
   try {
     await db
       .update(Schema.tables)
-      .set({ name, seats })
+      .set({ name: tableOptions.name, seats: tableOptions.seats })
       .where(eq(Schema.tables.id, tableId));
 
     return { result: "Table updated", status: 200 };
@@ -166,7 +166,7 @@ export const updateTable = async (
 
 export const getTables = async (
   db: QueryDB.DB,
-): Promise<ControllerResult<TableResponse.AdminGet>> => {
+): Promise<ControllerResult<TableResponse.Get>> => {
   try {
     const result = await db.query.tables.findMany({
       with: {

@@ -4,7 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import {
   deleteValidation,
   paidValidation,
-} from "shared/api/types/requests/order";
+} from "shared/types/requests/admin/order";
 import initializeDb from "api/lib/initialize-db";
 import { deleteOrder } from "api/controller/admin/order.controller";
 import { ContentfulStatusCode } from "hono/dist/types/utils/http-status";

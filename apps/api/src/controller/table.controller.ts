@@ -1,42 +1,12 @@
 import * as QueryDB from "api/lib/queryDB";
-import { GetTable, OccupyTable } from "shared/api/types/requests/table";
-import { and, eq, isNull } from "drizzle-orm";
-import { orders, tableContexts, tables } from "db/schema";
+import * as ClientTableRequest from "shared/types/requests/client/table";
+import { eq, isNull } from "drizzle-orm";
+import { orders, tables } from "db/schema";
 
-export const occupyTable = async (db: QueryDB.DB, query: OccupyTable) => {
-  const { tableId } = query;
-
-  try {
-    const table = await db.query.tables.findFirst({
-      where: eq(tables.id, tableId),
-    });
-
-    if (!table) return { error: "Table Not Found", status: 409 };
-
-    // 해당 테이블이 활성화 중인지 확인
-    const isTableActive = await db.query.tableContexts.findFirst({
-      where: and(
-        eq(tableContexts.tableId, table.id),
-        isNull(tableContexts.deletedAt),
-      ),
-      columns: {
-        id: true,
-      },
-    });
-
-    if (isTableActive)
-      return { error: "Table is already occupied", status: 409 };
-
-    await db.insert(tableContexts).values({ tableId });
-
-    return { result: "Table occupied", status: 200 };
-  } catch (e) {
-    console.error(e);
-    return { error: "DB Insert Error", status: 500 };
-  }
-};
-
-export const getTable = async (db: QueryDB.DB, query: GetTable) => {
+export const getTable = async (
+  db: QueryDB.DB,
+  query: ClientTableRequest.Get,
+) => {
   const { tableId } = query;
 
   try {

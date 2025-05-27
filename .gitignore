@@ -9,3 +9,4 @@ wrangler.toml
 .migrations
 
 .idea
+.env

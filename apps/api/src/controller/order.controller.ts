@@ -1,5 +1,5 @@
 import * as QueryDB from "api/lib/queryDB";
-import * as OrderResponse from "shared/api/types/responses/order";
+import * as OrderResponse from "shared/types/responses/client/order";
 import ControllerResult from "api/types/controller";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import {
@@ -10,11 +10,11 @@ import {
   tableContexts,
   tables,
 } from "db/schema";
-import { CreateOrder, DeleteOrder } from "shared/api/types/requests/order";
+import * as ClientOrderRequest from "shared/types/requests/client/order";
 
 export const createOrder = async (
   db: QueryDB.DB,
-  query: CreateOrder,
+  query: ClientOrderRequest.Create,
 ): Promise<ControllerResult<OrderResponse.Create>> => {
   const { tableId, menuOrders: menuOrdersData } = query;
 
@@ -199,7 +199,7 @@ export const getOrder = async (
 export const deleteOrder = async (
   db: QueryDB.DB,
 
-  query: DeleteOrder,
+  query: ClientOrderRequest.Delete,
 ): Promise<ControllerResult<OrderResponse.Delete>> => {
   const { orderId } = query;
   try {

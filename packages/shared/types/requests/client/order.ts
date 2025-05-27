@@ -9,15 +9,15 @@ export const createValidation = z.object({
     }),
   ),
 });
-export type CreateOrder = z.infer<typeof createValidation>;
+export type Create = z.infer<typeof createValidation>;
 
 export const getValidation = z.object({
   orderId: z.string().length(15),
 });
-export type GetOrderQuery = z.infer<typeof getValidation>;
+export type Get = z.infer<typeof getValidation>;
 
 export const deleteValidation = z.object({
   orderId: z.string().length(15),
 });
 
-export type DeleteOrderQuery = z.infer<typeof deleteValidation>;
+export type Delete = z.infer<typeof deleteValidation>;

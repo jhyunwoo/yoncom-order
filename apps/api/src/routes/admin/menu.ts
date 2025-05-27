@@ -14,7 +14,7 @@ import {
   createValidation,
   removeValidation,
   updateValidation,
-} from "shared/api/types/requests/admin/menu";
+} from "shared/types/requests/admin/menu";
 
 const adminMenu = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 

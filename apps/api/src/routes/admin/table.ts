@@ -8,7 +8,7 @@ import {
   removeValidation,
   updateValidation,
   vacateValidation,
-} from "shared/api/types/requests/admin/table";
+} from "shared/types/requests/admin/table";
 import {
   createTable,
   getTables,

@@ -20,10 +20,9 @@ export const deleteValidation = z.object({
   orderId: z.string().length(15),
 });
 
-export type DeleteOrder = z.infer<typeof deleteValidation>;
+export type DeleteOrderQuery = z.infer<typeof deleteValidation>;
 
 export const paidValidation = z.object({
   orderId: z.string().length(15),
 });
-
 export type PaidOrder = z.infer<typeof paidValidation>;

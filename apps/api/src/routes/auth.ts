@@ -6,7 +6,7 @@ import { users } from "db/schema";
 import { Scrypt } from "lucia";
 import initializeDb from "api/lib/initialize-db";
 import { initializeLucia } from "api/lib/lucia";
-import * as AuthRequest from "shared/api/types/requests/auth";
+import * as AuthRequest from "shared/types/requests/client/auth";
 import createSession from "api/lib/create-session";
 
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();

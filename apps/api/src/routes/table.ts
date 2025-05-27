@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
-import { getValidation } from "shared/api/types/requests/table";
+import { getValidation } from "shared/types/requests/client/table";
 import { getTable } from "api/controller/table.controller";
 import { ContentfulStatusCode } from "hono/utils/http-status";
 
