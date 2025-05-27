@@ -1,29 +1,31 @@
 import { create } from 'zustand';
 import * as Schema from 'db/schema';
-import * as MenuRequest from 'shared/api/types/requests/admin/menu';
-import * as MenuResponse from 'shared/api/types/responses/menu';
-import * as MenuCategoryRequest from 'shared/api/types/requests/admin/menuCategory';
-import * as MenuCategoryResponse from 'shared/api/types/responses/admin/menuCategory';
+import * as ClientMenuRequest from "types/requests/client/menu";
+import * as ClientMenuResponse from "types/responses/client/menu";
+import * as AdminMenuRequest from "types/requests/admin/menu";
+import * as AdminMenuResponse from "types/responses/admin/menu";
+import * as AdminMenuCategoryRequest from "types/requests/admin/menuCategory";
+import * as AdminMenuCategoryResponse from "types/responses/admin/menuCategory";
 import queryStore from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
 
 export type MenuState = {
-  clientMenuCategories: MenuResponse.ClientGet["result"] | null;
+  clientMenuCategories: ClientMenuResponse.Get["result"] | null;
   menuCategories: Schema.MenuCategory[];
   menus: Schema.Menu[];
   isLoaded: boolean;
   error: boolean;
 
-  clientLoad: (query: MenuRequest.ClientGetQuery) => Promise<MenuResponse.ClientGet | null>;
-  adminLoad: (query: MenuRequest.AdminGetQuery) => Promise<MenuResponse.AdminGet | null>;
+  clientLoad: (query: ClientMenuRequest.Get) => Promise<ClientMenuResponse.Get | null>;
+  adminLoad: (query: AdminMenuRequest.Get) => Promise<AdminMenuResponse.Get | null>;
 
-  createMenu: (query: MenuRequest.CreateQuery) => Promise<MenuResponse.Create | null>;
-  removeMenu: (query: MenuRequest.RemoveQuery) => Promise<MenuResponse.Remove | null>;
-  updateMenu: (query: MenuRequest.UpdateQuery) => Promise<MenuResponse.Update | null>;
+  createMenu: (query: AdminMenuRequest.Create) => Promise<AdminMenuResponse.Create | null>;
+  removeMenu: (query: AdminMenuRequest.Remove) => Promise<AdminMenuResponse.Remove | null>;
+  updateMenu: (query: AdminMenuRequest.Update) => Promise<AdminMenuResponse.Update | null>;
 
-  createMenuCategory: (query: MenuCategoryRequest.CreateQuery) => Promise<MenuCategoryResponse.Create | null>;
-  removeMenuCategory: (query: MenuCategoryRequest.RemoveQuery) => Promise<MenuCategoryResponse.Remove | null>;
-  updateMenuCategory: (query: MenuCategoryRequest.UpdateQuery) => Promise<MenuCategoryResponse.Update | null>;
+  createMenuCategory: (query: AdminMenuCategoryRequest.Create) => Promise<AdminMenuCategoryResponse.Create | null>;
+  removeMenuCategory: (query: AdminMenuCategoryRequest.Remove) => Promise<AdminMenuCategoryResponse.Remove | null>;
+  updateMenuCategory: (query: AdminMenuCategoryRequest.Update) => Promise<AdminMenuCategoryResponse.Update | null>;
 
   // 다른 store에서 사용하기 위해 노출. component에서 사용하지 않음.
   _setMenus: (menus: Schema.Menu[]) => void;
@@ -36,17 +38,18 @@ const useMenuStore = create<MenuState>((set, get) => ({
   isLoaded: false,
   error: false,
 
-  clientLoad: async (query: MenuRequest.ClientGetQuery) => queryStore<MenuRequest.ClientGetQuery, MenuResponse.ClientGet>({
+  clientLoad: async (query: ClientMenuRequest.Get) => queryStore<ClientMenuRequest.Get, ClientMenuResponse.Get>({
     route: "menu",
     method: "get",
     query,
     setter: set,
     onSuccess: (res) => set({
       clientMenuCategories: res.result,
+      menus: res.result.flatMap((menuCategory) => menuCategory.menus),
     }),
   }),
 
-  adminLoad: async (query: MenuRequest.AdminGetQuery) => queryStore<MenuRequest.AdminGetQuery, MenuResponse.AdminGet>({
+  adminLoad: async (query: AdminMenuRequest.Get) => queryStore<AdminMenuRequest.Get, AdminMenuResponse.Get>({
     route: "admin/menu",
     method: "get",
     query,
@@ -57,7 +60,7 @@ const useMenuStore = create<MenuState>((set, get) => ({
     })
   }),
 
-  createMenu: async (query: MenuRequest.CreateQuery) => queryStore<MenuRequest.CreateQuery, MenuResponse.Create>({
+  createMenu: async (query: AdminMenuRequest.Create) => queryStore<AdminMenuRequest.Create, AdminMenuResponse.Create>({
     route: "admin/menu",
     method: "post",
     query,
@@ -72,7 +75,7 @@ const useMenuStore = create<MenuState>((set, get) => ({
     }
   }),
 
-  removeMenu: async (query: MenuRequest.RemoveQuery) => queryStore<MenuRequest.RemoveQuery, MenuResponse.Remove>({
+  removeMenu: async (query: AdminMenuRequest.Remove) => queryStore<AdminMenuRequest.Remove, AdminMenuResponse.Remove>({
     route: "admin/menu",
     method: "delete",
     query,
@@ -87,7 +90,7 @@ const useMenuStore = create<MenuState>((set, get) => ({
     },
   }),
 
-  updateMenu: async (query: MenuRequest.UpdateQuery) => queryStore<MenuRequest.UpdateQuery, MenuResponse.Update>({
+  updateMenu: async (query: AdminMenuRequest.Update) => queryStore<AdminMenuRequest.Update, AdminMenuResponse.Update>({
     route: "admin/menu",
     method: "put",
     query,
@@ -102,7 +105,7 @@ const useMenuStore = create<MenuState>((set, get) => ({
     },
   }),
 
-  createMenuCategory: async (query: MenuCategoryRequest.CreateQuery) => queryStore<MenuCategoryRequest.CreateQuery, MenuCategoryResponse.Create>({
+  createMenuCategory: async (query: AdminMenuCategoryRequest.Create) => queryStore<AdminMenuCategoryRequest.Create, AdminMenuCategoryResponse.Create>({
     route: "admin/menuCategory",
     method: "post",
     query,
@@ -117,7 +120,7 @@ const useMenuStore = create<MenuState>((set, get) => ({
     },
   }),
 
-  removeMenuCategory: async (query: MenuCategoryRequest.RemoveQuery) => queryStore<MenuCategoryRequest.RemoveQuery, MenuCategoryResponse.Remove>({
+  removeMenuCategory: async (query: AdminMenuCategoryRequest.Remove) => queryStore<AdminMenuCategoryRequest.Remove, AdminMenuCategoryResponse.Remove>({
     route: "admin/menuCategory",
     method: "delete",
     query,
@@ -132,7 +135,7 @@ const useMenuStore = create<MenuState>((set, get) => ({
     },
   }),
 
-  updateMenuCategory: async (query: MenuCategoryRequest.UpdateQuery) => queryStore<MenuCategoryRequest.UpdateQuery, MenuCategoryResponse.Update>({
+  updateMenuCategory: async (query: AdminMenuCategoryRequest.Update) => queryStore<AdminMenuCategoryRequest.Update, AdminMenuCategoryResponse.Update>({
     route: "admin/menuCategory",
     method: "put",
     query,

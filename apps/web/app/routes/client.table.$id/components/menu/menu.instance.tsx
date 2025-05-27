@@ -1,12 +1,12 @@
 import { Card } from "~/components/ui/card";
-import * as MenuResponse from "shared/api/types/responses/menu";
+import * as ClientMenuResponse from "shared/types/responses/client/menu";
 import { useState } from "react";
 import CartAddModal from "../cart/cart.add.modal";
 import useMenuStore from "~/stores/menu.store";
 import useTableStore from "~/stores/table.store";
 import { toast } from "~/hooks/use-toast";
 
-export default function MenuInstance({ menu }: { menu: MenuResponse.ClientGet["result"][number]["menus"][number] }) {
+export default function MenuInstance({ menu }: { menu: ClientMenuResponse.Get["result"][number]["menus"][number] }) {
   const [modalOpen, setModalOpen] = useState(false);
   const { clientTable } = useTableStore();
 
@@ -46,14 +46,14 @@ export default function MenuInstance({ menu }: { menu: MenuResponse.ClientGet["r
             }}
           >
             <div className="fr justify-between items-center bg-none h-full">
-              <div className="fr">
-                <img src={"/" + "favicon.ico"} alt="" width={50} height={50} className="rounded-md" />
-                <div className="fc ml-4">
+              <div className="fr items-center">
+                <img src={menu.image ? menu.image : "/favicon.ico"} alt="" width={50} height={50} className="rounded-md aspect-square w-[50px] h-[50px]" />
+                <div className="fc ml-4 flex-1">
                   <h1 className="font-bold text-xl flex items-center">{menu.name}</h1>
                   <span className="text-sm">{menu.description}</span>
                 </div>
               </div>
-              <span className="text-md">{menu.price.toLocaleString()}원</span>
+              <span className="text-md min-w-fit">{menu.price.toLocaleString()}원</span>
             </div>
           </Card>
         )}

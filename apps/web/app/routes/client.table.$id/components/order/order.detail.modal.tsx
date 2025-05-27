@@ -1,15 +1,9 @@
-
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DialogContent } from "~/components/ui/dialog";
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import useCartStore, { CartState } from "~/stores/cart.store";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import useMenuStore from "~/stores/menu.store";
-import OrderUpdateModal from "../order/order.update.modal";
-import OrderModal from "../order/order.modal";
-import useTableStore from "~/stores/table.store";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as ClientTableResponse from "shared/types/responses/client/table";
 
 export default function OrderDetailModal({
   openState, setOpenState,
@@ -17,12 +11,11 @@ export default function OrderDetailModal({
 }: {
   openState: boolean;
   setOpenState: (open: boolean) => void;
-  orderDetail: TableResponse.ClientGet["result"]["tableContexts"][number]["orders"][number] | null;
+  orderDetail: ClientTableResponse.Get["result"]["tableContexts"][number]["orders"][number] | null;
 }) {
   if (!orderDetail) return null;
 
-  const { clientMenuCategories } = useMenuStore();
-  const menus = clientMenuCategories?.flatMap((menuCategory) => menuCategory.menus) ?? [];
+  const { menus } = useMenuStore();
   const menuOrderInfos = orderDetail.menuOrders.map((menuOrder) => {
     const menu = menus.find((menu) => menu.id === menuOrder.menuId);
     if (!menu) return null;
@@ -35,9 +28,6 @@ export default function OrderDetailModal({
     }
   })
 
-  const handleConfirm = () => {
-    setOpenState(false);
-  }
   const handleClose = () => {
     setOpenState(false);
   }

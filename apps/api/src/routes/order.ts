@@ -4,11 +4,11 @@ import { Bindings, Variables } from "api/lib/bindings";
 import initializeDb from "api/lib/initialize-db";
 import {
   createValidation,
-  deleteValidation,
+  removeValidation,
 } from "shared/types/requests/client/order";
 import {
   createOrder,
-  deleteOrder,
+  removeOrder,
   getOrder,
   getOrders,
 } from "api/controller/order.controller";
@@ -34,16 +34,15 @@ order.get("/:tableId", async (c) => {
 
 order.get("/:tableId/:orderId", async (c) => {
   const db = initializeDb(c.env.DB);
-  const { tableId, orderId } = c.req.param();
-  const { result, error, status } = await getOrder(db, tableId, orderId);
+
+  const { result, error, status } = await getOrder(db, c.req.param());
   return c.json({ result, error }, status as ContentfulStatusCode);
 });
 
-order.delete("/", zValidator("json", deleteValidation), async (c) => {
+order.delete("/", zValidator("json", removeValidation), async (c) => {
   const db = initializeDb(c.env.DB);
-  const data = c.req.valid("json");
 
-  const { result, error, status } = await deleteOrder(db, data);
+  const { result, error, status } = await removeOrder(db, c.req.valid("json"));
   return c.json({ result, error }, status as ContentfulStatusCode);
 });
 

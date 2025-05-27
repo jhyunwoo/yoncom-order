@@ -44,6 +44,8 @@ adminTable.put("/", zValidator("json", updateValidation), async (c) => {
   return c.json({ result, error }, status);
 });
 
+//TODO: 테이블 점유 처리 로직 구현, 주석 실수 수정
+//TODO: 아직 완료 안된 주문 있는데 vacate 됨. paid만 보는게 아니라 내부 menuOrder의 상태들도 전부 확인해야함
 // Occupy Table
 adminTable.put("/vacate", zValidator("json", vacateValidation), async (c) => {
   const db = initializeDb(c.env.DB);

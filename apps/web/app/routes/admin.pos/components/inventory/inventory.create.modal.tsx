@@ -1,13 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import useTableStore from "~/stores/table.store";
-import * as MenuResponse from "shared/api/types/responses/menu";
-import { Menu } from "db/schema";
 import useMenuStore from "~/stores/menu.store";
-import { API_BASE_URL } from "shared/constants";
 import { Checkbox } from "~/components/ui/checkbox";
 
 export default function InventoryCreateModal({
@@ -58,7 +54,7 @@ export default function InventoryCreateModal({
   const handleConfirm = async () => {
     if (
       menuName.length === 0
-      || menuCategories.some(category => category.id === menuCategory)
+      || !menuCategories.some(category => category.id === menuCategory)
     ) {
       setInvalid(true);
       return;
@@ -230,9 +226,9 @@ export default function InventoryCreateModal({
           </div>
         </div>
 
-        {/* <DialogDescription className={`-mt-2 text-right`}>⚠︎ 올바른 이름과 좌석 수를 입력하세요.</DialogDescription> */}
+        <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 이름과 카테고리를 입력하세요.</DialogDescription>
         <DialogFooter className="">
-          <Button onClick={handleConfirm} className="dangerBG dangerB">저장</Button>
+          <Button onClick={handleConfirm} className="dangerBG dangerB">추가</Button>
           <Button onClick={handleClose}>닫기</Button>
         </DialogFooter>
       </DialogContent>

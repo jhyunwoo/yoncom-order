@@ -16,11 +16,11 @@ export const getValidation = z.object({
 });
 export type GetOrderQuery = z.infer<typeof getValidation>;
 
-export const deleteValidation = z.object({
+export const removeValidation = z.object({
   orderId: z.string().length(15),
 });
 
-export type DeleteOrderQuery = z.infer<typeof deleteValidation>;
+export type RemoveOrderQuery = z.infer<typeof removeValidation>;
 
 export const paidValidation = z.object({
   orderId: z.string().length(15),

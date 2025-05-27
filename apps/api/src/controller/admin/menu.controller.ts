@@ -2,22 +2,20 @@ import * as QueryDB from "api/lib/queryDB";
 import { eq, isNull } from "drizzle-orm";
 import { menuCategories, menus } from "db/schema";
 import { Create, Remove, Update } from "shared/types/requests/admin/menu";
+import ControllerResult from "api/types/controller";
+import * as AdminMenuResponse from "shared/types/responses/admin/menu";
 
-export const adminGetMenus = async (db: QueryDB.DB) => {
+export const adminGetMenus = async (db: QueryDB.DB): Promise<ControllerResult<AdminMenuResponse.Get>> => {
   try {
-    const menuCategoryPromise = db.query.menuCategories.findMany({
+    const menuCategory = await db.query.menuCategories.findMany({
       where: isNull(menuCategories.deletedAt),
+      with: {
+        menus: true,
+      },
     });
 
-    const menuPromise = db.query.menus.findMany();
-
-    const [menuCategoriesData, menusData] = await Promise.all([
-      menuCategoryPromise,
-      menuPromise,
-    ]);
-
     return {
-      result: { menuCategories: menuCategoriesData, menus: menusData },
+      result: menuCategory,
       status: 200,
     };
   } catch (e) {

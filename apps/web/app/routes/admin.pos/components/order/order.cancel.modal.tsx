@@ -1,14 +1,8 @@
-
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DialogContent } from "~/components/ui/dialog";
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import useMenuStore from "~/stores/menu.store";
-import * as TableResponse from "shared/api/types/responses/table";
-import queryStore from "~/lib/query";
-import * as OrderRequest from "shared/api/types/requests/order";
-import * as OrderResponse from "shared/api/types/responses/order";
+import * as AdminTableResponse from "shared/types/responses/admin/table";
+import useTableStore from "~/stores/table.store";
 
 export default function OrderCancelModal({
   openState, setOpenState,
@@ -16,17 +10,14 @@ export default function OrderCancelModal({
 }: {
   openState: boolean;
   setOpenState: (open: boolean) => void;
-  order: TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number];
+  order: AdminTableResponse.Get["result"][number]["tableContexts"][number]["orders"][number];
 }) {
   const handleConfirm = async () => {
-    // await queryStore<OrderRequest.DeleteQuery, OrderResponse.Delete>({
-    //   route: "order",
-    //   method: "delete",
-    //   query: {
-    //     orderId: order.id,
-    //   },
-    // });
-    // handleClose();
+    //TODO: 주문 취소 로직 구현
+    useTableStore.getState().adminCancelOrder({
+      orderId: order.id,
+    });
+    handleClose();
   }
 
   const handleClose = () => {

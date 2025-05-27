@@ -1,29 +1,37 @@
 import { create } from 'zustand';
-import * as TableRequest from 'shared/api/types/requests/table';
-import * as TableResponse from 'shared/api/types/responses/table';
+import * as ClientTableRequest from "types/requests/client/table";
+import * as ClientTableResponse from "types/responses/client/table";
+import * as AdminTableRequest from "types/requests/admin/table";
+import * as AdminTableResponse from "types/responses/admin/table";
 import queryStore from '~/lib/query';
 import { toast } from '~/hooks/use-toast';
-import { Table } from 'db/schema';
+import * as ClientOrderRequest from "shared/types/requests/client/order";
+import * as ClientOrderResponse from "shared/types/responses/client/order";
+import * as AdminOrderRequest from "shared/types/requests/admin/order";
+import * as AdminOrderResponse from "shared/types/responses/admin/order";
 
 type TableState = {
-  clientTable: TableResponse.ClientGet["result"] | null;
-  tables: TableResponse.AdminGet["result"];
+  clientTable: ClientTableResponse.Get["result"] | null;
+  tables: AdminTableResponse.Get["result"];
   isLoaded: boolean;
   error: boolean;
 
-  load: (query: TableRequest.AdminGetQuery) => Promise<TableResponse.AdminGet | null>;
+  load: (query: AdminTableRequest.Get) => Promise<AdminTableResponse.Get | null>;
 
-  createTable: (query: TableRequest.CreateQuery) => Promise<TableResponse.Create | null>;
-  removeTable: (query: TableRequest.RemoveQuery) => Promise<TableResponse.Remove | null>;
-  updateTable: (query: TableRequest.UpdateQuery) => Promise<TableResponse.Update | null>;
+  createTable: (query: AdminTableRequest.Create) => Promise<AdminTableResponse.Create | null>;
+  removeTable: (query: AdminTableRequest.Remove) => Promise<AdminTableResponse.Remove | null>;
+  updateTable: (query: AdminTableRequest.Update) => Promise<AdminTableResponse.Update | null>;
 
-  occupyTable: (query: TableRequest.OccupyQuery) => Promise<TableResponse.Occupy | null>;
-  vacateTable: (query: TableRequest.VacateQuery) => Promise<TableResponse.Vacate | null>;
+  occupyTable: (query: AdminTableRequest.Occupy) => Promise<AdminTableResponse.Occupy | null>;
+  vacateTable: (query: AdminTableRequest.Vacate) => Promise<AdminTableResponse.Vacate | null>;
 
-  clientGetTable: (query: TableRequest.ClientGetQuery) => Promise<TableResponse.ClientGet | null>;
+  clientGetTable: (query: ClientTableRequest.Get) => Promise<ClientTableResponse.Get | null>;
+
+  clientCancelOrder: (query: ClientOrderRequest.Remove) => Promise<ClientOrderResponse.Remove | null>;
+  adminCancelOrder: (query: AdminOrderRequest.RemoveOrderQuery) => Promise<AdminOrderResponse.Remove | null>;
 
   // 다른 store에서 사용하기 위해 노출. component에서 사용하지 않음.
-  _setTables: (tables: TableResponse.AdminGet["result"]) => void;
+  _setTables: (tables: AdminTableResponse.Get["result"]) => void;
 }
 
 const useTableStore = create<TableState>((set, get) => ({
@@ -32,15 +40,22 @@ const useTableStore = create<TableState>((set, get) => ({
   isLoaded: false,
   error: false,
 
-  load: async (query: TableRequest.AdminGetQuery) => await queryStore<TableRequest.AdminGetQuery, TableResponse.AdminGet>({
+  load: async (query: AdminTableRequest.Get) => await queryStore<AdminTableRequest.Get, AdminTableResponse.Get>({
     route: "admin/table",
     method: "get",
     query,
     setter: set,
-    onSuccess: (res) => set({ tables: res.result }),
+    onSuccess: (res) => set({ tables: res.result.map((table) => ({
+      ...table,
+      tableContexts: table.tableContexts.sort((a, b) => b.createdAt - a.createdAt)
+        .map((tableContext) => ({
+          ...tableContext,
+          orders: tableContext.orders.sort((a, b) => b.createdAt - a.createdAt),
+        })),
+    })) }),
   }),
 
-  createTable: async (query: TableRequest.CreateQuery) => await queryStore<TableRequest.CreateQuery, TableResponse.Create>({
+  createTable: async (query: AdminTableRequest.Create) => await queryStore<AdminTableRequest.Create, AdminTableResponse.Create>({
     route: "admin/table",
     method: "post",
     query,
@@ -52,7 +67,7 @@ const useTableStore = create<TableState>((set, get) => ({
     }),
   }),
 
-  removeTable: async (query: TableRequest.RemoveQuery) => await queryStore<TableRequest.RemoveQuery, TableResponse.Remove>({
+  removeTable: async (query: AdminTableRequest.Remove) => await queryStore<AdminTableRequest.Remove, AdminTableResponse.Remove>({
     route: "admin/table",
     method: "delete",
     query,
@@ -64,7 +79,7 @@ const useTableStore = create<TableState>((set, get) => ({
     }),
   }),
 
-  updateTable: async (query: TableRequest.UpdateQuery) => await queryStore<TableRequest.UpdateQuery, TableResponse.Update>({
+  updateTable: async (query: AdminTableRequest.Update) => await queryStore<AdminTableRequest.Update, AdminTableResponse.Update>({
     route: "admin/table",
     method: "put",
     query,
@@ -76,7 +91,7 @@ const useTableStore = create<TableState>((set, get) => ({
     }),
   }),
 
-  occupyTable: async (query: TableRequest.OccupyQuery) => await queryStore<TableRequest.OccupyQuery, TableResponse.Occupy>({
+  occupyTable: async (query: AdminTableRequest.Occupy) => await queryStore<AdminTableRequest.Occupy, AdminTableResponse.Occupy>({
     route: "admin/table/occupy",
     method: "put",
     query,
@@ -88,7 +103,7 @@ const useTableStore = create<TableState>((set, get) => ({
     }),
   }),
 
-  vacateTable: async (query: TableRequest.VacateQuery) => await queryStore<TableRequest.VacateQuery, TableResponse.Vacate>({
+  vacateTable: async (query: AdminTableRequest.Vacate) => await queryStore<AdminTableRequest.Vacate, AdminTableResponse.Vacate>({
     route: "admin/table/vacate",
     method: "put",
     query,
@@ -100,15 +115,52 @@ const useTableStore = create<TableState>((set, get) => ({
     }),
   }),
 
-  clientGetTable: async (query: TableRequest.ClientGetQuery) => await queryStore<TableRequest.ClientGetQuery, TableResponse.ClientGet>({
+  clientGetTable: async (query: ClientTableRequest.Get) => await queryStore<ClientTableRequest.Get, ClientTableResponse.Get>({
     route: "table",
     method: "get",
     query,
     setter: set,
-    onSuccess: (res) => set({ clientTable: res.result }),
+    onSuccess: (res) => set({ clientTable: {
+      ...res.result,
+      tableContexts: res.result.tableContexts.sort((a, b) => b.createdAt - a.createdAt)
+        .map((tableContext) => ({
+          ...tableContext,
+          orders: tableContext.orders.sort((a, b) => b.createdAt - a.createdAt),
+        })),
+    }}),
   }),
 
-  _setTables: (tables: TableResponse.AdminGet["result"]) => set({ tables }),
+  clientCancelOrder: async (query: ClientOrderRequest.Remove) => await queryStore<ClientOrderRequest.Remove, ClientOrderResponse.Remove>({
+    route: "order",
+    method: "delete",
+    query,
+    setter: set,
+    onSuccess: (res) => {
+      toast({
+        title: "주문 취소 완료",
+        description: "주문이 성공적으로 취소되었습니다.",
+        duration: 3000,
+      });
+      get().clientGetTable({ tableId: get().clientTable?.id ?? "" });
+    },
+  }),
+
+  adminCancelOrder: async (query: AdminOrderRequest.RemoveOrderQuery) => await queryStore<AdminOrderRequest.RemoveOrderQuery, AdminOrderResponse.Remove>({
+    route: "admin/order",
+    method: "delete",
+    query,
+    setter: set,
+    onSuccess: (res) => {
+      toast({
+      title: "주문 취소 완료",
+      description: "주문이 성공적으로 취소되었습니다.",
+      duration: 3000,
+      });
+      get().load({});
+    },
+  }),
+
+  _setTables: (tables: AdminTableResponse.Get["result"]) => set({ tables }),
 }));
 
 export default useTableStore;

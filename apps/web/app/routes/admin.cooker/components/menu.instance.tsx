@@ -1,10 +1,6 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
-import useMenuStore from "~/stores/menu.store";
-import useTableStore from "~/stores/table.store";
-import * as TableResponse from "shared/api/types/responses/table";
-import { dateDiffString } from "~/lib/date";
 import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
+import { dateDiffString } from "~/lib/date";
 import * as Schema from "db/schema";
 
 export default function MenuInstance({ 
@@ -49,10 +45,7 @@ export default function MenuInstance({
         </CardHeader>
         <CardContent className="fr px-4 py-2 items-end">
           <ul className="flex-1">
-            <li className="text-lg my-1">
-              {order.status === Schema.menuOrderStatus.PENDING ? "⌛"
-                : order.status === Schema.menuOrderStatus.SERVED ? "✅"
-                : "❌"} {order.menuName} <b>x{order.quantity}</b>
+            <li className="text-lg my-1">{order.menuName} <b>x{order.quantity}</b>
             </li>
           </ul>
         </CardContent>

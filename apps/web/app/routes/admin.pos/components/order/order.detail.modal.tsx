@@ -1,11 +1,11 @@
 
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DialogContent } from "~/components/ui/dialog";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import useMenuStore from "~/stores/menu.store";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as AdminTableResponse from "shared/types/responses/admin/table";
+import useTableStore from "~/stores/table.store";
 
 export default function OrderDetailModal({
   openState, setOpenState,
@@ -13,9 +13,9 @@ export default function OrderDetailModal({
 }: {
   openState: boolean;
   setOpenState: (open: boolean) => void;
-  order: TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number];
+  order: AdminTableResponse.Get["result"][number]["tableContexts"][number]["orders"][number];
 }) {
-  const { menuCategories, menus } = useMenuStore();
+  const { menus } = useMenuStore();
 
   const menuOrderInfos = order.menuOrders.map((menuOrder) => {
     const menu = menus.find((menu) => menu.id === menuOrder.menuId);
@@ -29,6 +29,14 @@ export default function OrderDetailModal({
       totalPrice: menu.price * menuOrder.quantity,
     }
   })
+  
+  const handelOrderCancel = async () => {
+    //TODO: 주문 취소 로직 구현
+    await useTableStore.getState().adminCancelOrder({
+      orderId: order.id,
+    });
+    handleClose();
+  }
 
   const handleClose = () => {
     setOpenState(false);
@@ -41,9 +49,9 @@ export default function OrderDetailModal({
           <DialogHeader className="fc items-start w-fit">
             <DialogTitle className="text-2xl">주문 정보</DialogTitle>
             <DialogDescription className="fc">
-              <div><span className="font-bold">id</span>: {order.id}</div>
-              <div><span className="font-bold">일시</span>: {new Date(order.createdAt).toLocaleString()}</div>
-              <div><span className="font-bold">결제 상태</span>: {order.payment.paid ? "결제 완료 → 조리 중" : "결제 대기"}</div>
+              <span><span className="font-bold">id</span>: {order.id}</span>
+              <span><span className="font-bold">일시</span>: {new Date(order.createdAt).toLocaleString()}</span>
+              <span><span className="font-bold">결제 상태</span>: {order.payment.paid ? "결제 완료 → 조리 중" : "결제 대기"}</span>
             </DialogDescription>
           </DialogHeader>
           <Table className="w-full">
@@ -79,7 +87,7 @@ export default function OrderDetailModal({
           </div>
           <DialogFooter className="w-full h-fit fr justify-end items-end">
             <div className="w-fit *:mx-1">
-              <Button className="dangerBG dangerB" onClick={handleClose}>주문 취소</Button>
+              <Button className="dangerBG dangerB" onClick={handelOrderCancel}>주문 취소</Button>
               {!order.payment.paid && (
                 <Button className="dangerBG dangerB" onClick={handleClose}>결제</Button>
               )}

@@ -3,7 +3,6 @@ import { Button } from "~/components/ui/button"
 import CartModal from "./cart/cart.modal";
 import useCartStore from "~/stores/cart.store";
 import useTableStore from "~/stores/table.store";
-import PurchaseModal from "./purchase.modal";
 import OrderModal from "./order/order.modal";
 import OrderHistoryModal from "./order/order.history.modal";
 
@@ -16,7 +15,7 @@ export default function Footer() {
 
   const quantity = menuOrders.reduce((acc, menuOrder) => acc + menuOrder.quantity, 0);
 
-  const inProgressOrderRemain = clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid));
+  const inProgressOrderRemain = clientTable?.tableContexts.some((tableContext) => tableContext.orders.some((order) => !order.payment.paid && order.deletedAt === null));
   useEffect(() => {
     if (inProgressOrderRemain) {
       const interval = setInterval(() => {

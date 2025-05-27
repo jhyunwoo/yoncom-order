@@ -1,6 +1,3 @@
-import { Button } from "~/components/ui/button";
-import { ListIcon } from "lucide-react";
-
 export default function ShopIntro({ tableName, tableSeats }: { tableName: string, tableSeats: number }) {
   return (
     <>

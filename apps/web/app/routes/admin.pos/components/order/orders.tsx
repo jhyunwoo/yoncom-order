@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import useTableStore from "~/stores/table.store";
 import * as Schema from "db/schema";
 import OrderInstance from "./order.instance";
-import { Divide } from "lucide-react";
 import OrderDetailModal from "./order.detail.modal";
-import * as TableResponse from "shared/api/types/responses/table";
+import * as AdminTableResponse from "shared/types/responses/admin/table";
 
 export default function Orders() {
-  const [orderDetail, setOrderDetail] = useState<TableResponse.AdminGet["result"][number]["tableContexts"][number]["orders"][number] | null>(null);
+  const [orderDetail, setOrderDetail] = useState<AdminTableResponse.Get["result"][number]["tableContexts"][number]["orders"][number] | null>(null);
   const [orderDetailModalOpenState, setOrderDetailModalOpenState] = useState(false);
 
   const { tables } = useTableStore();
@@ -24,9 +23,9 @@ export default function Orders() {
     <div className="full p-2">
       <Card className="full bg-[#F2F2F2] px-3 fc rounded-3xl">
         <CardHeader className="px-2">
-          <CardTitle className="text-2xl">주문 현황</CardTitle>
+          <CardTitle className="text-2xl">주문 현황 <b className="font-light text-lg">({inProgressOrders.length})</b></CardTitle>
         </CardHeader>
-        <CardContent className="p-0 overflow-scroll *:hover:cursor-pointer">
+        <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {inProgressOrders.map((order) => 
             <OrderInstance 
               key={order.id} 
