@@ -1,7 +1,7 @@
 import * as QueryDB from "api/lib/queryDB";
 import * as ClientOrderResponse from "shared/types/responses/client/order";
 import ControllerResult from "api/types/controller";
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import {
   menuOrders,
   menus,
@@ -97,6 +97,12 @@ export const createOrder = async (
       )
         return { error: "Menu Not Enough", status: 409 };
     }
+    // 메뉴 수량 업데이트
+    for (const menu of menuData) {
+      await db.update(menus).set({
+        quantity: sql`${menus.quantity} - ${menu.quantity}`,
+      });
+    }
 
     // order 생성
     console.log("Creating order");
@@ -190,7 +196,10 @@ export const getOrder = async (
     });
     if (!orderData) return { error: "Order Not Found", status: 403 };
 
-    return { result: orderData as unknown as ClientOrderResponse.Get["result"], status: 200 };
+    return {
+      result: orderData as unknown as ClientOrderResponse.Get["result"],
+      status: 200,
+    };
   } catch (e) {
     console.error(e);
     return { error: "DB Query Error", status: 500 };
@@ -213,6 +222,12 @@ export const removeOrder = async (
     if (!orderData) return { error: "Order Not Found", status: 403 };
     if (orderData.payment && orderData.payment.paid) {
       return { error: "Paid Order Cannot Be Deleted", status: 403 };
+    }
+
+    for (const menuOrder of orderData?.menuOrders || []) {
+      await db.update(menus).set({
+        quantity: sql`${menus.quantity} + ${menuOrder.quantity}`,
+      });
     }
 
     // menuOrders 삭제
