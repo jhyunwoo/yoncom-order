@@ -4,7 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import initializeDb from "api/lib/initialize-db";
 import { payments } from "db/schema";
 import { createValidation } from "shared/api/types/requests/admin/deposit";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 const deposit = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -15,13 +15,13 @@ deposit.post("/", zValidator("json", createValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
   // 사용자가 입금한 금액과 동일한 금액을 입금 받아야하는 payments를 모두 조회
-  const remainingPayments = await db.query.payments.findMany({
-    where: eq(payments.amount, amount),
+  const remainingPayments = await db.query.payments.findFirst({
+    where: and(eq(payments.amount, amount), eq(payments.paid, false)),
     orderBy: desc(payments.createdAt),
   });
 
   // 만약 payment가 없으면 오류 후 종료
-  if (remainingPayments.length === 0) {
+  if (!remainingPayments) {
     return c.json({ result: "fail" }, 400);
   }
 
@@ -34,7 +34,7 @@ deposit.post("/", zValidator("json", createValidation), async (c) => {
       createdAt: timestamp,
       depositor: name,
     })
-    .where(eq(payments.id, remainingPayments[0].id))
+    .where(eq(payments.id, remainingPayments.id))
     .returning();
 
   // 만약 업데이트된 payment가 없다면 오류 후 종료

@@ -1,4 +1,3 @@
-import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
 import * as OrderResponse from "shared/api/types/responses/order";
 import ControllerResult from "api/types/controller";
@@ -45,19 +44,23 @@ export const createOrder = async (
     // 활성화되어있는 tableContext에 미결제 주문이 존재하는지
     console.log("Checking unfinished orders");
     const checkUnpaidOrder = await db.query.tableContexts.findFirst({
-      where: eq(tableContexts.tableId, tableContextsData.id),
+      where: and(
+        eq(tableContexts.id, tableContextsData.id),
+        isNull(tableContexts.deletedAt),
+      ),
       with: {
         orders: {
-          where: and(isNull(orders.deletedAt), eq(payments.paid, false)),
+          where: isNull(orders.deletedAt),
           with: {
             payment: true,
           },
         },
       },
     });
-
+    console.log(checkUnpaidOrder);
     if (checkUnpaidOrder) {
       for (const order of checkUnpaidOrder?.orders) {
+        console.log(order.payment);
         if (order.payment && !order.payment.paid) {
           return { error: "Unpaid Order Exists", status: 409 };
         }
@@ -67,6 +70,7 @@ export const createOrder = async (
     // 주문에 들어온 메뉴가 모두 존재하는지 확인
     console.log("Checking menu existence");
     const menuIds = menuOrdersData.map((menuOrder) => menuOrder.menuId);
+
     const menuData = await db.query.menus.findMany({
       where: and(inArray(menus.id, menuIds), isNull(menus.deletedAt)),
     });
@@ -147,6 +151,10 @@ export const getOrders = async (db: QueryDB.DB, tableId: string) => {
 
     const ordersData = await db.query.orders.findMany({
       where: eq(orders.tableContextId, findTableContext.id),
+      with: {
+        menuOrders: true,
+        payment: true,
+      },
     });
     if (!ordersData) return { error: "Order Not Found", status: 403 };
 
@@ -174,6 +182,10 @@ export const getOrder = async (
         eq(orders.id, orderId),
         eq(orders.tableContextId, findTableContext?.id!),
       ),
+      with: {
+        menuOrders: true,
+        payment: true,
+      },
     });
     if (!orderData) return { error: "Order Not Found", status: 403 };
 
@@ -186,10 +198,10 @@ export const getOrder = async (
 
 export const deleteOrder = async (
   db: QueryDB.DB,
+
   query: DeleteOrder,
 ): Promise<ControllerResult<OrderResponse.Delete>> => {
   const { orderId } = query;
-
   try {
     const orderData = await db.query.orders.findFirst({
       where: eq(orders.id, orderId),
@@ -199,8 +211,8 @@ export const deleteOrder = async (
       },
     });
     if (!orderData) return { error: "Order Not Found", status: 403 };
-    if (orderData.payment && !orderData.payment.paid) {
-      return { error: "Unpaid Order Cannot Be Deleted", status: 403 };
+    if (orderData.payment && orderData.payment.paid) {
+      return { error: "Paid Order Cannot Be Deleted", status: 403 };
     }
 
     // menuOrders 삭제

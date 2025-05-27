@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import * as Schema from "db/schema";
 import * as QueryDB from "api/lib/queryDB";
 import * as TableResponse from "shared/api/types/responses/table";
@@ -106,33 +106,37 @@ export const vacateTable = async (
 
   try {
     // 해당 테이블에 활성화 중인 tableContext가 있는지 확인
-    const activeTableContext = await db.query.tableContexts.findMany({
-      where: and(eq(tableContexts.tableId, tableId)),
+    const activeTableContext = await db.query.tableContexts.findFirst({
+      where: and(
+        eq(tableContexts.tableId, tableId),
+        isNull(tableContexts.deletedAt),
+      ),
       columns: {
         id: true,
       },
     });
-    if (activeTableContext.length === 0)
+    if (!activeTableContext)
       return { error: "Table is not occupied yet", status: 409 };
 
     // 해당 테이블에 끝나지 않은 주문이 있는지
     const unfinishedOrders = await db.query.orders.findFirst({
       where: and(
         isNull(orders.deletedAt),
-        inArray(
-          orders.tableContextId,
-          activeTableContext.map((tc) => tc.id),
-        ),
+        eq(orders.tableContextId, activeTableContext.id),
       ),
+      with: {
+        payment: true,
+      },
     });
 
-    if (unfinishedOrders)
+    if (!unfinishedOrders?.payment?.paid) {
       return { error: "There are on active orders in the table", status: 409 };
+    }
 
     await db
       .update(tableContexts)
       .set({ deletedAt: Date.now() })
-      .where(eq(tableContexts.id, tableId));
+      .where(eq(tableContexts.tableId, tableId));
 
     return { result: "Table vacated", status: 200 };
   } catch (e) {
