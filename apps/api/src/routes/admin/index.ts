@@ -7,6 +7,7 @@ import adminTable from "./table";
 import adminMenuCategory from "./menuCategory";
 import adminOrder from "api/routes/admin/order";
 import deposit from "api/routes/admin/deposit";
+import image from "api/routes/admin/image";
 
 const admin = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -23,5 +24,6 @@ admin.route("/table", adminTable);
 admin.route("/menuCategory", adminMenuCategory);
 admin.route("/order", adminOrder);
 admin.route("/deposit", deposit);
+admin.route("/image", image);
 
 export default admin;

@@ -53,7 +53,7 @@ adminOrder.put(
     } catch (e) {
       return c.json({ error: "Failed to complete menu order" }, 500);
     }
-    return c.json({ result: completeValidation });
+    return c.json({ result: "Success" });
   },
 );
 

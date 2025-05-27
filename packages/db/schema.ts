@@ -231,14 +231,12 @@ export const menuOrders = sqliteTable("menuOrders", {
     .notNull()
     .$type<MenuOrderStatus>()
     .default(menuOrderStatus.PENDING),
-
   orderId: text("orderId")
     .notNull()
     .references(() => orders.id),
   menuId: text("menuId")
     .notNull()
     .references(() => menus.id),
-
   createdAt: integer("createdAt")
     .notNull()
     .$defaultFn(() => Date.now()),
