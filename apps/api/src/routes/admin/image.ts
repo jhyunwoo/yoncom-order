@@ -14,7 +14,9 @@ image.put("/", zValidator("form", uploadValidation), async (c) => {
 
   await c.env.R2_BUCKET.put(filename, formData.get("file") as Blob);
 
-  return c.json({ result: { filename: filename } });
+  return c.json({
+    result: { filename: "https://image.yoncomorder.moveto.kr/" + filename },
+  });
 });
 
 export default image;
