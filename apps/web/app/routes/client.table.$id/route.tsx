@@ -28,7 +28,7 @@ export default function Client() {
   }, [table])
 
   return (
-    <div className="full fc items-center justify-center overflow-hidden">
+    <div className="w-[100vw] h-[100vh] fc items-center justify-center overflow-hidden">
       {clientTable && clientMenuCategories
         ? (
           <>
