@@ -39,7 +39,7 @@ export async function signIn(email: string, password: string) {
     method: "post",
     query: { email, password },
     onSuccess: () => {
-      window.location.href = "/admin";
+      window.location.href = "/admin/pos";
     },
     onError: () => {
       window.location.href = "/auth";

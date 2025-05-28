@@ -26,7 +26,12 @@ export default function Cooker() {
 
   return (
     <div className="w-screen h-screen fc bg-white p-2">
-      <h1 className="font-bold text-2xl mx-4 my-4">메뉴 모니터링</h1>
+      <div className="fr items-center">
+        <h1 className="font-bold text-2xl mx-4 my-4">메뉴 모니터링</h1>
+        <Button variant="outline" className="bg-slate-600 text-white" onClick={() => {
+          window.open("/admin/pos", "_blank");
+        }}>포스로 이동</Button>
+      </div>
       <div className="w-full h-fit fr *:mx-1 justify-end">
         <Button onClick={() => setMenuAddModalOpen(true)}>메뉴 추가</Button>
         <Button variant="outline" onClick={() => setMenuRemoveModalOpen(true)}>메뉴 제거</Button>

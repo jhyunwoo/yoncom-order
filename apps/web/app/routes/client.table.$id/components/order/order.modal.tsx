@@ -47,7 +47,9 @@ export default function OrderModal({
       return;
     }
 
+    // TODO: 토스 이체 계좌 변경 필요
     window.open(`supertoss://send?amount=${amountWithKey}&bank=국민은행&accountNo=11110204273566`, "_blank");
+    // window.open(`supertoss://send?amount=${amountWithKey}&bank=국민은행&accountNo=94320201650240`, "_blank");
     handleClose();
   }
 

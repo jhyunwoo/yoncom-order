@@ -15,6 +15,7 @@ import {
   getTables,
   removeTable,
   updateTable,
+  occupyTable,
   vacateTable,
 } from "api/controller/admin/table.controller";
 import { ContentfulStatusCode } from "hono/utils/http-status";

@@ -47,6 +47,9 @@ export default function Inventories() {
                     setMenuDetail(menu);
                     setMenuDetailModalOpenState(true);
                   }}
+                  style={{
+                    opacity: menu.quantity === 0 || menu.available === false ? 0.3 : 1,
+                  }}
                 >
                   <TableCell className="text-start">{menu.name}</TableCell>
                   <TableCell className="text-center border-l-[1px]">{menuCategories.find((category) => category.id === menu.menuCategoryId)?.name}</TableCell>

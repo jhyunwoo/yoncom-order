@@ -92,6 +92,31 @@ export const removeTable = async (
     return { error: "DB Delete Error", status: 500 };
   }
 };
+export const occupyTable = async (
+  db: QueryDB.DB,
+  query: AdminTable.Occupy
+): Promise<ControllerResult<TableResponse.Occupy>> => {
+  const { tableId } = query;
+
+  try {
+    const table = (await QueryDB.queryTables(db, [tableId], { tableContexts: true }))[0];
+
+    // 해당 테이블에 비활성화 중인지 확인
+    const isTableOnDeactivate = QueryDB.isTablesOnDeactivate([table]);
+    console.debug(isTableOnDeactivate);
+    if (!isTableOnDeactivate)
+      return { error: "Table is already occupied", status: 409 };
+
+    await db
+      .insert(Schema.tableContexts)
+      .values({ tableId });
+
+    return { result: "Table occupied", status: 200 };
+  } catch (e) {
+    console.error(e);
+    return { error: "DB Insert Error", status: 500 };
+  }
+}
 
 /**
  * Admin에서 테이블 점유를 푸는 함수

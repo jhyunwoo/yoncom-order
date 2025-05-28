@@ -5,6 +5,7 @@ import * as Schema from "db/schema";
 import OrderInstance from "./order.instance";
 import OrderDetailModal from "./order.detail.modal";
 import * as AdminTableResponse from "shared/types/responses/admin/table";
+import { Button } from "~/components/ui/button";
 
 export default function Orders() {
   const [orderDetail, setOrderDetail] = useState<AdminTableResponse.Get["result"][number]["tableContexts"][number]["orders"][number] | null>(null);
@@ -22,8 +23,11 @@ export default function Orders() {
   return (
     <div className="full p-2">
       <Card className="full bg-[#F2F2F2] px-3 fc rounded-3xl">
-        <CardHeader className="px-2">
+        <CardHeader className="px-2 fr items-center justify-between">
           <CardTitle className="text-2xl">주문 현황 <b className="font-light text-lg">({inProgressOrders.length})</b></CardTitle>
+          <Button variant="outline" className="bg-slate-600 text-white" onClick={() => {
+            window.open("/admin/cooker", "_blank");
+          }}>요리 섹션</Button>
         </CardHeader>
         <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {inProgressOrders.map((order) => 

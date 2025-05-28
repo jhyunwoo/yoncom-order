@@ -7,6 +7,7 @@ import { dateDiffString } from "~/lib/date";
 import useMenuStore from "~/stores/menu.store";
 import { TimerIcon } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
+import TableDetailModal from "./table.detail.modal";
 
 export default function TableInstance({
   table
@@ -98,7 +99,7 @@ export default function TableInstance({
             </CardContent>
           )}
       </Card>
-      <TableSetModal
+      <TableDetailModal
         table={table}
         openState={modalOpen}
         setOpenState={setModalOpen}
