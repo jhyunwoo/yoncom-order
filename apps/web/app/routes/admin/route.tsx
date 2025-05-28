@@ -28,7 +28,7 @@ export default function AdminLayout() {
     const interval = setInterval(async () => {
       await useMenuStore.getState().adminLoad({});
       await useTableStore.getState().load({});
-    }, 1000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
