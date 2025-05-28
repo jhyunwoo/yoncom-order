@@ -46,6 +46,7 @@ export default function RemoveTableModal({
           </SelectTrigger>
           <SelectContent>
             {tables
+              .filter((table) => table.deletedAt === null)
               .filter((table) => !table.tableContexts.some((tableContext) => tableContext.deletedAt === null))
               .map((table) => 
                 <SelectItem key={table.id} value={table.id}>{table.name}</SelectItem>

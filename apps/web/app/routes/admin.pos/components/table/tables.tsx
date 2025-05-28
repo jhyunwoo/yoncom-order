@@ -26,7 +26,7 @@ export default function Tables() {
           </CardHeader>
           <div className="fr justify-end *:mx-1 mb-3">
             <Button onClick={() => setCreateTableModalOpen(true)}>테이블 추가</Button>
-            <Button className="!bg-slate-600" onClick={() => setUpdateTableModalOpen(true)}>테이블 변경</Button>
+            {/* <Button className="!bg-slate-600" onClick={() => setUpdateTableModalOpen(true)}>테이블 변경</Button> */}
             <Button variant="outline" onClick={() => setRemoveTableModalOpen(true)}>테이블 제거</Button>
           </div>
           {(isLoaded || tables.length > 0) ? (
