@@ -12,10 +12,6 @@ import payout from "api/routes/admin/payout";
 
 const admin = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-admin.use("*", async (c, next) =>
-  protectRoute(c, next, [Schema.userRole.ADMIN]),
-);
-
 admin.get("/", async (c) => {
   return c.json({ result: "Admin API is Healthy", user: c.get("user") });
 });

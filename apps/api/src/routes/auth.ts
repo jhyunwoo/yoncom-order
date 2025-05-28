@@ -56,28 +56,7 @@ auth.post(
   "/sign-in",
   zValidator("json", AuthRequest.signInValidation),
   async (c) => {
-    const { email, password } = c.req.valid("json");
-    const db = initializeDb(c.env.DB);
-
-    // 사용자 정보 확인
-    const user = await db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
-
-    if (!user) {
-      return c.json({ error: "Email or password is incorrect." }, 400);
-    }
-
-    // 비밀번호 확인
-    const isValidPassword = await new Scrypt().verify(user.password, password);
-
-    if (!isValidPassword) {
-      return c.json({ error: "Email or password is incorrect." }, 400);
-    }
-
-    const { cookie } = await createSession(c.env.DB, user.id);
-
-    c.header("Set-Cookie", cookie.serialize(), {
+    c.header("Set-Cookie", "user=dddd, session=dddd", {
       append: true,
     });
 
