@@ -32,7 +32,7 @@ export default function Tables() {
           {(isLoaded || tables.length > 0) ? (
             <CardContent className="flex-1 p-2 overflow-y-auto">
               <div className={"grid gap-4"} style={{
-                gridTemplateColumns: `repeat(${min(ceil(sqrt(tables.length)), 4)}, minmax(0, 1fr))`,
+                gridTemplateColumns: `repeat(${min(ceil(sqrt(tables.filter((table) => table.deletedAt === null).length)), 4)}, minmax(0, 1fr))`,
               }}>
                 {tables
                   .filter((table) => table.deletedAt === null)
