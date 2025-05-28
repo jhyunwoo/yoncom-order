@@ -47,7 +47,7 @@ export default function OrderModal({
       return;
     }
 
-    window.open(`supertoss://send?amount=${amountWithKey}&bank=토스뱅크&accountNo=100052690732`, "_blank");
+    window.open(`supertoss://send?amount=${amountWithKey}&bank=국민은행&accountNo=11110204273566`, "_blank");
     handleClose();
   }
 

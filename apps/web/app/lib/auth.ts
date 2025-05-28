@@ -34,7 +34,7 @@ export async function isSignedIn(
 }
 
 export async function signIn(email: string, password: string) {
-  queryStore<AuthRequest.SignInQuery, AuthResponse.SignInResponse>({
+  queryStore<AuthRequest.SignIn, AuthResponse.SignIn>({
     route: "auth/sign-in",
     method: "post",
     query: { email, password },
@@ -48,7 +48,7 @@ export async function signIn(email: string, password: string) {
 }
 
 export async function signUp(name: string, email: string, password: string) {
-  queryStore<AuthRequest.SignUpQuery, AuthResponse.SignUpResponse>({
+  queryStore<AuthRequest.SignUp, AuthResponse.SignUp>({
     route: "auth/sign-up",
     method: "post",
     query: { name, email, password },
@@ -59,7 +59,7 @@ export async function signUp(name: string, email: string, password: string) {
 }
 
 export async function signOut() {
-  queryStore<{}, AuthResponse.SignOutResponse>({
+  queryStore<{}, AuthResponse.SignOut>({
     route: "auth/sign-out",
     method: "post",
     query: {},

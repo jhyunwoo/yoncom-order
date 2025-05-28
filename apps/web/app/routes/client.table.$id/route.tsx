@@ -11,7 +11,7 @@ import { useEffect } from "react";
 export const loader: LoaderFunction = async ({ params }) => {
   const tableId = params.id ?? "";
   const table = (await useTableStore.getState().clientGetTable({ tableId }))?.result;
-  const menuCategories = (await useMenuStore.getState().clientLoad({ userId: table?.userId ?? "" }))?.result;
+  const menuCategories = (await useMenuStore.getState().clientLoad({}))?.result;
   return { table, menuCategories };
 };
 
@@ -28,7 +28,7 @@ export default function Client() {
   }, [table])
 
   return (
-    <div className="screen fc items-center justify-center overflow-hidden">
+    <div className="w-[100vw] h-[100vh] fc items-center justify-center overflow-hidden">
       {clientTable && clientMenuCategories
         ? (
           <>
