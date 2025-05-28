@@ -6,6 +6,14 @@ import useTableStore from "~/stores/table.store";
 import MenuRemoveModal from "./components/menu.remove.modal";
 import MenuAddModal from "./components/menu.add.modal";
 import MenuMonitor from "./components/menu.monitor";
+import type { MetaFunction } from "@remix-run/node";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "요리 섹션" },
+    { name: "description", content: "요리 섹션" }
+  ];
+};
 
 export default function Cooker() {
   const { tables } = useTableStore();

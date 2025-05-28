@@ -1,4 +1,4 @@
-import { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import useTableStore from "~/stores/table.store";
 import Header from "./components/header";
@@ -7,6 +7,13 @@ import ShopIntro from "./components/shop.intro";
 import Footer from "./components/footer";
 import useMenuStore from "~/stores/menu.store";
 import { useEffect } from "react";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "테이블" },
+    { name: "description", content: "테이블" }
+  ];
+};
 
 export const loader: LoaderFunction = async ({ params }) => {
   const tableId = params.id ?? "";

@@ -4,6 +4,14 @@ import { isSignedIn } from "~/lib/auth";
 import SignOut from "./components/sign-out";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import SignUp from "./components/sign-up";
+import type { MetaFunction } from "@remix-run/node";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "로그인" },
+    { name: "description", content: "로그인" }
+  ];
+};
 
 export default function Auth() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);

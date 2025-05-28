@@ -1,6 +1,14 @@
 import Tables from "./components/table/tables";
 import Orders from "./components/order/orders";
 import Inventories from "./components/inventory/inventories";
+import type { MetaFunction } from "@remix-run/node";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "POS" },
+    { name: "description", content: "POS" }
+  ];
+};
 
 export default function POS() { 
   return (
