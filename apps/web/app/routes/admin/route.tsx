@@ -10,28 +10,10 @@ import useTableStore from "~/stores/table.store";
 // export const loader: LoaderFunction = async ({ request }) => {
 //   const user = await requireUser(request); // API 통해 인증
 //   if (!user) throw redirect("/auth");
-  
+
 //   return user;
 // };
 
 export default function AdminLayout() {
-  useEffect(() => {
-    isSignedIn((res) => {
-      if (res.user === null) {
-        window.location.href = "/auth";
-      }
-    }, (error) => {
-      console.error(error);
-      window.location.href = "/auth";
-    });
-
-    const interval = setInterval(async () => {
-      await useMenuStore.getState().adminLoad({});
-      await useTableStore.getState().load({});
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return <Outlet />;
 }
