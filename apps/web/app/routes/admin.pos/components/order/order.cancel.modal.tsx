@@ -13,8 +13,7 @@ export default function OrderCancelModal({
   order: AdminTableResponse.Get["result"][number]["tableContexts"][number]["orders"][number];
 }) {
   const handleConfirm = async () => {
-    //TODO: 주문 취소 로직 구현
-    useTableStore.getState().adminCancelOrder({
+    await useTableStore.getState().adminCancelOrder({
       orderId: order.id,
     });
     handleClose();

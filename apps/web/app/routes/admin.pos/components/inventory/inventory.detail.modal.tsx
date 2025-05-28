@@ -40,7 +40,6 @@ export default function InventoryDetailModal({
   };
 
   const handleConfirm = async () => {
-    // TODO: 메뉴 정보 업데이트 API 호출
     await useMenuStore.getState().updateMenu({
       menuOptions: {
         name: menuName,
