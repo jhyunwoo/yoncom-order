@@ -14,7 +14,7 @@ export default function OrderPaymentModal({
   const copyAccount = () => {
     // TODO: 토스 이체 계좌 변경 필요
     // navigator.clipboard.writeText("국민은행 11110204273566");
-    navigator.clipboard.writeText("국민은행 94320201650240");
+    navigator.clipboard.writeText("국민은행 94580201548620");
     toast({
       title: "계좌정보가 복사되었습니다.",
     });
