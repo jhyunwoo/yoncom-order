@@ -35,6 +35,7 @@ export default function Tables() {
                 gridTemplateColumns: `repeat(${min(ceil(sqrt(tables.length)), 4)}, minmax(0, 1fr))`,
               }}>
                 {tables
+                  .filter((table) => table.deletedAt === null)
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map(table =>
                     <TableInstance

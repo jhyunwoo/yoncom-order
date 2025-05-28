@@ -56,7 +56,7 @@ export default function TableDetailModal({
           <DialogTitle>테이블 상세</DialogTitle>
           <DialogDescription className="text-neutral-800 !-mb-2"><b>이름:</b> {table.name}</DialogDescription>
           <DialogDescription className="text-neutral-800 !-mb-2"><b>Id:</b> {table.id}</DialogDescription>
-          <DialogDescription className="text-neutral-800"><b>상태:</b> {prompt}</DialogDescription>
+          <DialogDescription className="text-neutral-800"><b>상태:</b> {inUse ? "사용 중" : "미사용"}</DialogDescription>
         </DialogHeader>
         <div className="fr items-center">
           <span className="mr-2 min-w-fit font-bold text-sm">테이블 이름</span>

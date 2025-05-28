@@ -20,7 +20,7 @@ import {
 } from "api/controller/admin/table.controller";
 import { ContentfulStatusCode } from "hono/utils/http-status";
 import { and, eq, isNull } from "drizzle-orm";
-import { tableContexts } from "db/schema";
+import { tableContexts, tables } from "db/schema";
 
 const adminTable = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -60,15 +60,31 @@ adminTable.put("/occupy", zValidator("json", occupyValidation), async (c) => {
 
   const { tableId } = c.req.valid("json");
 
+  const table = await db.query.tables.findFirst({
+    where: and(
+      eq(tables.id, tableId),
+      isNull(tables.deletedAt),
+    ),
+  });
+
+  if (table?.deletedAt !== null) {
+    return c.json({ error: "삭제된 테이블입니다." }, 400);
+  }
+
   const findTableContext = await db.query.tableContexts.findFirst({
     where: and(
       eq(tableContexts.tableId, tableId),
       isNull(tableContexts.deletedAt),
     ),
+    with: {
+      table: true,
+    },
   });
+
   if (findTableContext) {
     return c.json({ error: "이미 사용중인 테이블입니다." }, 400);
   }
+
   try {
     await db.insert(tableContexts).values({ tableId: tableId });
   } catch (e) {
