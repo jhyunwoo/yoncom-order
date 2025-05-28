@@ -110,7 +110,7 @@ export default function InventoryDetailModal({
             <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
               {menuImage ? (
                 <img
-                  src={menu.image}
+                  src={menuImage}
                   alt="메뉴 이미지"
                   className="w-full h-full object-cover"
                 />
