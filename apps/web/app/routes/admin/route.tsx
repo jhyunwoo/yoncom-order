@@ -15,5 +15,14 @@ import useTableStore from "~/stores/table.store";
 // };
 
 export default function AdminLayout() {
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      await useMenuStore.getState().adminLoad({});
+      await useTableStore.getState().load({});
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return <Outlet />;
 }
