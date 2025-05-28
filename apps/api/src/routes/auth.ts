@@ -81,8 +81,6 @@ auth.post(
       append: true,
     });
 
-    console.log(cookie.serialize());
-
     return c.json({ result: "Success" }, 200);
   },
 );
@@ -100,6 +98,8 @@ auth.post("/sign-out", async (c) => {
 
   // 빈 세션 쿠키 생성
   const cookie = lucia.createBlankSessionCookie();
+  cookie.attributes.sameSite = "none";
+  cookie.attributes.secure = true;
   c.header("Set-Cookie", cookie.serialize(), { append: true });
 
   return c.json({ result: "Success" }, 200);
