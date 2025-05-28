@@ -130,11 +130,20 @@ export const vacateTable = async (
       },
     });
 
-    if (
-      !unfinishedOrders?.payment?.paid ||
-      unfinishedOrders?.menuOrders.some((order) => order.status === "PENDING")
-    ) {
-      return { error: "There are on active orders in the table", status: 409 };
+    let canVacate = true;
+
+    if (unfinishedOrders) {
+      // 주문이 있는 경우, 결제 상태가 완료되지 않은 주문이 있는지 확인
+      for (const order of unfinishedOrders.menuOrders) {
+        if (order.status === "PENDING") {
+          canVacate = false;
+          break;
+        }
+      }
+    }
+
+    if (!canVacate) {
+      return { error: "There are unfinished orders", status: 409 };
     }
 
     await db
