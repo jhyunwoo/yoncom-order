@@ -77,7 +77,11 @@ auth.post(
 
     const { cookie } = await createSession(c.env.DB, user.id);
 
-    c.header("Set-Cookie", cookie.serialize(), { append: true });
+    c.header("Set-Cookie", cookie.serialize(), {
+      append: true,
+    });
+
+    console.log(cookie.serialize());
 
     return c.json({ result: "Success" }, 200);
   },

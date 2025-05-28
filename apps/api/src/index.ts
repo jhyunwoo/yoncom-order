@@ -21,7 +21,6 @@ app.use(
   cors({
     origin: ["http://localhost:5173", "https://yoncomorder.moveto.kr"],
     credentials: true, // <-- 이게 핵심
-    allowHeaders: ["Content-Type"], // 필요한 헤더 추가
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"], // preflight 대응
   }),
 );
@@ -49,7 +48,8 @@ app.get("/image/:filename", async (c) => {
 
   return new Response(object.body, {
     headers: {
-      "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
+      "Content-Type":
+        object.httpMetadata?.contentType || "application/octet-stream",
       "Cache-Control": "public, max-age=86400",
     },
   });
