@@ -5,6 +5,7 @@ import initializeDb from "api/lib/initialize-db";
 
 import {
   createValidation,
+  occupyValidation,
   removeValidation,
   updateValidation,
   vacateValidation,
@@ -17,6 +18,8 @@ import {
   vacateTable,
 } from "api/controller/admin/table.controller";
 import { ContentfulStatusCode } from "hono/utils/http-status";
+import { and, eq, isNull } from "drizzle-orm";
+import { tableContexts } from "db/schema";
 
 const adminTable = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -44,14 +47,33 @@ adminTable.put("/", zValidator("json", updateValidation), async (c) => {
   return c.json({ result, error }, status);
 });
 
-//TODO: 테이블 점유 처리 로직 구현, 주석 실수 수정
-//TODO: 아직 완료 안된 주문 있는데 vacate 됨. paid만 보는게 아니라 내부 menuOrder의 상태들도 전부 확인해야함
-// Occupy Table
 adminTable.put("/vacate", zValidator("json", vacateValidation), async (c) => {
   const db = initializeDb(c.env.DB);
 
   const { result, error, status } = await vacateTable(db, c.req.valid("json"));
   return c.json({ result, error }, status as ContentfulStatusCode);
+});
+
+adminTable.put("/occupy", zValidator("json", occupyValidation), async (c) => {
+  const db = initializeDb(c.env.DB);
+
+  const { tableId } = c.req.valid("json");
+
+  const findTableContext = await db.query.tableContexts.findFirst({
+    where: and(
+      eq(tableContexts.tableId, tableId),
+      isNull(tableContexts.deletedAt),
+    ),
+  });
+  if (findTableContext) {
+    return c.json({ error: "이미 사용중인 테이블입니다." }, 400);
+  }
+  try {
+    await db.insert(tableContexts).values({ tableId: tableId });
+  } catch (e) {
+    return c.json({ error: "테이블 사용중에 문제가 발생했습니다." }, 500);
+  }
+  return c.json({ result: "Success" }, 200);
 });
 
 // pos에서 테이블 현황을 받아올 때 여기로 접속

@@ -10,7 +10,7 @@ import useTableStore from "~/stores/table.store";
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await requireUser(request); // API 통해 인증
   if (!user) throw redirect("/auth");
-  
+
   return user;
 };
 
