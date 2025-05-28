@@ -45,20 +45,26 @@ export default function CreateTableModal({
       <DialogContent className={modalClassName}>
         <DialogHeader>
           <DialogTitle>테이블 생성</DialogTitle>
-          <DialogDescription>새롭게 만들 테이블 이름을 입력하세요.</DialogDescription>
+          <DialogDescription>새롭게 만들 테이블 설정을 입력하세요.</DialogDescription>
         </DialogHeader>
-        <Input
-          type="text"
-          placeholder="테이블 이름을 입력하세요"
-          value={tableName}
-          onChange={(e) => setTableName(e.target.value)}
-        />
-        <Input
-          type="number"
-          placeholder="테이블 좌석 수를 입력하세요"
-          value={tableSeats}
-          onChange={(e) => setTableSeats(Number(e.target.value))}
-        />
+        <div className="fr items-center">
+          <span className="mr-2 min-w-fit font-bold text-sm">테이블 이름</span>
+          <Input
+            type="text"
+            placeholder="테이블 이름을 입력하세요"
+            value={tableName}
+            onChange={(e) => setTableName(e.target.value)}
+          />
+        </div>
+        <div className="fr items-center">
+          <span className="mr-2 min-w-fit font-bold text-sm">테이블 좌석 수</span>
+          <Input
+            type="number"
+            placeholder="테이블 좌석 수를 입력하세요"
+            value={tableSeats}
+            onChange={(e) => setTableSeats(Number(e.target.value))}
+          />
+        </div>
         <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 이름과 좌석 수를 입력하세요.</DialogDescription>
         <DialogFooter className="">
           <Button variant="outline" onClick={handleClose}>취소</Button>

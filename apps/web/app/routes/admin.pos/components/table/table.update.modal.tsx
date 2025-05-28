@@ -47,7 +47,7 @@ export default function CreateTableModal({
       <DialogContent className={modalClassName}>
         <DialogHeader>
           <DialogTitle>테이블 변경</DialogTitle>
-          <DialogDescription>변경할 테이블을 선택하세요.</DialogDescription>
+          <DialogDescription>테이블 설정을 변경하세요.</DialogDescription>
         </DialogHeader>
         <Select value={tableId} onValueChange={(value) => {
           setTableId(value);
@@ -63,18 +63,24 @@ export default function CreateTableModal({
             )}
           </SelectContent>
         </Select>
-        <Input
-          type="text"
-          placeholder="테이블 이름을 입력하세요"
-          value={tableName}
-          onChange={(e) => setTableName(e.target.value)}
-        />
-        <Input
-          type="number"
-          placeholder="테이블 좌석 수를 입력하세요"
-          value={tableSeats}
-          onChange={(e) => setTableSeats(Number(e.target.value))}
-        />
+        <div className="fr items-center">
+          <span className="mr-2 min-w-fit font-bold text-sm">테이블 이름</span>
+          <Input
+            type="text"
+            placeholder="테이블 이름을 입력하세요"
+            value={tableName}
+            onChange={(e) => setTableName(e.target.value)}
+          />
+        </div>
+        <div className="fr items-center">
+          <span className="mr-2 min-w-fit font-bold text-sm">테이블 좌석 수</span>
+          <Input
+            type="number"
+            placeholder="테이블 좌석 수를 입력하세요"
+            value={tableSeats}
+            onChange={(e) => setTableSeats(Number(e.target.value))}
+          />
+        </div>
         <DialogDescription className={`-mt-2 text-right ${invalid ? "dangerTXT" : "hidden"}`}>⚠︎ 올바른 이름과 좌석 수를 입력하세요.</DialogDescription>
         <DialogFooter className="">
           <Button variant="outline" onClick={handleClose}>취소</Button>
