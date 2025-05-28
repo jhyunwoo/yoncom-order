@@ -13,21 +13,24 @@ export async function requireUser(request: Request) {
     headers: {
       cookie: cookie ?? "",
     },
+    credentials: "include",
   });
 
   const data = await res.json();
   return data?.user; // 예: { id: 'abc', email: 'user@domain.com' }
 }
 
-
-export async function isSignedIn(onSuccess: (res: AdminResponse.HeartBeat) => void, onError: (error: unknown) => void) {
+export async function isSignedIn(
+  onSuccess: (res: AdminResponse.HeartBeat) => void,
+  onError: (error: unknown) => void,
+) {
   queryStore<{}, AdminResponse.HeartBeat>({
     route: "admin",
     method: "get",
     query: {},
     onSuccess,
     onError,
-  })
+  });
 }
 
 export async function signIn(email: string, password: string) {
@@ -35,9 +38,13 @@ export async function signIn(email: string, password: string) {
     route: "auth/sign-in",
     method: "post",
     query: { email, password },
-    onSuccess: () => { window.location.href = "/admin"; },
-    onError: () => { window.location.href = "/auth"; },
-  })
+    onSuccess: () => {
+      window.location.href = "/admin";
+    },
+    onError: () => {
+      window.location.href = "/auth";
+    },
+  });
 }
 
 export async function signUp(name: string, email: string, password: string) {
@@ -45,8 +52,10 @@ export async function signUp(name: string, email: string, password: string) {
     route: "auth/sign-up",
     method: "post",
     query: { name, email, password },
-    onSuccess: () => { window.location.href = "/auth"; },
-  })
+    onSuccess: () => {
+      window.location.href = "/auth";
+    },
+  });
 }
 
 export async function signOut() {
@@ -54,7 +63,11 @@ export async function signOut() {
     route: "auth/sign-out",
     method: "post",
     query: {},
-    onSuccess: () => { window.location.href = "/auth"; },
-    onError: () => { window.location.href = "/auth"; },
-  })
+    onSuccess: () => {
+      window.location.href = "/auth";
+    },
+    onError: () => {
+      window.location.href = "/auth";
+    },
+  });
 }
