@@ -14,6 +14,7 @@ export default function OrderPaymentModal({
   const copyAccount = () => {
     // TODO: 토스 이체 계좌 변경 필요
     // navigator.clipboard.writeText("국민은행 11110204273566");
+    // navigator.clipboard.writeText("국민은행 94580201548620");
     navigator.clipboard.writeText("국민은행 94580201548620");
     toast({
       title: "계좌정보가 복사되었습니다.",
@@ -48,7 +49,7 @@ export default function OrderPaymentModal({
                   onClick={copyAccount}
                   className="fr w-full oveflow-hidden rounded-lg bg-gray-200 p-2 justify-center mb-2 items-center"
                 >
-                  <span className="truncate text-gray-600 text-xl font-semibold hover:cursor-pointer">국민은행 94320201650240</span>
+                  <span className="truncate text-gray-600 text-xl font-semibold hover:cursor-pointer">국민은행 94580201548620</span>
                   <ClipboardPasteIcon className="text-gray-600 scale-75 w-fit mt-[2px]" />
                 </div>
               </div>
