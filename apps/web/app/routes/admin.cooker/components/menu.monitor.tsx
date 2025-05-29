@@ -53,7 +53,7 @@ export default function MenuMonitor({
         </CardHeader>
         <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer">
           {menuOrders
-            .sort((a, b) => b.timestamp - a.timestamp)
+            .sort((a, b) => a.timestamp - b.timestamp)
             .map((menuOrder) => 
             <MenuInstance 
               key={menuOrder.timestamp} 
