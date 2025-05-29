@@ -27,7 +27,7 @@ export default function MenuMonitor({
       tableName: table.name,
     }))
     .flatMap(({ orders, tableName }) => orders
-        .filter((order) => order.payment.paid && order.deletedAt === null)
+        .filter((order) => order?.payment?.paid && order?.deletedAt === null)
         .flatMap(
           (order) => order.menuOrders
             .filter(menuOrder => menuOrder.menuId === menuId)
@@ -52,7 +52,9 @@ export default function MenuMonitor({
           <CardTitle className="text-xl font-bold">{menu.name}</CardTitle>
         </CardHeader>
         <CardContent className="p-0 overflow-y-auto *:hover:cursor-pointer">
-          {menuOrders.map((menuOrder) => 
+          {menuOrders
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .map((menuOrder) => 
             <MenuInstance 
               key={menuOrder.timestamp} 
               order={menuOrder} 
