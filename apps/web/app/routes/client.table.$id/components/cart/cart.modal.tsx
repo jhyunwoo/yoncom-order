@@ -23,6 +23,7 @@ export default function CartModal({
   const [confirmModalOpenState, setConfirmModalOpenState] = useState(false);
   const [modalOpenState, setModalOpenState] = useState(false);
   const [modalMenuOrder, setModalMenuOrder] = useState<CartState["menuOrders"][number] | null>(null);
+  const [duringPurchase, setDuringPurchase] = useState(false);
 
   const { clientMenuCategories } = useMenuStore();
   const { menuOrders, purchaseMenuOrders } = useCartStore();
@@ -47,6 +48,8 @@ export default function CartModal({
     || menuOrderInfos.some((menuOrderInfo) => menuOrderInfo === null)
 
   const handleConfirm = async () => {
+    if (duringPurchase) return;
+    setDuringPurchase(true);
     const isValid = await validateOrder(menuOrders);
     if (!isValid) return;
     
@@ -62,6 +65,7 @@ export default function CartModal({
     });
     setConfirmModalOpenState(true);
     setOpenState(false);
+    setDuringPurchase(false);
   }
   const handleClose = () => {
     setOpenState(false);
