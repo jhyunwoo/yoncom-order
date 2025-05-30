@@ -37,7 +37,7 @@ export default function Inventories() {
             </TableHeader>
             <TableBody>
               {menus
-                .filter((menu) => !menu.deletedAt)
+                .filter((menu) => menu?.deletedAt === null)
                 .sort((a, b) => menuCategories.find((category) => category.id === a.menuCategoryId)?.name.localeCompare(menuCategories.find((category) => category.id === b.menuCategoryId)?.name ?? "") ?? 0)
                 .map((menu) => (
                 <TableRow

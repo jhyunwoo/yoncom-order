@@ -34,7 +34,7 @@ export default function OrderInstance({
     <>
       <Card className="rounded-xl my-3" onClick={onClick}>
         <CardHeader className="py-2 px-3 rounded-t-xl fr justify-between bg-slate-500">
-          <CardTitle className="text-white">{table!.name}</CardTitle>
+          <CardTitle className="text-white">{table?.name}</CardTitle>
           <div className="!-m-1 !p-0 text-white">{
             dateDiffString(now, order.createdAt).startsWith("-") 
               ? "00:00" 

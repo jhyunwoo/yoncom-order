@@ -46,7 +46,7 @@ export default function InventoryRemoveModal({
           </SelectTrigger>
           <SelectContent>
             {menus
-              .filter((menu) => !menu.deletedAt)
+              .filter((menu) => menu?.deletedAt === null)
               .map((menu) => 
                 <SelectItem key={menu.id} value={menu.id}>{menu.name}</SelectItem>
             )}

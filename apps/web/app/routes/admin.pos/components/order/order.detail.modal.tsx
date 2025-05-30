@@ -28,7 +28,7 @@ export default function OrderDetailModal({
       quantity: menuOrder.quantity,
       totalPrice: menu.price * menuOrder.quantity,
     }
-  })
+  }).filter((menuOrderInfo) => menuOrderInfo !== null);
   
   const handelOrderCancel = async () => {
     await useTableStore.getState().adminCancelOrder({
@@ -76,7 +76,7 @@ export default function OrderDetailModal({
             <TableBody>
               {menuOrderInfos.map((menuOrderInfo) => (
                 <TableRow
-                  key={menuOrderInfo!.menuId}
+                  key={menuOrderInfo.menuId}
                   className="h-14 *:text-base"
                 >
                   {/* <TableCell className="text-center">{index + 1}</TableCell> */}
